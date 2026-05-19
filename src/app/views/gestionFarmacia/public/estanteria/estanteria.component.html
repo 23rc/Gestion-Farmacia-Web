@@ -1,0 +1,126 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+  <button (click)="regresar()" class="btn btn-outline-primary d-flex align-items-center mb-3">
+    <i class="bi bi-house-door mr-2"></i> Home
+  </button>
+  <div class="d-flex flex-column align-items-end">
+    <!-- Botón de Productos en Mal Estado si no han pasado más de 30 días -->
+    <!-- <button 
+      *ngIf="!ProductosMalEstadoDesactualizado"
+      (click)="productoMalEstado()" 
+      class="btn d-flex flex-column align-items-start px-3 py-2 rounded-2 shadow-sm botonPequeño BotonProductosMalEstado"
+      style="font-size: 0.875rem; line-height: 1.3;">
+        
+      <div class="d-flex align-items-center mb-1">
+        <i class="bi bi-exclamation-triangle-fill me-2 fs-6"></i>
+        <strong>Productos en Mal Estado ({{ productosMalEstadoCount }})</strong>
+      </div>
+  
+      <div class="d-flex align-items-center ms-4">
+        <i class="bi bi-calendar-event me-2 fs-6"></i>
+        <span style="font-size: 0.85rem; font-weight: 500;">
+          Actualizado el: {{ FechaProductosMalEstado }}
+        </span>
+      </div>
+    </button> -->
+  
+    <!-- Botón de advertencia si han pasado más de 30 días -->
+    <!-- <button 
+      *ngIf="ProductosMalEstadoDesactualizado"
+      (click)="productoMalEstado()" 
+      class="btn d-flex flex-column align-items-start px-3 py-2 rounded-2 shadow-sm botonPequeño bg-warning text-dark"
+      style="font-size: 0.875rem; line-height: 1.3;">
+        
+      <div class="d-flex align-items-center mb-1">
+        <i class="bi bi-exclamation-circle-fill me-2 fs-6"></i>
+        <strong>Productos en Mal Estado Desactualizados</strong>
+      </div>
+  
+      <div class="d-flex align-items-center ms-4">
+        <i class="bi bi-calendar-event me-2 fs-6"></i>
+        <span style="font-size: 0.85rem; font-weight: 500;">
+          Última actualización: {{ FechaProductosMalEstado }}
+        </span>
+      </div>
+    </button> -->
+  </div>
+  
+  
+  
+</div>
+<div class="d-flex flex-column align-items-start">
+  <!-- Botón normal, si está dentro de 30 días -->
+  <!-- <button 
+    *ngIf="!EstanteriaDesactualizada"
+    class="btn d-flex flex-column align-items-end px-3 py-2 rounded-2 shadow-sm botonPequeño BotonEstanteríaActualizacion"
+    style="font-size: 0.875rem; line-height: 1.3;">
+    
+    <div class="d-flex align-items-center me-2">
+      <i class="bi bi-calendar-event me-2 fs-6"></i>
+      <span style="font-size: 0.85rem; font-weight: 500;">
+        Estantería Actualizada el: {{ FechaEstanteria }}
+      </span>
+    </div>
+  </button> -->
+
+  <!-- Botón de advertencia si pasaron más de 30 días -->
+  <!-- <button 
+    *ngIf="EstanteriaDesactualizada"
+    class="btn d-flex flex-column align-items-end px-3 py-2 rounded-2 shadow-sm botonPequeño bg-warning text-dark"
+    style="font-size: 0.875rem; line-height: 1.3;">
+    
+    <div class="d-flex align-items-center me-2">
+      <i class="bi bi-exclamation-circle-fill me-2 fs-6"></i>
+      <span style="font-size: 0.85rem; font-weight: 500;">
+        Estantería desactualizada ({{ FechaEstanteria }})
+      </span>
+    </div>
+  </button> -->
+</div>
+
+
+  <div *ngFor="let estanteria of estanterias" class="mb-5">
+    <div class="d-flex justify-content-between align-items-center p-0 rounded shadow-sm mb-3" style="background-color: #6c757d3d;">
+      <div class="col-6 col-sm-6 col-md-3 p-1 flex-grow-0 flex-shrink-0">
+        <img src="https://www.farmaciasgaleno.com.gt/Image/SPMedicos/pmdescripcion.png" alt="Imagen izquierda" class="img-fluid">
+      </div>
+      <!-- Aplica la clase CSS break-word aquí -->
+      <h2 class="text-black text-center m-0 flex-grow-1 letraPequeña">{{ estanteria.nombreEstanteria }}</h2>
+      <div class="col-2 col-sm-2 col-md-1 p-0 flex-grow-0 flex-shrink-0">
+        <img src="assets/img/doc.gif" alt="Imagen derecha" class="img-fluid">
+      </div>
+    </div>
+    <div class="mb-3 d-flex align-items-center">
+      <input [(ngModel)]="busqueda" (keyup.enter)="buscar()" type="text" placeholder="Buscar palabra..." class="form-control me-2" style="height: calc(2.25rem + 2px); flex: 1;" />
+      <button (click)="buscar()" class="btn btn-outline-success" style="height: calc(2.25rem + 2px);">
+        <i class="bi bi-search"></i> Buscar
+      </button>
+    </div>
+    <div class="estanteria-grid shadow-lg">
+      <div *ngFor="let fila of [].constructor(estanteria.cantidadFilas); let i = index" [id]="'fila-' + estanteria.nombreEstanteria + '-' + i" class="fila">    
+        <div class="row g-0" style="display: flex; flex-wrap: wrap;">
+          <div *ngFor="let columna of [].constructor(estanteria.cantidadColumnas || 9); let j = index"
+          [ngStyle]="{ 
+            backgroundColor: resaltarCelda(i, j, estanteria.nombreEstanteria) ? '#1e293b' : 'transparent', 
+            color: resaltarCelda(i, j, estanteria.nombreEstanteria) ? '#ffffff' : 'inherit', 
+            boxShadow: resaltarCelda(i, j, estanteria.nombreEstanteria) ? '0 4px 10px rgba(0, 0, 0, 0.5)' : 'none', 
+            border: resaltarCelda(i, j, estanteria.nombreEstanteria) ? '2px solid #3b82f6' : '1px solid #6c757d'
+          }"
+          style="flex: 1 0 calc(100% / 9); padding: 0; text-align: center; border-radius: 5px; margin-bottom: 10px; position: relative;"
+          [id]="'celda-' + estanteria.nombreEstanteria + '-' + i + '-' + j">
+            <div *ngIf="ubicacionExistente(i, j, estanteria.nombreEstanteria)">
+              <div class="d-block d-sm-none break-word" style="font-size: 35%;">{{ obtenerDatoCelda(i, j, estanteria.nombreEstanteria) }}</div>
+              <div class="d-none d-sm-block d-md-none break-word" style="font-size: 35%;">{{ obtenerDatoCelda(i, j, estanteria.nombreEstanteria) }}</div>
+              <div class="d-none d-md-block d-lg-none break-word" style="font-size: 45%;">{{ obtenerDatoCelda(i, j, estanteria.nombreEstanteria) }}</div>
+              <div class="d-none d-lg-block d-xxl-none break-word" style="font-size: 65%;">{{ obtenerDatoCelda(i, j, estanteria.nombreEstanteria) }}</div>
+              <div class="d-none d-xxl-block break-word" style="font-size: 80%;">{{ obtenerDatoCelda(i, j, estanteria.nombreEstanteria) }}</div>
+            </div>
+            <div *ngIf="!ubicacionExistente(i, j, estanteria.nombreEstanteria)">
+              <div class="text-muted fst-italic letraMuyPequeña">Vacío</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

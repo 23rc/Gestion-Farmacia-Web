@@ -1,0 +1,53 @@
+<app-navbar/>   
+<div class="container mt-5">
+    <div class="card shadow-lg">
+      <div class="bg-primary">
+        <h1 class="text-center text-white py-2">Editar cliente</h1>
+      </div>
+      <div class="card-body">
+        <form (ngSubmit)="editar()">
+            <div class="mb-3">
+                <label class="form-label" for="nombre">Nombre</label>
+                <input class="form-control" type="text" id="nombre" [(ngModel)]="nombre" name="nombre" placeholder="Escriba el nombre del cliente">
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="dpi">No. DPI</label>
+                <input class="form-control" type="text" id="dpi" [(ngModel)]="dpi" name="dpi" placeholder="Escriba el DPI">
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="nit">NIT</label>
+                <input class="form-control" type="text" id="nit" [(ngModel)]="nit" name="nit" placeholder="Escriba el NIT">
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="celular">Celular/Telefono</label>
+                <input class="form-control" type="text" id="celular" [(ngModel)]="celular" name="celular" placeholder="Escriba el número de telefono/celular">
+              </div>
+              <div class="mb-3">
+                  <label class="form-label" for="medicamento">Medicamento registrado</label>
+                  <input class="form-control" type="text" id="medicamento" [(ngModel)]="medicamento" name="medicamento" placeholder="Escriba el medicamento inscrito">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" for="correo">Correo/Usuario</label>
+                  <input class="form-control" type="text" id="correo" [(ngModel)]="correo" name="correo" placeholder="Escriba el correo">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" for="clave">Contraseña</label>
+                  <input class="form-control" type="text" id="clave" [(ngModel)]="clave" name="clave" placeholder="Escriba la contraseña">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" for="laboratorio">Laboratorio/Plan Médico</label>
+                  <input class="form-control" type="text" id="laboratorio" [(ngModel)]="laboratorio" name="laboratorio" placeholder="Escriba el laboratorio/plan médico">
+                </div>
+          <div class="mb-3 d-flex justify-content-between">
+            <button type="button" class="btn btn-secondary" (click)="regresar()">
+                <i class="bi bi-arrow-left-circle"></i> Regresar al listado
+              </button>
+            <button type="submit" class="btn btn-warning">
+              <i class="bi bi-pencil-square"></i> Actualizar cliente
+            </button>
+          </div> 
+        </form>
+      </div>
+    </div>
+  </div>
+  

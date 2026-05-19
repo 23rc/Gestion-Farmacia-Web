@@ -1,0 +1,47 @@
+/* Aplica la regla de separación para palabras largas */
+.break-word {
+    word-break: break-word; 
+    overflow-wrap: break-word;
+    hyphens: auto; 
+  }
+  .BotonProductosMalEstado{
+    background-color: #f80202; 
+    color: #ffffff; 
+
+  }
+  .BotonEstanteríaActualizacion{
+    background-color: #006c16; 
+    color: #ffffff; 
+
+  }
+  .celda-promociones {
+    background-color: #ffcc00; /* Color de fondo para resaltar */
+    color: #fff; /* Texto en blanco */
+    font-weight: bold; /* Hacer el texto más destacado */
+    border: 2px solid transparent; /* Borde inicial transparente */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Sombra para hacer más visible */
+    position: relative; /* Necesario para el borde animado */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease; /* Animación suave */
+}
+  @media (max-width: 415.98px) {
+    .letraPequeña {
+        font-size: 10px; /* O ajusta al tamaño deseado */
+    }
+    .letraMuyPequeña {
+        font-size: 5px; /* O ajusta al tamaño deseado */
+    }
+    .botonPequeño {
+        font-size: 14px;
+        margin-top: -10px;
+    }
+  
+}
+@media (max-width: 325.98px) {
+    .letraMuyPequeña {
+        font-size: 5px; /* O ajusta al tamaño deseado */
+    }
+    .botonPequeño {
+        margin-top: -20px;
+        font-size: 12px;
+    }
+}

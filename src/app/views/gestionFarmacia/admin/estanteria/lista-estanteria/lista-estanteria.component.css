@@ -1,0 +1,34 @@
+@media (max-width: 415.98px) {
+    .botonPequeño {
+        font-size: 6px;
+    }
+    .letraMuyPequeña {
+        font-size: 7px; /* O ajusta al tamaño deseado */
+    }
+    .margenPequeño{
+        padding: 6px;
+    }
+
+}
+@media (max-width: 325.98px) {
+    .letraPequeña {
+        font-size: 10px; /* O ajusta al tamaño deseado */
+    }
+    .letraMuyPequeña {
+        font-size: 5px; /* O ajusta al tamaño deseado */
+    }
+    .botonPequeño {
+        font-size: 5px;
+        margin-top: 5px;
+    }
+    .margenPequeño{
+        padding: 2px;
+    }
+
+}
+
+.break-word {
+    word-break: break-word; 
+    overflow-wrap: break-word;
+    hyphens: auto; 
+  }

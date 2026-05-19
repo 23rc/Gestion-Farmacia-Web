@@ -1,0 +1,49 @@
+<app-navbar/>   
+<div class="container mt-5">
+  <div class="card shadow-lg">
+    <div class="bg-primary">
+      <h1 class="text-center text-white py-2">Agregar productos en mal estado</h1>
+    </div>
+    <div class="card-body">
+      <form (ngSubmit)="insertar()">
+        <!-- Campos individuales -->
+        <div class="mb-3">
+          <label class="form-label" for="codigo">Código del medicamento</label>
+          <input class="form-control" type="text" id="codigo" [(ngModel)]="codigo" name="codigo" placeholder="Escriba el código del medicamento">
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="producto">Nombre del medicamento</label>
+          <input class="form-control" type="text" id="producto" [(ngModel)]="producto" name="producto" placeholder="Escriba el nombre del medicamento">
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="cantidad">Cantidad del medicamento</label>
+          <input class="form-control" type="text" id="cantidad" [(ngModel)]="cantidad" name="cantidad" placeholder="Escriba la cantidad del medicamento">
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="descripcion">Descripción del medicamento</label>
+          <input class="form-control" type="text" id="descripcion" [(ngModel)]="descripcion" name="descripcion" placeholder="Escriba una descripción del medicamento">
+        </div>
+        <div class="mb-3 d-flex justify-content-between">
+          <button type="button" class="btn btn-secondary" (click)="regresar()">
+            <i class="bi bi-arrow-left-circle"></i> Regresar al listado
+          </button>
+          <button type="submit" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Agregar Medicamento
+          </button>
+        </div>
+      </form>
+      <!-- Nueva sección -->
+      <div class="mt-5">
+        <h2 class="text-center">Agregar cantidades grandes</h2>
+        <textarea class="form-control mb-3" rows="10" [(ngModel)]="bulkData" name="bulkData"></textarea>
+        <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-secondary" (click)="procesarDatos()">Procesar Datos</button>
+          <button type="button" class="btn btn-success" (click)="guardarDatos()">
+            Guardar Datos
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

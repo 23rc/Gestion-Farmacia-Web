@@ -1,0 +1,1025 @@
+<div class="container mt-4">
+    <!-- ===================================== -->
+    <!-- BIENVENIDA USUARIO -->
+    <!-- ===================================== -->
+
+    <div class="d-flex justify-content-between align-items-center 
+        mb-3 px-3 py-2 rounded-4 shadow-sm text-white" style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);">
+
+        <!-- IZQUIERDA -->
+
+        <div class="d-flex align-items-center gap-2">
+
+            <div class="bg-white bg-opacity-25 rounded-circle 
+                d-flex align-items-center justify-content-center" style="width: 42px; height: 42px;">
+
+                <i class="bi bi-person-fill fs-5 text-white"></i>
+
+            </div>
+
+            <div>
+
+                <div class="small opacity-75">
+
+                    Bienvenido
+
+                </div>
+
+                <div class="fw-bold">
+
+                    {{ NombreUsuario }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- DERECHA -->
+
+        <div class="d-flex align-items-center gap-3">
+
+            <div class="text-end">
+
+                <div class="small opacity-75">
+
+                    Sistema
+
+                </div>
+
+                <div class="fw-semibold small">
+
+                    Inventario Diario
+
+                </div>
+
+            </div>
+
+            <!-- CERRAR -->
+
+            <button class="btn btn-light rounded-circle shadow-sm d-flex 
+                   align-items-center justify-content-center p-0" style="width: 38px; height: 38px;"
+                (click)="CerrarSesion()">
+
+                <i class="bi bi-x-lg" style="color: #1e3a5f;"></i>
+
+            </button>
+
+        </div>
+
+    </div>
+    <!-- ===================================== -->
+    <!-- BOTONES SUPERIORES -->
+    <!-- ===================================== -->
+
+    <div class="row g-2 mb-3">
+
+        <div class="col-6">
+
+            <button class="btn w-100 rounded-4 fw-semibold shadow-sm py-2 border-0"
+                [ngClass]="!MostrarListadoMovil ? 'text-white' : 'btn-outline-primary'"
+                [style.background]="!MostrarListadoMovil ? '#1e3a5f' : ''" (click)="MostrarFormulario()">
+
+                <i class="bi bi-grid-1x2-fill me-1"></i>
+
+                Formulario
+
+            </button>
+
+        </div>
+
+        <div class="col-6">
+
+            <button class="btn w-100 rounded-4 fw-semibold shadow-sm py-2 border-0"
+                [ngClass]="MostrarListadoMovil ? 'text-white' : 'btn-outline-secondary'"
+                [style.background]="MostrarListadoMovil ? '#3d5a80' : ''" (click)="MostrarListado()">
+
+                <i class="bi bi-list-task me-1"></i>
+
+                Listado
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- ===================================== -->
+    <!-- FORMULARIO -->
+    <!-- ===================================== -->
+
+    <div class="card border-0 shadow-lg rounded-4 overflow-hidden bg-white" [class.d-none]="MostrarListadoMovil">
+
+        <!-- HEADER -->
+
+        <div class="card-header border-0 py-3" style="background: linear-gradient(135deg,#1e3a5f,#3d5a80);">
+
+            <div class="d-flex align-items-center justify-content-center gap-2">
+
+                <div class="bg-white bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center"
+                    style="width: 42px; height: 42px;">
+
+                    <i class="bi bi-box-seam-fill text-white"></i>
+
+                </div>
+
+                <div>
+
+                    <h5 class="mb-0 fw-bold text-white">
+
+                        {{ Editando ? 'Editar Registro' : 'Inventario Diario' }}
+
+                    </h5>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- BODY -->
+
+        <div class="card-body p-3 p-md-4" style="background: #f8fafc;">
+
+            <form #Formulario="ngForm" (ngSubmit)="Guardar()">
+
+                <div class="row g-3">
+
+                    <!-- FECHA -->
+
+                    <div class="col-6 col-md-4">
+
+                        <label class="form-label fw-semibold small text-secondary">
+
+                            Fecha
+
+                        </label>
+
+                        <div class="input-group shadow-sm rounded-4 overflow-hidden">
+
+                            <span class="input-group-text border-0 bg-white">
+
+                                <i class="bi bi-calendar-event text-primary"></i>
+
+                            </span>
+
+                            <input type="date" class="form-control border-0 py-2" [(ngModel)]="Fecha" name="Fecha"
+                                required>
+
+                        </div>
+
+                    </div>
+
+                    <!-- CODIGO -->
+
+                    <div class="col-6 col-md-4">
+
+                        <label class="form-label fw-semibold small text-secondary">
+
+                            Código
+
+                        </label>
+
+                        <div class="input-group shadow-sm rounded-4 overflow-hidden">
+
+                            <span class="input-group-text border-0 bg-white">
+
+                                <i class="bi bi-upc-scan text-primary"></i>
+
+                            </span>
+
+                            <input type="number" class="form-control border-0 py-2" [(ngModel)]="CodigoProducto"
+                                name="CodigoProducto" placeholder="10025" required>
+
+                        </div>
+
+                    </div>
+
+                    <!-- CANTIDAD -->
+
+                    <div class="col-12 col-md-4">
+
+                        <label class="form-label fw-semibold small text-secondary">
+
+                            Cantidad
+
+                        </label>
+
+                        <div class="input-group shadow-sm rounded-4 overflow-hidden">
+
+                            <span class="input-group-text border-0 bg-white">
+
+                                <i class="bi bi-boxes text-primary"></i>
+
+                            </span>
+
+                            <input type="number" class="form-control border-0 py-2" [(ngModel)]="Cantidad"
+                                name="Cantidad" placeholder="5" required>
+
+                        </div>
+
+                    </div>
+
+                    <!-- PRODUCTO -->
+
+                    <div class="col-12">
+
+                        <label class="form-label fw-semibold small text-secondary">
+
+                            Producto
+
+                        </label>
+
+                        <div class="input-group shadow-sm rounded-4 overflow-hidden">
+
+                            <span class="input-group-text border-0 bg-white">
+
+                                <i class="bi bi-capsule-pill text-primary"></i>
+
+                            </span>
+
+                            <input type="text" class="form-control border-0 py-2" [(ngModel)]="NombreProducto"
+                                name="NombreProducto" placeholder="Nombre producto" required>
+
+                        </div>
+
+                    </div>
+
+                    <!-- TIPO -->
+
+                    <div class="col-6">
+
+                        <label class="form-label fw-semibold small text-secondary">
+
+                            Tipo
+
+                        </label>
+
+                        <select class="form-select rounded-4 shadow-sm border-0 py-2" [(ngModel)]="Tipo" name="Tipo"
+                            required>
+
+                            <option value="FALTANTE">
+
+                                FALTANTE
+
+                            </option>
+
+                            <option value="SOBRANTE">
+
+                                SOBRANTE
+
+                            </option>
+
+                            <option value="SIN_INCIDENCIA">
+                                SIN INCIDENCIA (TODO BIÉN)
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- ESTADO -->
+
+                    <div class="col-6">
+
+                        <label class="form-label fw-semibold small text-secondary">
+
+                            Estado
+
+                        </label>
+
+                        <select class="form-select rounded-4 shadow-sm border-0 py-2" [(ngModel)]="Estado" name="Estado"
+                            required>
+
+                            <option value="PENDIENTE">
+
+                                PENDIENTE
+
+                            </option>
+
+                            <option value="SOLUCIONADO">
+
+                                SOLUCIONADO
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <!-- ===================================== -->
+                <!-- SWITCH -->
+                <!-- ===================================== -->
+
+                <div class="mt-4 px-1">
+
+                    <div class="form-check form-switch d-flex align-items-center gap-2">
+
+                        <input class="form-check-input fs-5 m-0" type="checkbox" [(ngModel)]="TieneCruce"
+                            name="TieneCruce">
+
+                        <label class="form-check-label fw-semibold text-secondary">
+
+                            Tiene producto cruzado
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+                <!-- ===================================== -->
+                <!-- CRUCE -->
+                <!-- ===================================== -->
+
+                <div *ngIf="TieneCruce" class="card border-0 shadow-sm rounded-4 mt-3 overflow-hidden">
+
+                    <div class="card-header border-0 py-2" style="background: linear-gradient(135deg,#dbeafe,#eff6ff);">
+
+                        <h6 class="fw-bold mb-0 text-primary">
+
+                            <i class="bi bi-shuffle me-1"></i>
+
+                            Producto Cruce
+
+                        </h6>
+
+                    </div>
+
+                    <div class="card-body bg-white">
+
+                        <div class="row g-3">
+
+                            <!-- CODIGO -->
+
+                            <div class="col-6 col-md-4">
+
+                                <label class="form-label small fw-semibold text-secondary">
+
+                                    Código Cruce
+
+                                </label>
+
+                                <input type="number" class="form-control rounded-4 border-0 shadow-sm py-2"
+                                    [(ngModel)]="CodigoCruce" name="CodigoCruce">
+
+                            </div>
+
+                            <!-- CANTIDAD -->
+
+                            <div class="col-6 col-md-4">
+
+                                <label class="form-label small fw-semibold text-secondary">
+
+                                    Cantidad Cruce
+
+                                </label>
+
+                                <input type="number" class="form-control rounded-4 border-0 shadow-sm py-2"
+                                    [(ngModel)]="CantidadCruce" name="CantidadCruce">
+
+                            </div>
+
+                            <!-- NOMBRE -->
+
+                            <div class="col-12">
+
+                                <label class="form-label small fw-semibold text-secondary">
+
+                                    Nombre Cruce
+
+                                </label>
+
+                                <input type="text" class="form-control rounded-4 border-0 shadow-sm py-2"
+                                    [(ngModel)]="NombreCruce" name="NombreCruce">
+
+                            </div>
+
+                            <!-- TIPO -->
+
+                            <div class="col-12 col-md-4">
+
+                                <label class="form-label small fw-semibold text-secondary">
+
+                                    Tipo Cruce
+
+                                </label>
+
+                                <select class="form-select rounded-4 border-0 shadow-sm py-2" [(ngModel)]="TipoCruce"
+                                    name="TipoCruce">
+
+                                    <option value="SOBRANTE">
+
+                                        SOBRANTE
+
+                                    </option>
+
+                                    <option value="FALTANTE">
+
+                                        FALTANTE
+
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- ===================================== -->
+                <!-- BOTONES -->
+                <!-- ===================================== -->
+
+                <div class="mt-4 d-flex gap-2 justify-content-center flex-wrap">
+
+                    <button type="submit" class="btn btn-primary rounded-pill px-4 py-2 fw-semibold shadow-sm border-0">
+
+                        <i class="bi bi-floppy-fill me-2"></i>
+
+                        {{ Editando ? 'Actualizar' : 'Guardar' }}
+
+                    </button>
+
+                    <button *ngIf="Editando" type="button"
+                        class="btn btn-outline-secondary rounded-pill px-4 py-2 fw-semibold"
+                        (click)="LimpiarFormulario()">
+
+                        Cancelar
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- ===================================== -->
+    <!-- LISTADO -->
+    <!-- ===================================== -->
+
+    <div class="card border-0 shadow-lg mt-4 overflow-hidden rounded-4" [class.d-none]="!MostrarListadoMovil">
+
+        <!-- HEADER -->
+
+        <div class="text-white px-3 px-md-4 py-3" style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);">
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+                <div>
+
+                    <h5 class="fw-bold mb-1">
+
+                        📦 Inventario Diario
+
+                    </h5>
+
+                    <small class="text-light opacity-75">
+
+                        Control y seguimiento de movimientos
+
+                    </small>
+
+                </div>
+
+                <div class="bg-white fw-bold px-3 py-2 rounded-3 shadow-sm small" style="color: #1e3a5f;">
+
+                    {{ InventarioFiltrado.length }} registros
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- FILTROS -->
+
+        <div class="card-body border-bottom bg-body-tertiary py-3">
+
+            <div class="row g-2 align-items-end">
+
+                <!-- DESDE -->
+
+                <div class="col-6 col-md-3">
+
+                    <label class="form-label fw-semibold small text-secondary mb-1">
+
+                        📅 Desde
+
+                    </label>
+
+                    <input type="date" class="form-control shadow-sm" [(ngModel)]="FiltroFechaInicio"
+                        (ngModelChange)="AplicarFiltros()">
+
+                </div>
+
+                <!-- HASTA -->
+
+                <div class="col-6 col-md-3">
+
+                    <label class="form-label fw-semibold small text-secondary mb-1">
+
+                        📅 Hasta
+
+                    </label>
+
+                    <input type="date" class="form-control shadow-sm" [(ngModel)]="FiltroFechaFin"
+                        (ngModelChange)="AplicarFiltros()">
+
+                </div>
+
+                <!-- BOTONES -->
+
+                <div class="col-12 col-md-6">
+
+                    <div class="d-flex gap-2 flex-wrap">
+
+                        <button class="btn btn-outline-danger fw-semibold shadow-sm flex-fill"
+                            (click)="FiltrarEstado('PENDIENTE')">
+
+                            ⚠️ Pendientes
+
+                        </button>
+
+                        <button class="btn btn-outline-success fw-semibold shadow-sm flex-fill"
+                            (click)="FiltrarEstado('SOLUCIONADO')">
+
+                            ✅ Solucionados
+
+                        </button>
+
+                        <button class="btn btn-outline-primary fw-semibold shadow-sm flex-fill"
+                            (click)="FiltrarEstado('TODOS')">
+
+                            📋 Todos
+
+                        </button>
+
+                    </div>
+
+                </div>
+                <!-- FILTRO POR REVISOR -->
+                <!-- FILTRO REVISOR (solo encargado / sub_encargado) -->
+                <div class="col-12 col-md-3" *ngIf="esEncargado()">
+
+                    <label class="form-label fw-semibold small text-secondary mb-1">
+                        👤 Revisor
+                    </label>
+
+                    <select class="form-select shadow-sm" [(ngModel)]="FiltroRevisor"
+                        (ngModelChange)="AplicarFiltros()">
+
+                        <option value="TODOS">Todos</option>
+
+                        <!-- valores quemados -->
+                        <option value="ROBERTO CARLOS YOXON CUJ">Roberto</option>
+                        <option value="MARIA ELENA AJCALON SAPUT">Maria</option>
+                        <option value="DORCAS ELIZABETH YOXON TERETA">Dorcas</option>
+                        <option value="GERSON EMMANUEL BARRENO GARCIA">Gerson</option>
+                        <option value="ROSEMARY EDITH MORALES SACUJ">Rosemary</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- BODY -->
+
+        <div class="card-body bg-light p-2 p-md-3">
+
+            <!-- ITEM -->
+
+            <ng-container *ngFor="let Item of InventarioFiltrado; let i = index">
+
+                <!-- ===================================== -->
+                <!-- SEPARADOR FECHA -->
+                <!-- ===================================== -->
+
+                <div *ngIf="EsNuevaFecha(i)" class="position-relative my-2 py-1">
+
+                    <hr class="opacity-10 m-0">
+
+                    <div class="position-absolute top-50 start-50 translate-middle bg-light px-2" style="
+            font-size: 10px;
+            font-weight: 700;
+            color: #1e3a5f;
+            letter-spacing: .4px;
+        ">
+
+                        <i class="bi bi-calendar3 me-1"></i>
+
+                        {{ Item.fecha | date:'dd/MM/yyyy' }}
+
+                    </div>
+
+                </div>
+
+                <!-- CARD -->
+
+                <div class="card border-0 shadow-sm mb-3 overflow-hidden rounded-3">
+
+                    <div class="p-2 p-md-3" role="button" (click)="ToggleRegistro(Item.id)">
+
+                        <!-- ===================================== -->
+                        <!-- COMPRIMIDO -->
+                        <!-- ===================================== -->
+
+                        <div *ngIf="RegistroAbierto != Item.id">
+
+                            <div class="row align-items-center g-2">
+
+                                <!-- FECHA -->
+
+                                <div class="col-2">
+
+                                    <small class="text-secondary fw-semibold">
+
+                                        {{ Item.fecha }}
+
+                                    </small>
+
+                                </div>
+
+                                <!-- CODIGO -->
+
+                                <div class="col-4">
+
+                                    <div class="fw-bold text-primary small">
+
+                                        #{{ Item.codigoProducto }}
+
+                                    </div>
+                                    <small *ngIf="esEncargado()" class="d-block lh-sm mt-1" style="font-size: 10px;">
+
+                                        <div class="text-secondary text-truncate">
+
+                                            <i class="bi bi-person-check me-1"></i>
+
+                                            <span class="fw-semibold">Revisor:</span>
+
+                                            {{ Item.nombreUsuario }}
+
+                                        </div>
+
+                                        <div class="text-secondary text-truncate">
+
+                                            <i class="bi bi-bag-check me-1"></i>
+
+                                            <span class="fw-semibold">Ventas de:</span>
+
+                                            {{ Item.revisa_a || 'SIN ASIGNAR' }}
+
+                                        </div>
+
+                                    </small>
+
+                                </div>
+
+                                <!-- PRODUCTO -->
+
+                                <div class="col-4">
+
+                                    <div class="fw-semibold small text-truncate">
+
+                                        {{ Item.nombreProducto }}
+
+                                    </div>
+
+                                </div>
+
+                                <!-- ESTADO -->
+
+                                <div class="col-2 text-end">
+
+                                    <span class="badge px-2 py-1" [ngClass]="{
+                                        'bg-danger': Item.estado == 'PENDIENTE',
+                                        'bg-success': Item.estado == 'SOLUCIONADO'
+                                    }">
+
+                                        <i class="bi" [ngClass]="{
+                                            'bi-exclamation-circle-fill': Item.estado == 'PENDIENTE',
+                                            'bi-check-circle-fill': Item.estado == 'SOLUCIONADO'
+                                        }"></i>
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- ===================================== -->
+                        <!-- DESPLEGADO -->
+                        <!-- ===================================== -->
+
+                        <div *ngIf="RegistroAbierto == Item.id" class="mt-3 border-top pt-3">
+
+                            <!-- INFO SUPERIOR -->
+
+                            <div class="row g-2 mb-3">
+
+                                <!-- PRODUCTO -->
+
+                                <div class="col-12 col-md-5">
+
+                                    <div class="bg-light border rounded-3 p-3 h-100">
+
+                                        <small class="text-secondary fw-semibold d-block mb-1">
+
+                                            PRODUCTO
+
+                                        </small>
+
+                                        <div class="fw-bold text-primary-emphasis">
+
+                                            {{ Item.nombreProducto }}
+
+                                        </div>
+
+                                        <small class="text-secondary">
+
+                                            Código: {{ Item.codigoProducto }}
+
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+                                <!-- DETALLES -->
+
+                                <div class="col-12 col-md-4">
+
+                                    <div class="bg-light border rounded-3 p-3 h-100">
+
+                                        <div class="row small g-2">
+
+                                            <div class="col-6">
+
+                                                <span class="text-secondary">
+
+                                                    Fecha
+
+                                                </span>
+
+                                                <div class="fw-semibold">
+
+                                                    {{ Item.fecha }}
+
+                                                </div>
+
+                                            </div>
+                                            <div *ngIf="esEncargado()" class="col-12">
+
+                                                <div class="border rounded-3 p-2 bg-body-tertiary">
+
+                                                    <div class="small text-secondary mb-1">
+
+                                                        <i class="bi bi-person-check me-1"></i>
+
+                                                        <span class="fw-semibold">Revisor:</span>
+
+                                                        <span class="text-dark">
+
+                                                            {{ Item.nombreUsuario }}
+
+                                                        </span>
+
+                                                    </div>
+
+                                                    <div class="small text-secondary">
+
+                                                        <i class="bi bi-bag-check me-1"></i>
+
+                                                        <span class="fw-semibold">Ventas de:</span>
+
+                                                        <span class="text-dark">
+
+                                                            {{ Item.revisa_a || 'SIN ASIGNAR' }}
+
+                                                        </span>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <div class="col-6">
+
+                                                <span class="text-secondary">
+
+                                                    Cantidad
+
+                                                </span>
+
+                                                <div class="fw-semibold">
+
+                                                    {{ Item.cantidad }}
+
+                                                </div>
+
+                                            </div>
+
+                                            <div class="col-6">
+
+                                                <span class="text-secondary">
+
+                                                    Tipo
+
+                                                </span>
+
+                                                <div class="fw-bold" [ngClass]="{
+                                                    'text-danger': Item.tipo == 'FALTANTE',
+                                                    'text-success': Item.tipo == 'SOBRANTE'
+                                                }">
+
+                                                    {{ Item.tipo }}
+
+                                                </div>
+
+                                            </div>
+
+                                            <div class="col-6">
+
+                                                <span class="text-secondary">
+
+                                                    Estado
+
+                                                </span>
+
+                                                <div>
+
+                                                    <span class="badge" [ngClass]="{
+                                                        'bg-danger': Item.estado == 'PENDIENTE',
+                                                        'bg-success': Item.estado == 'SOLUCIONADO'
+                                                    }">
+
+                                                        {{ Item.estado }}
+
+                                                    </span>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <!-- ACCIONES -->
+
+                                <div class="col-12 col-md-3">
+
+                                    <div class="d-grid gap-2">
+
+                                        <button class="btn btn-primary" (click)="EditarRegistro(Item)">
+
+                                            <i class="bi bi-pencil-fill me-1"></i>
+
+                                            Editar
+
+                                        </button>
+
+                                        <button class="btn btn-outline-danger"
+                                            (click)="EliminarRegistro(Item.id, Item.nombreProducto)">
+
+                                            <i class="bi bi-trash-fill me-1"></i>
+
+                                            Eliminar
+
+                                        </button>
+
+                                        <button *ngIf="Item.estado == 'PENDIENTE'" class="btn btn-success"
+                                            (click)="CambiarEstado(Item, 'SOLUCIONADO')">
+
+                                            <i class="bi bi-check-circle-fill me-1"></i>
+
+                                            Solucionar
+
+                                        </button>
+
+                                        <button *ngIf="Item.estado == 'SOLUCIONADO'" class="btn btn-secondary"
+                                            (click)="CambiarEstado(Item, 'PENDIENTE')">
+
+                                            <i class="bi bi-arrow-counterclockwise me-1"></i>
+
+                                            Reabrir
+
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <!-- CRUCE -->
+
+                            <div *ngIf="Item.tieneCruce" class="border rounded-3 bg-body-tertiary p-3">
+
+                                <div class="fw-bold text-primary mb-2">
+
+                                    🔄 Producto Cruce
+
+                                </div>
+
+                                <div class="row small g-2">
+
+                                    <div class="col-6 col-md-3">
+
+                                        <span class="text-secondary">
+
+                                            Código
+
+                                        </span>
+
+                                        <div class="fw-semibold">
+
+                                            {{ Item.codigoCruce }}
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-6 col-md-3">
+
+                                        <span class="text-secondary">
+
+                                            Cantidad
+
+                                        </span>
+
+                                        <div class="fw-semibold">
+
+                                            {{ Item.cantidadCruce }}
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-6 col-md-3">
+
+                                        <span class="text-secondary">
+
+                                            Tipo
+
+                                        </span>
+
+                                        <div class="fw-bold" [ngClass]="{
+                                            'text-danger': Item.tipoCruce == 'FALTANTE',
+                                            'text-success': Item.tipoCruce == 'SOBRANTE'
+                                        }">
+
+                                            {{ Item.tipoCruce }}
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-6 col-md-3">
+
+                                        <span class="text-secondary">
+
+                                            Producto
+
+                                        </span>
+
+                                        <div class="fw-semibold text-break">
+
+                                            {{ Item.nombreCruce }}
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </ng-container>
+
+        </div>
+
+    </div>
+</div>

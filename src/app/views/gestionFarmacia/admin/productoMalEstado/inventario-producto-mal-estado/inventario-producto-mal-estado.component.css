@@ -1,0 +1,48 @@
+.floating-arrow {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.floating-arrow .btn {
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Aumentar tamaño y bordes de los checkboxes sin exagerar */
+.custom-checkbox input[type="checkbox"] {
+  width: 18px; /* Tamaño más grande */
+  height: 18px; /* Tamaño más grande */
+  border: 2px solid #007bff; /* Borde más grueso */
+  border-radius: 4px; /* Bordes redondeados opcionales */
+  cursor: pointer;
+}
+
+/* Cambiar el color de fondo cuando el checkbox está marcado */
+.custom-checkbox input[type="checkbox"]:checked {
+  background-color: #007bff;
+  border-color: #0056b3;
+}
+
+
+@media (max-width: 415.98px) {
+    .columnaPequeña {
+      width: 1px; 
+    }
+    .letraPequeña {
+        font-size: 10px; /* O ajusta al tamaño deseado */
+    }
+  }
+  .break-word {
+    word-break: break-word; 
+    overflow-wrap: break-word;
+    hyphens: auto; 
+  }

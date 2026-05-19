@@ -1,0 +1,50 @@
+<app-navbar/>   
+<div class="container mt-5">
+  <div class="card shadow-lg">
+    <div class="d-flex align-items-center bg-primary text-white p-3">
+      <!-- Botón de Home -->
+      <button (click)="regresar()" class="btn btn-outline-light me-3 d-flex align-items-center">
+        <i class="bi bi-house-door-fill me-2"></i> Home
+      </button>
+      <!-- Título -->
+      <h1 class="text-center flex-grow-1 m-0">Lista de estanterias</h1>
+    </div>
+ 
+    <div class="card-body">
+      <div class="d-flex justify-content-end">
+        <button class="mb-3 btn btn-success" (click)="agregar()">
+          <i class="bi bi-bag-plus-fill"></i> Agregar estantería
+        </button>
+      </div>
+      <div class="table-responsive">
+        <table id="tabla" class="table table-bordered">
+          <thead>
+            <tr>
+              <th class="letraMuyPequeña margenPequeño">Código</th>
+              <th class=" letraMuyPequeña margenPequeño">Estanteria</th>
+              <th class=" letraMuyPequeña margenPequeño">Columnas</th>
+              <th class="letraMuyPequeña margenPequeño">Filas</th>
+              <th class="letraMuyPequeña margenPequeño">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let contenedor of contenedor">
+              <td class="break-word letraMuyPequeña">{{ contenedor.id }}</td>
+              <td class="break-word letraMuyPequeña">{{ contenedor.nombreEstanteria }}</td>
+              <td class="break-word letraMuyPequeña">{{ contenedor.cantidadColumnas }}</td>
+              <td class="break-word letraMuyPequeña">{{ contenedor.cantidadFilas }}</td>
+              <td>
+                <button class="btn btn-warning m-2 botonPequeño" (click)="editarProducto(contenedor.id)">
+                  <i class="bi bi-pencil "></i> Editar
+                </button>
+                <button class="btn btn-danger botonPequeño" (click)="eliminar(contenedor.id, contenedor.nombreEstanteria)">
+                  <i class="bi bi-trash-fill"></i> Eliminar
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

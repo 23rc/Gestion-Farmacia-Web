@@ -1,0 +1,179 @@
+<div class="container-fluid min-vh-100 d-flex flex-column align-items-center bg-light mt-0 py-4">
+
+  <!-- Título -->
+  <div class="text-center mb-4">
+    <h1 class="fw-bold text-black display-4">Menú de Opciones</h1>
+  </div>
+
+  <!-- Tarjeta principal -->
+  <div class="card shadow-lg border-0 rounded-4 w-100" style="max-width: 700px;">
+    <div class="card-body p-4 margenElementosBorde">
+
+      <!-- Opciones -->
+      <div class="row gy-4 espaciadoVertical">
+
+        <!-- Opción 1 -->
+        <div class="col-12">
+          <div class="d-flex align-items-center p-0 shadow-sm rounded-4 bg-primary-subtle">
+            <img src="assets/img/vinculoProductoMalEstado.jpeg" alt="Productos en Mal Estado"
+              class="rounded-circle me-3 border shadow-sm" style="width: 70px; height: 70px; object-fit: cover;" />
+
+            <button class="btn btn-primary fw-bold w-100 py-3 rounded-pill shadow-sm letraMuyPequena"
+              (click)="productoMalEstado()">
+              <i class="bi bi-capsule me-2 letraMuyPequena"></i>
+              Productos en Mal Estado
+            </button>
+          </div>
+        </div>
+
+        <!-- Opción 2 -->
+        <div class="col-12">
+          <div class="d-flex align-items-center p-0 shadow-sm rounded-4 bg-success-subtle">
+            <img src="assets/img/vinculoEstanteria.png" alt="Estantería" class="rounded-circle me-3 border shadow-sm"
+              style="width: 70px; height: 70px; object-fit: cover;" />
+
+            <button class="btn btn-success fw-bold w-100 py-3 rounded-pill shadow-sm letraMuyPequena"
+              (click)="vinculoEstanteria()">
+              <i class="bi bi-bookshelf me-2 letraMuyPequena"></i>
+              Estantería
+            </button>
+          </div>
+        </div>
+
+        <!-- Opción 3 -->
+        <div class="col-12">
+          <div class="d-flex align-items-center p-0 shadow-sm rounded-4 bg-warning-subtle">
+            <img src="assets/img/vinculoInformacion.png" alt="Información" class="rounded-circle me-3 border shadow-sm"
+              style="width: 70px; height: 70px; object-fit: cover;" />
+
+            <button class="btn btn-warning fw-bold w-100 py-3 rounded-pill shadow-sm letraMuyPequena"
+              (click)="vinculoClientePlanMedico()">
+              <i class="bi bi-journal-medical me-2 letraMuyPequena"></i>
+              Clientes / Planes Médicos
+            </button>
+          </div>
+        </div>
+
+        <!-- Opción 4 -->
+        <div class="col-12">
+          <div class="d-flex align-items-center p-0 shadow-sm rounded-4 bg-danger-subtle">
+
+            <img src="assets/img/vinculoInventarioDiario.png" alt="Inventario Diario"
+              class="rounded-circle me-3 border shadow-sm" style="width: 70px; height: 70px; object-fit: cover;" />
+
+            <button class="btn btn-danger fw-bold w-100 py-3 rounded-pill shadow-sm letraMuyPequena"
+              (click)="abrirAccesoInventario()">
+
+              <i class="bi bi-clipboard2-pulse-fill me-2 letraMuyPequena"></i>
+
+              Inventario Diario
+
+            </button>
+
+          </div>
+        </div>
+
+        <!-- Opción 5 -->
+        <div class="col-12">
+          <div class="d-flex align-items-center p-0 shadow-sm rounded-4 bg-info-subtle">
+            <img src="assets/img/vinculoAdministrativo.png" alt="Administrativo"
+              class="rounded-circle me-3 border shadow-sm" style="width: 70px; height: 70px; object-fit: cover;" />
+
+            <button class="btn btn-info fw-bold w-100 py-3 rounded-pill shadow-sm letraMuyPequena"
+              (click)="vinculoAdministrativo()">
+              <i class="bi bi-house-gear-fill me-2 letraMuyPequena"></i>
+              Administrativo
+            </button>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal-backdrop bg-dark opacity-50" *ngIf="mostrarAcceso"></div>
+
+<div class="position-fixed top-50 start-50 translate-middle" *ngIf="mostrarAcceso" style="z-index: 1050; width: 340px;">
+
+  <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+
+    <!-- HEADER -->
+    <div class="text-center text-white py-4 px-3" style="background: linear-gradient(135deg, #0f172a, #1e3a5f);">
+
+      <div class="fs-3 mb-1">🔐</div>
+
+      <h6 class="fw-bold mb-1">
+        Acceso al sistema
+      </h6>
+
+      <small class="text-white-50">
+        Inventario Diario
+      </small>
+
+    </div>
+
+    <!-- BODY -->
+    <div class="p-3 bg-white">
+
+      <!-- USUARIO -->
+      <div class="mb-3">
+
+        <label class="form-label small text-secondary mb-1">
+          Usuario
+        </label>
+
+        <div class="input-group shadow-sm rounded-3 overflow-hidden">
+
+          <span class="input-group-text bg-light border-0">
+            👤
+          </span>
+
+          <input type="text" class="form-control border-0 py-2" placeholder="Ingrese usuario" [(ngModel)]="usuario">
+
+        </div>
+
+      </div>
+
+      <!-- PASSWORD -->
+      <div class="mb-3">
+
+        <label class="form-label small text-secondary mb-1">
+          Contraseña
+        </label>
+
+        <div class="input-group shadow-sm rounded-3 overflow-hidden">
+
+          <span class="input-group-text bg-light border-0">
+            🔑
+          </span>
+
+          <input type="password" class="form-control border-0 py-2" placeholder="Ingrese contraseña"
+            [(ngModel)]="password">
+
+        </div>
+
+      </div>
+
+      <!-- BOTÓN INGRESAR -->
+      <button class="btn w-100 fw-semibold text-white shadow-sm mb-2"
+        style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);" (click)="accederInventario()">
+
+        Ingresar
+
+      </button>
+
+      <!-- BOTÓN CANCELAR -->
+      <button class="btn btn-light w-100 fw-semibold" (click)="mostrarAcceso = false">
+
+        Cancelar
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

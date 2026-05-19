@@ -1,0 +1,32 @@
+<app-navbar/>   
+<div class="container mt-5">
+    <div class="card shadow-lg ">
+      <div class="bg-primary">
+        <h1 class="text-center text-white py-2">Agregar estanteria</h1>
+      </div>
+      <div class="card-body">
+        <form (ngSubmit)="insertar()">
+          <div class="mb-3">
+            <label class="form-label" for="nombreMedicamento">Nombre de la estantería</label>
+            <input class="form-control" type="text" id="nombreMedicamento"[(ngModel)]=nombreEstanteria name="nombreEstanteria" placeholder="Escriba el nombre de la estanteria">
+          </div> 
+          <div class="mb-3">
+            <label class="form-label" for="cantidad">Cantidad de columnas</label>
+            <input class="form-control" type="number" id="cantidad" [(ngModel)]="cantidadColumnas" name="cantidadColumnas" >
+          </div>     
+          <div class="mb-3">
+            <label class="form-label" for="cantidad">Cantidad de filas</label>
+            <input class="form-control" type="number" id="cantidad" [(ngModel)]="cantidadFilas" name="cantidadFilas" >
+          </div>
+          <div class="mb-3 d-flex justify-content-between">
+            <button type="button" class="btn btn-secondary" (click)="regresar()">
+              <i class="bi bi-arrow-left-circle"></i> Regresar al listado
+            </button>
+            <button type="submit" class="btn btn-success">
+              <i class="bi bi-plus-circle"></i> Agregar Medicamento
+            </button>
+          </div> 
+        </form>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,69 @@
+<div class="container mt-2">
+  <div class="container mt-1">
+    <!-- Botones arriba -->
+    <div class="d-flex justify-content-between align-items-center mb-2 me-1 mr-1 ms-1">
+      <!-- Botón de Home -->
+      <button 
+        (click)="regresar()" 
+        class="btn btn-outline-primary d-flex align-items-center botonPequeño">
+        <i class="bi bi-house-door-fill me-2"></i> Home
+      </button>
+      <!-- Botón de Estantería -->
+      <button 
+        (click)="estanteria()" 
+        class="btn btn-outline-primary d-flex align-items-center botonPequeño">
+        <i class="bi bi-columns-gap me-2"></i> Estantería
+      </button>
+    </div>
+  <div class="card shadow-lg rounded-4 overflow-hidden">
+    <div class="d-flex flex-wrap align-items-center bg-primary text-white p-3">
+      <h1 class="text-center flex-grow-1 m-0 text-truncate  fs-sm-4 letraPequeña ">
+        Productos en Mal Estado
+      </h1>
+    </div>
+    <div class="card-body">
+      <div class="input-group mb-4">
+        <span class="input-group-text bg-primary text-white">
+          <i class="bi bi-search"></i>
+        </span>
+        <input
+          type="text"
+          class="form-control fs-6"
+          placeholder="Buscar..."
+          (input)="filtrarProductos($event)"
+        />
+      </div>
+
+      <!-- Tabla -->
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead class="table-primary">
+            <tr>
+              <th class="text-center col-3 col-sm-2 col-md-1 letraPequeña letraMuyPequeña " >Código</th>
+              <th class="text-center col-3 col-sm-2 col-md-1 letraPequeña letraMuyPequeña">Cantidad</th>
+              <th class="text-center col-5 col-sm-3 col-md-2 letraPequeña letraMuyPequeña">Nombre</th>
+              <th class="text-center col-6 col-sm-4 col-md-2 letraPequeña letraMuyPequeña">Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let producto of productosFiltrados">
+              <td class="text-center letraPequeña letraMuyPequeña break-word ">{{ producto.codigo }}</td>
+              <td class="text-center letraPequeña letraMuyPequeña break-word ">{{ producto.cantidad }}</td>
+              <td class="text-center letraPequeña letraMuyPequeña break-word  ">
+                {{ producto.producto }}
+              </td>
+              <td class="text-center text-wrap letraPequeña letraMuyPequeña break-word " >
+                {{ producto.descripcion }}
+              </td>
+            </tr>
+            <tr *ngIf="productosFiltrados.length === 0">
+              <td colspan="4" class="text-center text-muted fs-6">
+                No se encontraron resultados.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+/* ===== PESTAÑA LATERAL DESKTOP (TIPO LIBRO / HANDLE) ===== */
+.sidebar-tab {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 26px;
+  height: 96px;
+  background-color: #0d6efd; /* Bootstrap primary */
+  border-top-right-radius: 14px;
+  border-bottom-right-radius: 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  z-index: 1040;
+
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s ease-in-out;
+}
+
+/* Icono */
+.sidebar-tab i {
+  color: #ffffff;
+  font-size: 1.3rem;
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Hover elegante */
+.sidebar-tab:hover {
+  width: 34px;
+  background-color: #0b5ed7;
+}
+
+.sidebar-tab:hover i {
+  transform: translateX(2px);
+}

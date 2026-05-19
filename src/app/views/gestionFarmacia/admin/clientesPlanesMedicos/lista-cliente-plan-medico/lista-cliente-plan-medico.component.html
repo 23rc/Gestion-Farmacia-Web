@@ -1,0 +1,59 @@
+<app-navbar/>   
+<div class="container mt-5">
+  <div class="card shadow-lg">
+    <div class="d-flex align-items-center bg-primary text-white p-3">
+      <!-- Botón de Home -->
+      <button (click)="regresar()" class="btn btn-outline-light me-3 d-flex align-items-center">
+        <i class="bi bi-house-door-fill me-2"></i> Home
+      </button>
+      <!-- Título -->
+      <h1 class="text-center flex-grow-1 m-0">Clientes Planes Médicos</h1>
+    </div>
+    <div class="card-body">
+      <div class="d-flex justify-content-end">
+        <button class="mb-3 btn btn-success" (click)="agregar()">
+          <i class="bi bi-bag-plus-fill"></i> Agregar Cliente
+        </button>
+      </div>
+      <div class="table-responsive">
+        <table id="tabla" class="table table-bordered">
+          <thead>
+            <tr>
+              <th class="letraMuyPequeña margenPequeño">Codigo</th>
+              <th class="letraMuyPequeña margenPequeño">Cliente</th>
+              <th class="letraMuyPequeña margenPequeño">DPI</th>
+              <th class="letraMuyPequeña margenPequeño">NIT</th>
+              <th class="letraMuyPequeña margenPequeño">CORREO/USUARIO</th>
+              <th class="letraMuyPequeña margenPequeño">CONTRASEÑA</th>
+              <th class="letraMuyPequeña margenPequeño">CELULAR</th>
+              <th class="letraMuyPequeña margenPequeño">MEDICAMENTO</th>
+              <th class="letraMuyPequeña margenPequeño">LABORATORIO/PLAN MEDICO</th>
+              <th class="letraMuyPequeña margenPequeño">ACCIONES</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let contenedor of contenedor">
+              <td class="letraMuyPequeña break-word">{{ contenedor.id }}</td>
+              <td class="letraMuyPequeña break-word">{{ contenedor.nombre }}</td>
+              <td class="letraMuyPequeña break-word">{{ contenedor.dpi }}</td>
+              <td class="letraMuyPequeña break-word">{{ contenedor.nit }}</td>
+              <td class="letraMuyPequeña break-word">{{ contenedor.correo }}</td>
+              <td class="letraMuyPequeña break-word">{{ contenedor.clave }}</td>
+              <td class="letraMuyPequeña break-word">{{ contenedor.celular }}</td>
+              <td class="letraMuyPequeña break-word">{{ contenedor.medicamento }}</td>
+              <td class="letraMuyPequeña break-word">{{ contenedor.laboratorio }}</td>
+              <td class="col-md-3 text-center letraMuyPequeña">
+                <button class="btn btn-warning m-2 botonPequeño" (click)="editarProducto(contenedor.id)">
+                  <i class="bi bi-pencil"></i> Editar
+                </button>
+                <button class="btn btn-danger botonPequeño" (click)="eliminar(contenedor.id, contenedor.nombre)">
+                  <i class="bi bi-trash-fill"></i> Eliminar
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

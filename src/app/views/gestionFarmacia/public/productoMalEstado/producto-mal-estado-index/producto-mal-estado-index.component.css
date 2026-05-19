@@ -1,0 +1,28 @@
+@media (max-width: 415.98px) {
+    .letraPequeña {
+        font-size: 10px; /* O ajusta al tamaño deseado */
+    }
+    .botonPequeño {
+        font-size: 14px;
+    }
+
+}
+@media (max-width: 325.98px) {
+    .letraPequeña {
+        font-size: 10px; /* O ajusta al tamaño deseado */
+    }
+    .letraMuyPequeña {
+        font-size: 5px; /* O ajusta al tamaño deseado */
+    }
+    .botonPequeño {
+        font-size: 5px;
+        margin-top: 5px;
+    }
+}
+
+.break-word {
+    word-break: break-word; 
+    overflow-wrap: break-word;
+    hyphens: auto; 
+  }
+

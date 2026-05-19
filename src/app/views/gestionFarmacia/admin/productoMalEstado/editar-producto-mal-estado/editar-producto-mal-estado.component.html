@@ -1,0 +1,33 @@
+<app-navbar/>   
+<div class="container mt-5">
+    <div class="card shadow-lg">
+      <div class="bg-primary">
+        <h1 class="text-center text-white py-2">Editar Producto en Mal Estado</h1>
+      </div>
+      <div class="card-body">
+        <form (ngSubmit)="editar()">
+          <div class="mb-3">
+            <label class="form-label" for="producto">Nombre del medicamento</label>
+            <input class="form-control" type="text" id="producto" [(ngModel)]="producto" name="producto" placeholder="Escriba el nombre del medicamento">
+          </div> 
+          <div class="mb-3">
+            <label class="form-label" for="cantidad">Cantidad del medicamento</label>
+            <input class="form-control" type="text" id="cantidad" [(ngModel)]="cantidad" name="cantidad" placeholder="Escriba la cantidad del medicamento">
+          </div>     
+          <div class="mb-3">
+            <label class="form-label" for="descripcion">Descripción del medicamento</label>
+            <input class="form-control" type="text" id="descripcion" [(ngModel)]="descripcion" name="descripcion" placeholder="Escriba una descripción del medicamento">
+          </div> 
+          <div class="mb-3 d-flex justify-content-between">
+            <button type="button" class="btn btn-secondary" (click)="regresar()">
+                <i class="bi bi-arrow-left-circle"></i> Regresar al listado
+              </button>
+            <button type="submit" class="btn btn-warning">
+              <i class="bi bi-pencil-square"></i> Actualizar Medicamento
+            </button>
+          </div> 
+        </form>
+      </div>
+    </div>
+  </div>
+  

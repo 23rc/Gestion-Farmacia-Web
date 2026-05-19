@@ -1,0 +1,50 @@
+.fondoProductoMalEstado{
+    background-image: url('/assets/img/vinculoProductoMalEstado.jpg');
+    background-size: cover;
+    background-position: center; 
+    background-repeat: no-repeat; 
+}
+
+.fondoEstanteria{
+    background-image: url('/assets/img/vinculoEstanteria.jpg');
+    background-size: cover;
+    background-position: center; 
+    background-repeat: no-repeat; 
+}
+
+.fondoAdministrativo{
+    background-image: url('/assets/img/vinculoAdministracion.jpg');
+    background-size: cover;
+    background-position: center; 
+    background-repeat: no-repeat; 
+}
+
+@media (max-width: 415px) {
+    .letraMuyPequena {
+      font-size: 70%;
+    }
+  
+    .letraMuyPequena i {
+      font-size: 80%; 
+    }
+  
+    .btn {
+      width: 5%;
+    }
+  }
+
+@media (max-width: 325.98px) {
+    
+    img {
+        max-width: 30%;
+        min-height: 10%;
+  
+      }
+      .margenElementosBorde {
+        padding: 2px; 
+      }
+      .espaciadoVertical > * + * {
+        margin-top: 2px; 
+      }
+
+}

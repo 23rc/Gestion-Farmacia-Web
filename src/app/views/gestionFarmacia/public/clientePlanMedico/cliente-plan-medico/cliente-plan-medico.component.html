@@ -1,0 +1,100 @@
+<div class="container mt-5">
+    <!-- Tarjeta Principal -->
+    <div class="card shadow-lg border-0">
+      <!-- Encabezado -->
+      <div class="d-flex align-items-center bg-primary text-white p-3 rounded-top shadow-sm">
+        <!-- Botón de Home -->
+        <button (click)="regresar()" class="btn btn-outline-light me-3 d-flex align-items-center">
+          <i class="bi bi-house-door-fill me-2"></i> Home
+        </button>
+        <!-- Título Principal -->
+        <h1 class="text-center flex-grow-1 m-0">Clientes Planes Médicos</h1>
+      </div>
+  
+      <!-- Cuerpo de la Tarjeta -->
+      <div class="card-body bg-light">
+        <!-- Campo de Búsqueda -->
+        <div class="input-group mb-4">
+          <span class="input-group-text bg-primary text-white">
+            <i class="bi bi-search"></i>
+          </span>
+          <input 
+            type="text" 
+            class="form-control" 
+            placeholder="Buscar cliente, DPI, NIT, medicamento..." 
+            [(ngModel)]="filtro" />
+        </div>
+  
+        <!-- Tarjetas de Clientes -->
+        <div class="row g-3">
+          <div *ngFor="let contenedor of filtrarDatos()" class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100 shadow-lg border-0 rounded-3">
+              <!-- Contenido de la Tarjeta -->
+              <div class="card-body">
+                <!-- Detalles del Cliente -->
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span><strong style="font-weight: 700; font-size: 1.3em; color: #0056b3;">Cliente:</strong> {{ contenedor.nombre }}</span>
+                    <button class="btn btn-outline-secondary btn-sm" (click)="copiar(contenedor.nombre)">
+                      <i class="bi bi-clipboard"></i>
+                    </button>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span><strong>DPI:</strong> {{ contenedor.dpi }}</span>
+                    <button class="btn btn-outline-secondary btn-sm" (click)="copiar(contenedor.dpi)">
+                      <i class="bi bi-clipboard"></i>
+                    </button>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span><strong>NIT:</strong> {{ contenedor.nit }}</span>
+                    <button class="btn btn-outline-secondary btn-sm" (click)="copiar(contenedor.nit)">
+                      <i class="bi bi-clipboard"></i>
+                    </button>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span><strong>Celular:</strong> {{ contenedor.celular }}</span>
+                    <button class="btn btn-outline-secondary btn-sm" (click)="copiar(contenedor.celular)">
+                      <i class="bi bi-clipboard"></i>
+                    </button>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span><strong>Correo/Usuario:</strong> {{ contenedor.correo }}</span>
+                    <button class="btn btn-outline-secondary btn-sm" (click)="copiar(contenedor.correo)">
+                      <i class="bi bi-clipboard"></i>
+                    </button>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span><strong>Contraseña:</strong> {{ contenedor.clave }}</span>
+                    <button class="btn btn-outline-secondary btn-sm" (click)="copiar(contenedor.clave)">
+                      <i class="bi bi-clipboard"></i>
+                    </button>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span><strong>Medicamento:</strong> {{ contenedor.medicamento }}</span>
+                    <button class="btn btn-outline-secondary btn-sm" (click)="copiar(contenedor.medicamento)">
+                      <i class="bi bi-clipboard"></i>
+                    </button>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span><strong>Laboratorio:</strong> {{ contenedor.laboratorio }}</span>
+                    <button class="btn btn-outline-secondary btn-sm" (click)="copiar(contenedor.laboratorio)">
+                      <i class="bi bi-clipboard"></i>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+              <!-- Pie de la Tarjeta con color adicional -->
+              <div class="card-footer bg-warning text-white text-center rounded-bottom shadow-sm">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Mensaje de Copiado -->
+    <div *ngIf="mensajeVisible" class="copy-toast">
+      ¡Dato copiado al portapapeles!
+    </div>
+  </div>
+  

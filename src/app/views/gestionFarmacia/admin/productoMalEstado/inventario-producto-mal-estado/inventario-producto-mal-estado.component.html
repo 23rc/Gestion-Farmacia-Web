@@ -1,0 +1,95 @@
+<app-navbar></app-navbar>
+<div class="container mt-5">
+  <div class="card shadow-lg">
+    <div class="d-flex align-items-center bg-primary text-white p-3">
+      <button (click)="regresar()" class="btn btn-outline-light me-3 d-flex align-items-center">
+        <i class="bi bi-house-door-fill me-2"></i> Home
+      </button>
+      <h1 class="text-center flex-grow-1 m-0">Inventario de Productos</h1>
+    </div>
+    <div class="card-body">
+      <div class="mb-3 position-relative">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Buscar por código o nombre"
+          [(ngModel)]="searchTerm"
+          (input)="filtrarProductos()"
+        />
+        <button 
+          class="btn-clear position-absolute top-50 end-0 translate-middle-y me-2"
+          (click)="limpiarBuscador()"
+          *ngIf="searchTerm">
+          &times;
+        </button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th class="columnaPequeña letraPequeña break-word">Código</th>
+              <th class="columnaPequeña letraPequeña break-word">Nombre</th>
+              <th class="columnaPequeña letraPequeña break-word text-center">Existencia</th>
+              <th class="columnaPequeña letraPequeña break-word text-center">Vendido</th>
+              <th class="columnaPequeña letraPequeña break-word text-center">Cantidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let producto of productosFiltrados" 
+                [ngClass]="{
+                  'table-primary': producto.existencia,
+                  'table-danger': producto.vendido
+                }">
+              <td class="letraPequeña break-word">{{ producto.codigo }}</td>
+              <td class="letraPequeña break-word">{{ producto.producto }}</td>
+              <td class="text-center">
+                <label class="custom-checkbox">
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="producto.existencia"
+                    (change)="actualizarEstado(producto, 'existencia')"
+                  />
+                </label>
+              </td>
+              <td class="text-center">
+                <label class="custom-checkbox">
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="producto.vendido"
+                    (change)="actualizarEstado(producto, 'vendido')"
+                  />
+                </label>
+              </td>
+              
+              <td class="text-center">
+                <input
+                  type="number"
+                  class="form-control"
+                  [(ngModel)]="producto.cantidad"
+                  (input)="validarCantidad(producto)"
+                  placeholder="Ingrese cantidad"
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <button (click)="guardarDatos()" class="btn btn-success mb-3">
+        Guardar Existencia
+      </button>
+      
+    </div>
+  </div>
+</div>
+
+<!-- Botón flotante -->
+<div class="floating-arrow">
+  <button class="btn btn-primary" (click)="scrollToTop()">
+    <i class="bi bi-arrow-up"></i>
+  </button>
+  <button class="btn btn-primary mt-2" (click)="scrollToBottom()">
+    <i class="bi bi-arrow-down"></i>
+  </button>
+</div>

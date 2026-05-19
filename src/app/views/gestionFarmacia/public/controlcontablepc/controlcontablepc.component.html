@@ -1,0 +1,116 @@
+<div class="container-fluid mt-4 px-3 px-md-4">
+
+  <!-- ================= HEADER ================= -->
+  <div class="text-center mb-5">
+    <h2 class="fw-bold mb-1">Control Contable</h2>
+    <p class="text-muted fs-6 mb-0">Resumen de entradas, salidas y balance financiero</p>
+  </div>
+
+  <!-- ================= KPIs ================= -->
+  <div class="row g-3 mb-5">
+
+    <div class="col-6 col-md-3">
+      <div class="card text-center py-3 border-success rounded-3 shadow-sm hover-shadow">
+        <div class="fw-semibold text-success mb-1">
+          <i class="bi bi-arrow-down-circle me-1"></i> Entradas
+        </div>
+        <div class="fw-bold text-success fs-5">Q {{ totalEntradas | number:'1.2-2' }}</div>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="card text-center py-3 border-danger rounded-3 shadow-sm hover-shadow">
+        <div class="fw-semibold text-danger mb-1">
+          <i class="bi bi-arrow-up-circle me-1"></i> Salidas
+        </div>
+        <div class="fw-bold text-danger fs-5">Q {{ totalSalidas | number:'1.2-2' }}</div>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="card text-center py-3 border-info rounded-3 shadow-sm hover-shadow">
+        <div class="fw-semibold text-info mb-1">
+          <i class="bi bi-wallet2 me-1"></i> Balance
+        </div>
+        <div class="fw-bold text-info fs-5">Q {{ balance | number:'1.2-2' }}</div>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="card text-center py-3 border-secondary rounded-3 shadow-sm hover-shadow">
+        <div class="fw-semibold text-secondary mb-1">
+          <i class="bi bi-list-ul me-1"></i> Movimientos
+        </div>
+        <div class="fw-bold text-secondary fs-5">{{ totalMovimientos }}</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ================= LISTADO ================= -->
+  <div class="card shadow-sm rounded-3">
+    <div class="card-header bg-primary text-white fw-semibold text-center fs-5">
+      Movimientos registrados
+    </div>
+
+    <div class="table-responsive p-3">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr class="d-none d-md-table-row">
+            <th>Tipo</th>
+            <th>Fecha</th>
+            <th>Concepto</th>
+            <th>Persona</th>
+            <th class="text-end">Monto</th>
+            <th>Obs.</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <!-- PC -->
+          <tr *ngFor="let r of contenedorFiltrado; let i = index" 
+              class="d-none d-md-table-row"
+              [ngClass]="{'table-active': i % 2 === 0}">
+            <td>
+              <span
+                class="badge px-3 py-1 rounded-pill"
+                [class.bg-success]="r.tipo === 'entrada'"
+                [class.bg-danger]="r.tipo === 'salida'"
+                style="font-size: 0.85rem;">
+                {{ r.tipo === 'entrada' ? 'Entrada' : 'Salida' }}
+              </span>
+            </td>
+            <td>{{ r.fecha }}</td>
+            <td>{{ r.concepto }}</td>
+            <td>{{ r.persona }}</td>
+            <td class="text-end fw-bold">Q {{ r.monto | number:'1.2-2' }}</td>
+            <td class="text-muted">{{ r.observacion }}</td>
+          </tr>
+
+          <!-- MÓVIL -->
+          <tr *ngFor="let r of contenedorFiltrado" class="d-table-row d-md-none">
+            <td class="d-flex flex-column gap-1 p-2 bg-light rounded-2 mb-2">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="fw-semibold">{{ r.fecha }}</span>
+                <span class="fw-bold"
+                      [ngClass]="r.tipo === 'entrada' ? 'text-success' : 'text-danger'">
+                  Q {{ r.monto | number:'1.2-2' }}
+                </span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="fw-semibold">{{ r.concepto }} - {{ r.persona }}</span>
+                <span class="badge px-2 py-1"
+                      [class.bg-success]="r.tipo === 'entrada'"
+                      [class.bg-danger]="r.tipo === 'salida'"
+                      style="font-size: 0.75rem;">
+                  {{ r.tipo === 'entrada' ? 'Entrada' : 'Salida' }}
+                </span>
+              </div>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

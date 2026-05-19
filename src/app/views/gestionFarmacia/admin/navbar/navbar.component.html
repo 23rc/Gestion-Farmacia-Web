@@ -1,0 +1,105 @@
+<!-- Navbar superior: solo logo y hamburguesa móvil -->
+<nav class="navbar navbar-expand-lg bg-primary">
+  <div class="container-fluid">
+    <img src="assets/img/logo.jpeg" alt="Logo de la empresa" class="img-fluid rounded-circle me-2" width="50" height="50">
+    <span class="text-white">Administración</span>
+
+    <!-- Hamburguesa móvil -->
+    <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarNav">
+      <span class="bi bi-list text-white"></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Pestaña lateral para PC -->
+<div
+  class="sidebar-tab d-none d-lg-flex"
+  data-bs-toggle="offcanvas"
+  data-bs-target="#sidebarNav"
+  aria-controls="sidebarNav"
+>
+  <i class="bi bi-chevron-right"></i>
+</div>
+
+
+<!-- Sidebar offcanvas (mismo para móvil y PC) -->
+<div class="offcanvas offcanvas-start bg-white text-black" tabindex="-1" id="sidebarNav">
+  <div class="offcanvas-header">
+    <img src="assets/img/logo.jpeg" alt="Logo" class="img-fluid rounded-circle w-40" style="height: 40px;">
+    <span class="ms-2">Administración</span>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column bg-light">
+    <ul class="navbar-nav text-dark">
+      <li class="nav-item">
+        <a class="nav-link d-flex justify-content-start align-items-center" href="/menu-administrativo">
+          <i class="bi bi-house-door fs-4 me-2"></i>
+          <span>Inicio</span>
+          <i class="bi bi-arrow-right-short ms-auto"></i>
+        </a>
+        <hr class="mt-0 mb-2 w-100">
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link d-flex align-items-center" href="javascript:void(0)" (click)="validarCrearEstanteria()">
+          <i class="bi bi-plus-square fs-4 me-2"></i>
+          <span>Crear Estantería</span>
+          <i class="bi bi-arrow-right-short ms-auto"></i>
+        </a>
+        <hr class="mt-0 mb-2 w-100">
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link d-flex justify-content-start align-items-center" href="/controlcontable">
+          <i class="bi bi-journal-check fs-4 me-2"></i>
+          <span>Control Contable</span>
+          <i class="bi bi-arrow-right-short ms-auto"></i>
+        </a>
+        <hr class="mt-0 mb-2 w-100">
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link d-flex justify-content-start align-items-center" href="/crud-estanteria">
+          <i class="bi bi-building fs-4 me-2"></i>
+          <span>Ubicación/Laboratorios</span>
+          <i class="bi bi-arrow-right-short ms-auto"></i>
+        </a>
+        <hr class="mt-0 mb-2 w-100">
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link d-flex justify-content-start align-items-center" href="/lista-producto-mal-estado">
+          <i class="bi bi-x-circle fs-4 me-2"></i>
+          <span>Producto Deteriorado</span>
+          <i class="bi bi-arrow-right-short ms-auto"></i>
+        </a>
+        <hr class="mt-0 mb-2 w-100">
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link d-flex justify-content-start align-items-center" href="/inventario-producto-mal-estado">
+          <i class="bi bi-box-seam fs-4 me-2"></i>
+          <span>Inventario Productos Deteriorados</span>
+          <i class="bi bi-arrow-right-short ms-auto"></i>
+        </a>
+        <hr class="mt-0 mb-2 w-100">
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link d-flex justify-content-start align-items-center" href="/lista-cliente-plan-medico">
+          <i class="bi bi-person fs-4 me-2"></i>
+          <span>Clientes/Planes Médicos</span>
+          <i class="bi bi-arrow-right-short ms-auto"></i>
+        </a>
+        <hr class="mt-0 mb-2 w-100">
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link d-flex justify-content-start align-items-center" href="javascript:void(0)" (click)="cerrarSesion()">
+          <i class="bi bi-box-arrow-right fs-4 me-2"></i>
+          <span>Cerrar Sesión</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
