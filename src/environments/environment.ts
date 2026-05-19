@@ -1,13 +1,13 @@
 export const environment = {
     production: false,
     firebaseConfig: {
-        apiKey: "AIzaSyBTV2WDmXRbBczk3JUIE17J2DSG-YHQMj8",
-        authDomain: "gestionfarmacia-148da.firebaseapp.com",
-        databaseURL: "https://gestionfarmacia-148da-default-rtdb.firebaseio.com",
-        projectId: "gestionfarmacia-148da",
-        storageBucket: "gestionfarmacia-148da.firebasestorage.app",
-        messagingSenderId: "515990134299",
-        appId: "1:515990134299:web:1237169a0190d66f83a2be"
+        apiKey: "AIzaSyA6PfA4p98c_23JEblRaVgD3UQ1njg9GvY",
+        authDomain: "gestionfarmacia-984e0.firebaseapp.com",
+        databaseURL: "https://gestionfarmacia-984e0-default-rtdb.firebaseio.com",
+        projectId: "gestionfarmacia-984e0",
+        storageBucket: "gestionfarmacia-984e0.appspot.com",
+        messagingSenderId: "370812908336",
+        appId: "1:370812908336:web:3be229ced0f28c752a4ef5"
     },
     usuarios: [
         {
