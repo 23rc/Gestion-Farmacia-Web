@@ -312,38 +312,31 @@
                 <!-- ===================================== -->
                 <!-- SWITCH -->
                 <!-- ===================================== -->
+<!-- ===================================== -->
+<!-- SWITCHES: AMBOS EN LA MISMA FILA Y AL MISMO NIVEL -->
+<!-- ===================================== -->
+<div class="mt-4 px-1">
+    <div class="d-flex justify-content-between align-items-center">
 
-                <div class="mt-4 px-1">
+        <!-- SWITCH IZQUIERDA: TIENE CRUCE -->
+        <div class="form-check form-switch d-flex align-items-center gap-2 m-0">
+            <input class="form-check-input fs-5 m-0" type="checkbox" [(ngModel)]="TieneCruce" name="TieneCruce">
+            <label class="form-check-label fw-semibold text-secondary mb-0">
+                Tiene producto cruzado
+            </label>
+        </div>
 
-                    <div class="form-check form-switch d-flex align-items-center gap-2">
+        <!-- SWITCH DERECHA: SIN EXISTENCIA -->
+        <div class="form-check form-switch d-flex align-items-center gap-2 m-0">
+            <input class="form-check-input fs-5 m-0" type="checkbox" [(ngModel)]="TieneSinExistencia" name="TieneSinExistencia">
+            <label class="form-check-label fw-semibold text-secondary mb-0">
+                Producto sin existencia
+            </label>
+        </div>
 
-                        <input class="form-check-input fs-5 m-0" type="checkbox" [(ngModel)]="TieneCruce"
-                            name="TieneCruce">
+    </div>
+</div>
 
-                        <label class="form-check-label fw-semibold text-secondary">
-
-                            Tiene producto cruzado
-
-                        </label>
-
-                    </div>
-
-                </div>
-                <!-- ===================================== -->
-                <!-- NUEVO SWITCH: PRODUCTO SIN EXISTENCIA -->
-                <!-- ===================================== -->
-
-                <div class="mt-4 px-1">
-
-                    <div class="form-check form-switch d-flex align-items-center gap-2 justify-content-end">
-                        <input class="form-check-input fs-5 m-0" type="checkbox" [(ngModel)]="TieneSinExistencia"
-                            name="TieneSinExistencia">
-                        <label class="form-check-label fw-semibold text-secondary">
-                            Producto sin existencia
-                        </label>
-                    </div>
-
-                </div>
 
                 <!-- ===================================== -->
                 <!-- ESPACIO PARA LISTADO (SOLO VISIBLE SI ACTIVA EL SWITCH) -->
