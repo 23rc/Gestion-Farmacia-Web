@@ -20,6 +20,9 @@ import {
   styleUrl: './inventario-diario.component.css'
 })
 export class InventarioDiarioComponent implements OnInit {
+  MostrarModalSinExistencia: boolean = false;
+  public listaProductos: Array<{ codigo: string, nombre: string }> = [{ codigo: '', nombre: '' }];
+  public DatosModalSinExistencia: string = '';
   FiltroRevisor: string = 'TODOS';
   NombreUsuario: string = '';
   rol: string = '';
@@ -57,6 +60,17 @@ export class InventarioDiarioComponent implements OnInit {
   Tipo: string = 'FALTANTE';
 
   Estado: string = 'PENDIENTE';
+  // =========================
+  // DATOS PRODUCTOS SIN EXISTENCIA (NUEVO)
+  // =========================
+  // DATOS PRODUCTOS SIN EXISTENCIA
+  TieneSinExistencia: boolean = false;
+  ColumnaCodigos: string = '';  // Lo que escribes en la izquierda
+  ColumnaNombres: string = '';  // Lo que escribes en la derecha
+  ListadoSinExistencia: string = ''; // Aquí se arma el texto final ordenado
+
+
+
 
   // =========================
   // DATOS CRUCE
@@ -214,6 +228,9 @@ export class InventarioDiarioComponent implements OnInit {
   // =========================
   // GUARDAR
   // =========================
+  // =========================
+  // GUARDAR
+  // =========================
 
   Guardar() {
 
@@ -222,10 +239,8 @@ export class InventarioDiarioComponent implements OnInit {
     // =========================
 
     if (this.Fecha == '') {
-
       alertError("Ingrese fecha");
       return;
-
     }
 
     // =========================
@@ -233,73 +248,69 @@ export class InventarioDiarioComponent implements OnInit {
     // =========================
 
     if (this.Tipo !== 'SIN_INCIDENCIA') {
-
       if (this.CodigoProducto == '') {
-
         alertError("Ingrese código producto");
         return;
-
       }
-
       if (this.NombreProducto == '') {
-
         alertError("Ingrese nombre producto");
         return;
-
       }
-
       if (!this.Cantidad || this.Cantidad <= 0) {
-
         alertError("Ingrese una cantidad válida");
         return;
-
       }
-
     }
 
     // =========================
-    // VALIDAR CRUCE (SE MANTIENE IGUAL)
+    // VALIDAR CRUCE
     // =========================
 
     if (this.TieneCruce) {
-
       if (this.CodigoCruce == '') {
-
         alertError("Ingrese código cruce");
         return;
-
       }
-
       if (this.NombreCruce == '') {
-
         alertError("Ingrese nombre cruce");
         return;
-
       }
-
       if (!this.CantidadCruce || this.CantidadCruce <= 0) {
-
         alertError("Ingrese una cantidad cruce válida");
         return;
-
       }
-
     }
 
     // =========================
-    // LIMPIAR DATOS CRUCE
+    // LIMPIAR DATOS CRUCE SI NO SE USA
     // =========================
 
     if (!this.TieneCruce) {
-
       this.CodigoCruce = '';
-
       this.NombreCruce = '';
-
       this.CantidadCruce = 0;
-
       this.TipoCruce = 'SOBRANTE';
+    }
 
+    // =========================
+    // PROCESAR LISTADO SIN EXISTENCIA (TAL CUAL LO HICIMOS)
+    // =========================
+    if (this.TieneSinExistencia) {
+      let textoOrganizado = '';
+      this.listaProductos.forEach(item => {
+        const cod = (item.codigo || '').trim();
+        const nom = (item.nombre || '').trim();
+        if (cod !== '' && nom !== '') {
+          textoOrganizado += cod.padEnd(15, ' ') + nom + '\n';
+        }
+      });
+      this.ListadoSinExistencia = textoOrganizado.trim();
+      if (this.ListadoSinExistencia === '') {
+        alertError("Activó 'Sin Existencia' pero no ingresó ningún producto");
+        return;
+      }
+    } else {
+      this.ListadoSinExistencia = '';
     }
 
     // =========================
@@ -310,169 +321,156 @@ export class InventarioDiarioComponent implements OnInit {
       const usuario = this.sesion.getUsuario();
 
       const Datos = {
-
         fecha: this.Fecha,
-
-        codigoProducto: this.Tipo === 'SIN_INCIDENCIA'
-          ? '0'
-          : String(this.CodigoProducto || '').toUpperCase(),
-
-        nombreProducto: this.Tipo === 'SIN_INCIDENCIA'
-          ? 'SIN INCIDENCIAS - TODO OK'
-          : this.NombreProducto.toUpperCase(),
-
-        cantidad: this.Tipo === 'SIN_INCIDENCIA'
-          ? 0
-          : this.Cantidad,
-
+        codigoProducto: this.Tipo === 'SIN_INCIDENCIA' ? '0' : String(this.CodigoProducto || '').toUpperCase(),
+        nombreProducto: this.Tipo === 'SIN_INCIDENCIA' ? 'SIN INCIDENCIAS - TODO OK' : this.NombreProducto.toUpperCase(),
+        cantidad: this.Tipo === 'SIN_INCIDENCIA' ? 0 : this.Cantidad,
         tipo: this.Tipo,
-
-        estado: this.Tipo === 'SIN_INCIDENCIA'
-          ? 'SOLUCIONADO'
-          : this.Estado,
+        estado: this.Tipo === 'SIN_INCIDENCIA' ? 'SOLUCIONADO' : this.Estado,
 
         tieneCruce: this.TieneCruce,
-
         codigoCruce: String(this.CodigoCruce || '').toUpperCase(),
-
         nombreCruce: this.NombreCruce.toUpperCase(),
-
         cantidadCruce: this.CantidadCruce,
-
         tipoCruce: this.TipoCruce,
 
+        tieneSinExistencia: this.TieneSinExistencia,
+        listadoSinExistencia: this.ListadoSinExistencia,
+
         codigoUsuario: usuario.usuario,
-
         nombreUsuario: usuario.nombre,
-
         revisa_a: usuario.revisa_a,
-
         fechaCreacion: Date.now()
-
       };
 
       this.FirebaseRealtimeDatabaseService
         .insertar(this.Carpeta, Datos)
         .then(() => {
-
           alertExito(
             "Registro agregado",
             `${this.NombreProducto} agregado correctamente`,
             this.router,
             '/inventario-diario'
           );
-
           this.LimpiarFormulario();
-
         })
         .catch(() => {
-
           alertError("Error al guardar registro");
-
         });
-
     }
 
     // =========================
-    // EDITAR
+    // EDITAR (CORREGIDO PARA QUE GUARDE EL CRUCE Y SIN EXISTENCIA)
     // =========================
 
     else {
       const usuario = this.sesion.getUsuario();
 
       const Datos = {
-
         id: this.Id,
-
         fecha: this.Fecha,
-
         codigoProducto: String(this.CodigoProducto || '').toUpperCase(),
-
         nombreProducto: this.NombreProducto.toUpperCase(),
-
         cantidad: this.Cantidad,
-
         tipo: this.Tipo,
-
         estado: this.Estado,
 
+        // 🔴 ASEGURAMOS QUE SE GUARDE EL ESTADO DEL CRUCE
         tieneCruce: this.TieneCruce,
-
         codigoCruce: String(this.CodigoCruce || '').toUpperCase(),
-
         nombreCruce: this.NombreCruce.toUpperCase(),
-
         cantidadCruce: this.CantidadCruce,
-
         tipoCruce: this.TipoCruce,
 
+        // ✅ ASEGURAMOS QUE SE GUARDE LO DE SIN EXISTENCIA
+        tieneSinExistencia: this.TieneSinExistencia,
+        listadoSinExistencia: this.ListadoSinExistencia,
+
         codigoUsuario: usuario.usuario,
-
         nombreUsuario: usuario.nombre,
-
         revisa_a: usuario.revisa_a,
-
         fechaCreacion: Date.now()
-
       };
 
       this.FirebaseRealtimeDatabaseService
         .editar(this.Carpeta, Datos)
         .then(() => {
-
           alertExito(
             "Registro actualizado",
             `${this.NombreProducto} actualizado correctamente`,
             this.router,
             '/inventario-diario'
           );
-
           this.LimpiarFormulario();
-
         })
         .catch(() => {
-
           alertError("Error al actualizar registro");
-
         });
-
     }
-
   }
+
+
+
+  // =========================
+  // EDITAR REGISTRO (VERSIÓN FINAL - TODO INTEGRADO)
+  // =========================
 
   // =========================
   // EDITAR REGISTRO
   // =========================
 
+  // =========================
+  // EDITAR REGISTRO (CORREGIDA AL 100% PARA QUE SE VEA EL CRUCE)
+  // =========================
   EditarRegistro(Item: any) {
     this.MostrarListadoMovil = false;
     this.Editando = true;
 
     this.Id = Item.id;
-
     this.Fecha = Item.fecha;
-
     this.CodigoProducto = Item.codigoProducto;
-
     this.NombreProducto = Item.nombreProducto;
-
     this.Cantidad = Item.cantidad;
-
     this.Tipo = Item.tipo;
-
     this.Estado = Item.estado;
 
-    this.TieneCruce = Item.tieneCruce;
+    // 🔴🔴🔴 AQUÍ ESTABA EL ERROR PRINCIPAL 🔴🔴🔴
+    // Antes solo leías la variable, ahora FORZAMOS que si hay datos, se active SIEMPRE
+    this.TieneCruce = false; // Lo apagamos de inicio
 
-    this.CodigoCruce = Item.codigoCruce;
+    // Si la base dice que tiene cruce, O si hay algo escrito en los campos, lo activamos
+    if (Item.tieneCruce === true || Item.codigoCruce || Item.nombreCruce || Item.cantidadCruce) {
+      this.TieneCruce = true; // ✅ SWITCH PRENDIDO
+    }
 
-    this.NombreCruce = Item.nombreCruce;
+    // ✅ AHORA SÍ CARGAMOS LOS DATOS (ya no estarán ocultos)
+    this.CodigoCruce = Item.codigoCruce || '';
+    this.NombreCruce = Item.nombreCruce || '';
+    this.CantidadCruce = Item.cantidadCruce || null;
+    this.TipoCruce = Item.tipoCruce || 'SOBRANTE';
 
-    this.CantidadCruce = Item.cantidadCruce;
+    // ======================================
+    // ✅ LO DE PRODUCTOS SIN EXISTENCIA (SE QUEDA IGUAL, FUNCIONANDO)
+    // ======================================
+    const valorSinExistencia = Item.tieneSinExistencia;
+    this.TieneSinExistencia = (valorSinExistencia === true || valorSinExistencia === "true" || valorSinExistencia === 1);
+    this.ListadoSinExistencia = Item.listadoSinExistencia || '';
 
-    this.TipoCruce = Item.tipoCruce;
-
+    this.listaProductos = [{ codigo: '', nombre: '' }];
+    if (this.TieneSinExistencia && this.ListadoSinExistencia) {
+      const lineas = this.ListadoSinExistencia.split('\n');
+      this.listaProductos = lineas.map(linea => {
+        const cod = linea.substring(0, 15).trim();
+        const nom = linea.substring(15).trim();
+        return { codigo: cod, nombre: nom };
+      });
+      if (this.listaProductos.length === 0) {
+        this.listaProductos = [{ codigo: '', nombre: '' }];
+      }
+    }
   }
+
+
 
   // =========================
   // CAMBIAR ESTADO
@@ -598,6 +596,22 @@ export class InventarioDiarioComponent implements OnInit {
 
     this.TipoCruce = 'SOBRANTE';
 
+    this.TieneSinExistencia = false;
+    this.ColumnaCodigos = '';
+    this.ColumnaNombres = '';
+    this.ListadoSinExistencia = '';
+
+    this.listaProductos = [{ codigo: '', nombre: '' }];
+
+  }
+  VerSinExistencia(texto: string) {
+    this.DatosModalSinExistencia = texto;
+    this.MostrarModalSinExistencia = true;
+  }
+
+  CerrarModal() {
+    this.MostrarModalSinExistencia = false;
+    this.DatosModalSinExistencia = '';
   }
   EsNuevaFecha(index: number): boolean {
 
@@ -630,4 +644,86 @@ export class InventarioDiarioComponent implements OnInit {
     this.router.navigate(['/menu']);
 
   }
+
+  // 1. SALTO DE CÓDIGO A NOMBRE (Valida que haya código)
+  irANombre(indice: number, event: Event): void {
+    event.preventDefault();
+
+    // 🛑 OBLIGATORIO: CÓDIGO NO VACÍO
+    const codigoEscrito = (this.listaProductos[indice].codigo || '').trim();
+
+    if (codigoEscrito === '') {
+      alert('⚠️ Escribe primero el CÓDIGO');
+      return;
+    }
+
+    // ✅ Si tiene código, pasa al nombre
+    setTimeout(() => {
+      const nombres = document.querySelectorAll('input[placeholder="Nombre del producto"]');
+      if (nombres[indice]) (nombres[indice] as HTMLInputElement).focus();
+    }, 10);
+  }
+
+  // 2. AL PRESIONAR ENTER EN NOMBRE: AHORA VALIDA LOS DOS CAMPOS
+  agregarNuevoRegistro(event: Event, indiceActual: number): void {
+    event.preventDefault();
+
+    // 🛑 PRIMERO: VALIDAMOS QUE EXISTA EL CÓDIGO
+    const codigoEscrito = (this.listaProductos[indiceActual].codigo || '').trim();
+    if (codigoEscrito === '') {
+      alert('⚠️ Falta el CÓDIGO');
+      return;
+    }
+
+    // 🛑 SEGUNDO: VALIDAMOS QUE TAMBIÉN ESCRIBA EL NOMBRE ✅ (ESTA ES LA PARTE NUEVA)
+    const nombreEscrito = (this.listaProductos[indiceActual].nombre || '').trim();
+    if (nombreEscrito === '') {
+      alert('⚠️ Escribe el NOMBRE del producto');
+      return; // ❌ NO CREA LA LÍNEA SI NO HAY NOMBRE
+    }
+
+    // ✅ SI LLEGA AQUÍ: AMBOS ESTÁN LLENOS, GUARDAMOS Y CONTINUAMOS
+    this.actualizarDatosParaModal();
+
+    // ✅ CREAMOS LA NUEVA LÍNEA SOLO SI TODO ESTÁ COMPLETO
+    this.listaProductos.push({ codigo: '', nombre: '' });
+
+    // ✅ BAJA SCROLL Y ENVÍA FOCO AL NUEVO CÓDIGO
+    setTimeout(() => {
+      const contenedor = document.querySelector('.overflow-y-auto');
+      if (contenedor) contenedor.scrollTop = contenedor.scrollHeight;
+
+      const codigos = document.querySelectorAll('input[placeholder="Código"]');
+      if (codigos[indiceActual + 1]) (codigos[indiceActual + 1] as HTMLInputElement).focus();
+    }, 10);
+  }
+
+  // 3. ELIMINAR FILA
+  eliminarFila(indice: number): void {
+    if (this.listaProductos.length > 1) {
+      this.listaProductos.splice(indice, 1);
+    } else {
+      this.listaProductos[0].codigo = '';
+      this.listaProductos[0].nombre = '';
+    }
+    this.actualizarDatosParaModal();
+  }
+
+  // 4. FUNCIÓN PARA EL MODAL
+  actualizarDatosParaModal(): void {
+    let textoFinal = '';
+
+    this.listaProductos.forEach(item => {
+      const cod = (item.codigo || '').trim();
+      const nom = (item.nombre || '').trim();
+
+      // Solo guarda registros que tengan AMBAS cosas
+      if (cod !== '' && nom !== '') {
+        textoFinal += `${cod.padEnd(15)} ${nom}\n`;
+      }
+    });
+
+    this.DatosModalSinExistencia = textoFinal.trim();
+  }
+
 }

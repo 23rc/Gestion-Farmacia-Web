@@ -329,12 +329,128 @@
                     </div>
 
                 </div>
+                <!-- ===================================== -->
+                <!-- NUEVO SWITCH: PRODUCTO SIN EXISTENCIA -->
+                <!-- ===================================== -->
+
+                <div class="mt-4 px-1">
+
+                    <div class="form-check form-switch d-flex align-items-center gap-2 justify-content-end">
+                        <input class="form-check-input fs-5 m-0" type="checkbox" [(ngModel)]="TieneSinExistencia"
+                            name="TieneSinExistencia">
+                        <label class="form-check-label fw-semibold text-secondary">
+                            Producto sin existencia
+                        </label>
+                    </div>
+
+                </div>
+
+                <!-- ===================================== -->
+                <!-- ESPACIO PARA LISTADO (SOLO VISIBLE SI ACTIVA EL SWITCH) -->
+                <!-- ===================================== -->
+
+                <div *ngIf="TieneSinExistencia === true" class="card border-0 shadow-sm rounded-4 mt-3">
+
+
+                    <div class="card-header border-0 py-2" style="background: linear-gradient(135deg,#1e3a5f,#3d5a80);">
+                        <h6 class="fw-bold mb-0 text-white">
+                            <i class="bi bi-list-columns me-1"></i>
+                            Listado de productos sin existencia
+                        </h6>
+                    </div>
+
+                    <div class="card-body bg-white p-3">
+
+                        <!-- TÍTULOS DE LAS COLUMNAS -->
+                        <div class="d-flex bg-light rounded-3 mb-2 py-2 px-3">
+                            <div class="fw-bold text-primary" style="width: 130px;">CÓDIGO</div>
+                            <div class="fw-bold text-primary flex-grow-1 ps-2">PRODUCTO</div>
+                            <div class="fw-bold text-secondary text-center" style="width: 45px;">❌</div>
+                        </div>
+
+                        <!-- ✅ CONTENEDOR PRINCIPAL: AHORA SIN ERRORES DE OCULTAMIENTO -->
+                        <div class="border rounded-4 shadow-sm"
+                            style="height: 280px; overflow-y: scroll; position: relative;">
+
+                            <!-- ✅ LISTA DE REGISTROS -->
+                            <div class="p-2">
+                                <div *ngFor="let item of listaProductos; let i = index"
+                                    class="d-flex align-items-center mb-1 pb-1 border-bottom">
+
+                                    <!-- CÓDIGO -->
+                                    <input type="text" class="form-control form-control-sm border-0 py-2 px-2 m-0"
+                                        [(ngModel)]="item.codigo" name="codigo_{{i}}"
+                                        [ngModelOptions]="{standalone: true}" placeholder="Código"
+                                        style="width: 130px; font-family: monospace; font-size: 0.95rem; background-color: #f8fafc;"
+                                        (keydown.enter)="irANombre(i, $event)">
+
+                                    <!-- NOMBRE -->
+                                    <input type="text"
+                                        class="form-control form-control-sm border-0 py-2 px-2 m-0 flex-grow-1"
+                                        [(ngModel)]="item.nombre" name="nombre_{{i}}"
+                                        [ngModelOptions]="{standalone: true}" placeholder="Nombre del producto"
+                                        style="font-size: 0.95rem;" (keydown.enter)="agregarNuevoRegistro($event, i)">
+
+                                    <!-- BOTÓN ELIMINAR -->
+                                    <button type="button"
+                                        class="btn btn-sm btn-outline-danger rounded-circle d-flex align-items-center justify-content-center ms-1"
+                                        style="width: 30px; height: 30px;" (click)="eliminarFila(i)">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <small class="text-success mt-2 d-block px-1">
+                            <i class="bi bi-shield-check"></i> Barra deslizante activa: Ya sube, baja y funciona con el
+                            ratón.
+                        </small>
+
+                    </div>
+
+                </div>
+
+                <!-- ✅ ESTILOS FUERTES PARA FORZAR QUE SE VEA Y FUNCIONE -->
+                <style>
+                    /* Forzamos que la barra SIEMPRE aparezca y funcione */
+                    div[style*="overflow-y: scroll"] {
+                        overflow-y: scroll !important;
+                        overflow-x: hidden !important;
+                        scroll-behavior: auto !important;
+                    }
+
+                    /* Diseño de la barra para que se vea bien gruesa y fácil de usar */
+                    div[style*="overflow-y: scroll"]::-webkit-scrollbar {
+                        width: 10px !important;
+                        display: block !important;
+                    }
+
+                    div[style*="overflow-y: scroll"]::-webkit-scrollbar-track {
+                        background: #e9ecef !important;
+                    }
+
+                    div[style*="overflow-y: scroll"]::-webkit-scrollbar-thumb {
+                        background: #6c757d !important;
+                        border-radius: 5px !important;
+                    }
+
+                    div[style*="overflow-y: scroll"]::-webkit-scrollbar-thumb:hover {
+                        background: #495057 !important;
+                    }
+                </style>
+
+
+
+
 
                 <!-- ===================================== -->
                 <!-- CRUCE -->
                 <!-- ===================================== -->
 
-                <div *ngIf="TieneCruce" class="card border-0 shadow-sm rounded-4 mt-3 overflow-hidden">
+                <div *ngIf="TieneCruce === true" class="card border-0 shadow-sm rounded-4 mt-3 overflow-hidden">
+
 
                     <div class="card-header border-0 py-2" style="background: linear-gradient(135deg,#dbeafe,#eff6ff);">
 
@@ -921,6 +1037,18 @@
                                             Reabrir
 
                                         </button>
+                                        <!-- ===================================== -->
+                                        <!-- NUEVO BOTÓN: VER SIN EXISTENCIA -->
+                                        <!-- ===================================== -->
+                                        <button *ngIf="Item.tieneSinExistencia" class="btn w-100 mt-2"
+                                            style="background-color: #1e3a5f; color: white; border: none;"
+                                            (click)="VerSinExistencia(Item.listadoSinExistencia); $event.stopPropagation()">
+                                            <i class="bi bi-list-columns me-1"></i>
+                                            Ver Prod. Sin Existencia
+                                        </button>
+
+
+
 
                                     </div>
 
@@ -1022,4 +1150,55 @@
         </div>
 
     </div>
+    <!-- ===================================== -->
+    <!-- MODAL PRODUCTOS SIN EXISTENCIA (NUEVO) -->
+    <!-- ===================================== -->
+    <div *ngIf="MostrarModalSinExistencia" class="modal d-block position-fixed top-0 start-0 w-100 h-100"
+        style="background-color: rgba(0, 0, 0, 0.5); z-index: 1050;">
+
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+
+                <!-- ENCABEZADO MODAL -->
+                <div class="modal-header text-white py-3" style="background: linear-gradient(135deg,#1e3a5f,#3d5a80);">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-list-columns me-2"></i>
+                        Productos Sin Existencia
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" (click)="CerrarModal()"></button>
+                </div>
+
+                <!-- CUERPO MODAL -->
+                <div class="modal-body p-4" style="background: #f8fafc;">
+
+                    <!-- ENCABEZADO DE COLUMNAS DENTRO DEL MODAL -->
+                    <div class="d-flex bg-white rounded-3 mb-3 p-3 shadow-sm">
+                        <div class="fw-bold text-primary" style="width: 120px;">CÓDIGO</div>
+                        <div class="fw-bold text-primary flex-grow-1">PRODUCTO</div>
+                    </div>
+
+                    <!-- CONTENIDO FORMATEADO (LETRAS MÁS FUERTES Y OSCURAS) -->
+                    <div class="bg-white rounded-3 p-4 shadow-sm" style="min-height: 200px;">
+                        <pre class="mb-0"
+                            style="font-family: 'Courier New', monospace; font-size: 0.95rem; line-height: 1.7; color: #1e293b; font-weight: 500;">
+{{ DatosModalSinExistencia }}
+          </pre>
+                    </div>
+
+                </div>
+
+                <!-- PIE MODAL -->
+                <div class="modal-footer bg-white border-0 py-3">
+                    <button type="button" class="btn btn-primary rounded-pill px-4 shadow-sm" (click)="CerrarModal()">
+                        <i class="bi bi-check-lg me-1"></i>
+                        Cerrar
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
 </div>
