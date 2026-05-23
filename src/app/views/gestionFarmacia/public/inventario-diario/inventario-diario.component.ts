@@ -751,6 +751,14 @@ export class InventarioDiarioComponent implements OnInit {
   }
   // ✅ NUEVA FUNCIÓN: CAMBIA EL ESTADO EN BD
   MarcarComoAgregado() {
+
+    if (!this.esEncargado()) {
+      alertError(
+        "Solo el encargado puede marcar productos como AGREGADOS"
+      );
+      return;
+    }
+
     if (!this.ItemActual) return;
     const Datos = { ...this.ItemActual, estadoSinExistencia: 'AGREGADO' };
     this.FirebaseRealtimeDatabaseService.editar(this.Carpeta, Datos)
