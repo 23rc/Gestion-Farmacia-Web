@@ -20,6 +20,7 @@ import {
   styleUrl: './inventario-diario.component.css'
 })
 export class InventarioDiarioComponent implements OnInit {
+
   MostrarModalSinExistencia: boolean = false;
   public listaProductos: Array<{ codigo: string, nombre: string }> = [{ codigo: '', nombre: '' }];
   public DatosModalSinExistencia: string = '';
@@ -68,8 +69,8 @@ export class InventarioDiarioComponent implements OnInit {
   ColumnaCodigos: string = '';  // Lo que escribes en la izquierda
   ColumnaNombres: string = '';  // Lo que escribes en la derecha
   ListadoSinExistencia: string = ''; // Aquí se arma el texto final ordenado
-
-
+  EstadoSinExistencia: string = 'PENDIENTE_AGREGAR';
+  public ItemActual: any = null;
 
 
   // =========================
@@ -150,8 +151,11 @@ export class InventarioDiarioComponent implements OnInit {
 
       const fecha = new Date(x.fecha + "T00:00:00");
 
-      const cumpleEstado =
-        this.FiltroEstado === 'TODOS' || x.estado === this.FiltroEstado;
+      // const cumpleEstado =
+      //   this.FiltroEstado === 'TODOS' || x.estado === this.FiltroEstado;
+      const cumpleEstado = this.FiltroEstado === 'TODOS'
+        || (this.FiltroEstado === 'PENDIENTE' && (x.estado === 'PENDIENTE' || x.estadoSinExistencia === 'PENDIENTE_AGREGAR'))
+        || (this.FiltroEstado === 'SOLUCIONADO' && x.estado === 'SOLUCIONADO' && (!x.tieneSinExistencia || x.estadoSinExistencia === 'AGREGADO'));
 
       const cumpleFecha =
         (!inicio || fecha >= inicio) &&
@@ -225,9 +229,6 @@ export class InventarioDiarioComponent implements OnInit {
 
   }
 
-  // =========================
-  // GUARDAR
-  // =========================
   // =========================
   // GUARDAR
   // =========================
@@ -336,7 +337,7 @@ export class InventarioDiarioComponent implements OnInit {
 
         tieneSinExistencia: this.TieneSinExistencia,
         listadoSinExistencia: this.ListadoSinExistencia,
-
+        estadoSinExistencia: this.TieneSinExistencia ? this.EstadoSinExistencia : null,
         codigoUsuario: usuario.usuario,
         nombreUsuario: usuario.nombre,
         revisa_a: usuario.revisa_a,
@@ -360,11 +361,23 @@ export class InventarioDiarioComponent implements OnInit {
     }
 
     // =========================
-    // EDITAR (CORREGIDO PARA QUE GUARDE EL CRUCE Y SIN EXISTENCIA)
+    // EDITAR 
     // =========================
 
     else {
       const usuario = this.sesion.getUsuario();
+      const RegistroOriginal = this.Inventario.find(x => x.id === this.Id);
+      let nuevoEstadoSinExistencia = this.EstadoSinExistencia;
+
+      if (
+        RegistroOriginal &&
+        RegistroOriginal.tieneSinExistencia &&
+        this.TieneSinExistencia &&
+        RegistroOriginal.estadoSinExistencia === 'AGREGADO' &&
+        RegistroOriginal.listadoSinExistencia !== this.ListadoSinExistencia
+      ) {
+        nuevoEstadoSinExistencia = 'PENDIENTE_AGREGAR';
+      }
 
       const Datos = {
         id: this.Id,
@@ -385,6 +398,8 @@ export class InventarioDiarioComponent implements OnInit {
         // ✅ ASEGURAMOS QUE SE GUARDE LO DE SIN EXISTENCIA
         tieneSinExistencia: this.TieneSinExistencia,
         listadoSinExistencia: this.ListadoSinExistencia,
+        estadoSinExistencia: this.TieneSinExistencia ? nuevoEstadoSinExistencia : null,
+
 
         codigoUsuario: usuario.usuario,
         nombreUsuario: usuario.nombre,
@@ -450,23 +465,27 @@ export class InventarioDiarioComponent implements OnInit {
     this.TipoCruce = Item.tipoCruce || 'SOBRANTE';
 
     // ======================================
-    // ✅ LO DE PRODUCTOS SIN EXISTENCIA (SE QUEDA IGUAL, FUNCIONANDO)
+    // ✅ LO DE PRODUCTOS SIN EXISTENCIA (CORREGIDO)
     // ======================================
     const valorSinExistencia = Item.tieneSinExistencia;
     this.TieneSinExistencia = (valorSinExistencia === true || valorSinExistencia === "true" || valorSinExistencia === 1);
+    this.EstadoSinExistencia = Item.estadoSinExistencia || 'PENDIENTE_AGREGAR';
     this.ListadoSinExistencia = Item.listadoSinExistencia || '';
 
-    this.listaProductos = [{ codigo: '', nombre: '' }];
+    // 🔴🔴🔴 AQUÍ EL CAMBIO IMPORTANTE 🔴🔴🔴
+    // Ya NO inicializamos lista vacía al inicio.
+    // Solo creamos lista vacía si NO hay datos guardados.
     if (this.TieneSinExistencia && this.ListadoSinExistencia) {
+      // Si hay datos guardados: LOS LEEMOS Y ARMAMOS LA LISTA
       const lineas = this.ListadoSinExistencia.split('\n');
       this.listaProductos = lineas.map(linea => {
         const cod = linea.substring(0, 15).trim();
         const nom = linea.substring(15).trim();
         return { codigo: cod, nombre: nom };
       });
-      if (this.listaProductos.length === 0) {
-        this.listaProductos = [{ codigo: '', nombre: '' }];
-      }
+    } else {
+      // Si NO hay datos: DEJAMOS UNA FILA VACÍA
+      this.listaProductos = [{ codigo: '', nombre: '' }];
     }
   }
 
@@ -600,19 +619,24 @@ export class InventarioDiarioComponent implements OnInit {
     this.ColumnaCodigos = '';
     this.ColumnaNombres = '';
     this.ListadoSinExistencia = '';
-
+    this.EstadoSinExistencia = 'PENDIENTE_AGREGAR';
     this.listaProductos = [{ codigo: '', nombre: '' }];
 
   }
-  VerSinExistencia(texto: string) {
-    this.DatosModalSinExistencia = texto;
+  VerSinExistencia(Item: any) {
+    this.ItemActual = Item;
+    this.DatosModalSinExistencia = Item.listadoSinExistencia || 'Sin datos guardados';
     this.MostrarModalSinExistencia = true;
   }
 
+
+
   CerrarModal() {
     this.MostrarModalSinExistencia = false;
-    this.DatosModalSinExistencia = '';
+    this.ItemActual = null;
+    this.DatosModalSinExistencia = ''; // Esto se limpia al cerrar, es correcto
   }
+
   EsNuevaFecha(index: number): boolean {
 
     // PRIMER REGISTRO
@@ -653,7 +677,7 @@ export class InventarioDiarioComponent implements OnInit {
     const codigoEscrito = (this.listaProductos[indice].codigo || '').trim();
 
     if (codigoEscrito === '') {
-      alert('⚠️ Escribe primero el CÓDIGO');
+      alertError('Escribe primero el CÓDIGO');
       return;
     }
 
@@ -671,14 +695,14 @@ export class InventarioDiarioComponent implements OnInit {
     // 🛑 PRIMERO: VALIDAMOS QUE EXISTA EL CÓDIGO
     const codigoEscrito = (this.listaProductos[indiceActual].codigo || '').trim();
     if (codigoEscrito === '') {
-      alert('⚠️ Falta el CÓDIGO');
+      alertError('Falta el CÓDIGO');
       return;
     }
 
     // 🛑 SEGUNDO: VALIDAMOS QUE TAMBIÉN ESCRIBA EL NOMBRE ✅ (ESTA ES LA PARTE NUEVA)
     const nombreEscrito = (this.listaProductos[indiceActual].nombre || '').trim();
     if (nombreEscrito === '') {
-      alert('⚠️ Escribe el NOMBRE del producto');
+      alertError('Escribe el NOMBRE del producto');
       return; // ❌ NO CREA LA LÍNEA SI NO HAY NOMBRE
     }
 
@@ -725,5 +749,24 @@ export class InventarioDiarioComponent implements OnInit {
 
     this.DatosModalSinExistencia = textoFinal.trim();
   }
+  // ✅ NUEVA FUNCIÓN: CAMBIA EL ESTADO EN BD
+  MarcarComoAgregado() {
+    if (!this.ItemActual) return;
+    const Datos = { ...this.ItemActual, estadoSinExistencia: 'AGREGADO' };
+    this.FirebaseRealtimeDatabaseService.editar(this.Carpeta, Datos)
+      .then(() => {
+        alertExito(
+          "Actualizado",
+          "Productos marcados como AGREGADOS al sistema",
+          this.router,
+          '/inventario-diario'
+        );
+        this.CerrarModal();
+      })
+      .catch(() => {
+        alertError("Error al actualizar el estado");
+      });
+  }
+
 
 }

@@ -310,111 +310,236 @@
                 </div>
 
                 <!-- ===================================== -->
-                <!-- SWITCH -->
+                <!-- SWITCHES: AMBOS EN LA MISMA FILA Y AL MISMO NIVEL -->
                 <!-- ===================================== -->
-<!-- ===================================== -->
-<!-- SWITCHES: AMBOS EN LA MISMA FILA Y AL MISMO NIVEL -->
-<!-- ===================================== -->
-<div class="mt-4 px-1">
-    <div class="d-flex justify-content-between align-items-center">
+                <div class="mt-4 px-1">
+                    <div class="d-flex justify-content-between align-items-center">
 
-        <!-- SWITCH IZQUIERDA: TIENE CRUCE -->
-        <div class="form-check form-switch d-flex align-items-center gap-2 m-0">
-            <input class="form-check-input fs-5 m-0" type="checkbox" [(ngModel)]="TieneCruce" name="TieneCruce">
-            <label class="form-check-label fw-semibold text-secondary mb-0">
-                Tiene producto cruzado
-            </label>
-        </div>
-
-        <!-- SWITCH DERECHA: SIN EXISTENCIA -->
-        <div class="form-check form-switch d-flex align-items-center gap-2 m-0">
-            <input class="form-check-input fs-5 m-0" type="checkbox" [(ngModel)]="TieneSinExistencia" name="TieneSinExistencia">
-            <label class="form-check-label fw-semibold text-secondary mb-0">
-                Producto sin existencia
-            </label>
-        </div>
-
-    </div>
-</div>
-
-
-                <!-- ===================================== -->
-                <!-- ESPACIO PARA LISTADO (SOLO VISIBLE SI ACTIVA EL SWITCH) -->
-                <!-- ===================================== -->
-
-                <div *ngIf="TieneSinExistencia === true" class="card border-0 shadow-sm rounded-4 mt-3">
-
-
-                    <div class="card-header border-0 py-2" style="background: linear-gradient(135deg,#1e3a5f,#3d5a80);">
-                        <h6 class="fw-bold mb-0 text-white">
-                            <i class="bi bi-list-columns me-1"></i>
-                            Listado de productos sin existencia
-                        </h6>
-                    </div>
-
-                    <div class="card-body bg-white p-3">
-
-                        <!-- TÍTULOS DE LAS COLUMNAS -->
-                        <div class="d-flex bg-light rounded-3 mb-2 py-2 px-3">
-                            <div class="fw-bold text-primary" style="width: 130px;">CÓDIGO</div>
-                            <div class="fw-bold text-primary flex-grow-1 ps-2">PRODUCTO</div>
-                            <div class="fw-bold text-secondary text-center" style="width: 45px;">❌</div>
+                        <!-- SWITCH DERECHA: SIN EXISTENCIA -->
+                        <div class="form-check form-switch d-flex align-items-center gap-2 m-0">
+                            <input class="form-check-input fs-5 m-0" type="checkbox" [(ngModel)]="TieneSinExistencia"
+                                name="TieneSinExistencia">
+                            <label class="form-check-label fw-semibold text-secondary mb-0">
+                                Producto sin existencia
+                            </label>
+                        </div>
+                        <!-- SWITCH IZQUIERDA: TIENE CRUCE -->
+                        <div class="form-check form-switch d-flex align-items-center gap-2 m-0">
+                            <input class="form-check-input fs-5 m-0" type="checkbox" [(ngModel)]="TieneCruce"
+                                name="TieneCruce">
+                            <label class="form-check-label fw-semibold text-secondary mb-0">
+                                Tiene producto cruzado
+                            </label>
                         </div>
 
-                        <!-- ✅ CONTENEDOR PRINCIPAL: AHORA SIN ERRORES DE OCULTAMIENTO -->
-                        <div class="border rounded-4 shadow-sm"
-                            style="height: 280px; overflow-y: scroll; position: relative;">
 
-                            <!-- ✅ LISTA DE REGISTROS -->
-                            <div class="p-2">
-                                <div *ngFor="let item of listaProductos; let i = index"
-                                    class="d-flex align-items-center mb-1 pb-1 border-bottom">
+                    </div>
+                </div>
 
-                                    <!-- CÓDIGO -->
-                                    <input type="text" class="form-control form-control-sm border-0 py-2 px-2 m-0"
-                                        [(ngModel)]="item.codigo" name="codigo_{{i}}"
-                                        [ngModelOptions]="{standalone: true}" placeholder="Código"
-                                        style="width: 130px; font-family: monospace; font-size: 0.95rem; background-color: #f8fafc;"
-                                        (keydown.enter)="irANombre(i, $event)">
 
-                                    <!-- NOMBRE -->
-                                    <input type="text"
-                                        class="form-control form-control-sm border-0 py-2 px-2 m-0 flex-grow-1"
-                                        [(ngModel)]="item.nombre" name="nombre_{{i}}"
-                                        [ngModelOptions]="{standalone: true}" placeholder="Nombre del producto"
-                                        style="font-size: 0.95rem;" (keydown.enter)="agregarNuevoRegistro($event, i)">
 
-                                    <!-- BOTÓN ELIMINAR -->
-                                    <button type="button"
-                                        class="btn btn-sm btn-outline-danger rounded-circle d-flex align-items-center justify-content-center ms-1"
-                                        style="width: 30px; height: 30px;" (click)="eliminarFila(i)">
-                                        <i class="bi bi-x-lg"></i>
-                                    </button>
+                <!-- ===================================== -->
+                <!-- CONTENEDOR DE DOS COLUMNAS -->
+                <!-- ===================================== -->
+                <div class="row g-3 mt-1">
+
+                    <!-- COLUMNA IZQUIERDA: SIN EXISTENCIA (TAL CUAL LO TENÍAS) -->
+                    <div class="col-12 col-md-6">
+
+                        <!-- ===================================== -->
+                        <!-- ESPACIO PARA LISTADO (SOLO VISIBLE SI ACTIVA EL SWITCH) -->
+                        <!-- ===================================== -->
+                        <div *ngIf="TieneSinExistencia === true" class="card border-0 shadow-sm rounded-4 mt-3">
+
+
+                            <div class="card-header border-0 py-2"
+                                style="background: linear-gradient(135deg,#1e3a5f,#3d5a80);">
+                                <h6 class="fw-bold mb-0 text-white">
+                                    <i class="bi bi-list-columns me-1"></i>
+                                    Listado de productos sin existencia
+                                </h6>
+                            </div>
+
+                            <div class="card-body bg-white p-3">
+
+
+                                <div class="d-flex bg-light rounded-3 mb-2 py-2 px-3">
+                                    <div class="fw-bold text-primary" style="width: 130px;">CÓDIGO</div>
+                                    <div class="fw-bold text-primary flex-grow-1 ps-2">PRODUCTO</div>
+                                    <div class="fw-bold text-secondary text-center" style="width: 45px;">❌</div>
+                                </div>
+
+
+                                <div class="border rounded-4 shadow-sm"
+                                    style="height: 280px; overflow-y: scroll; position: relative;">
+
+                                    <div class="p-2">
+                                        <div *ngFor="let item of listaProductos; let i = index"
+                                            class="d-flex align-items-center mb-1 pb-1 border-bottom">
+
+                                            <input type="text"
+                                                class="form-control form-control-sm border-0 py-2 px-2 m-0"
+                                                [(ngModel)]="item.codigo" name="codigo_{{i}}"
+                                                [ngModelOptions]="{standalone: true}" placeholder="Código"
+                                                style="width: 130px; font-family: monospace; font-size: 0.95rem; background-color: #f8fafc;"
+                                                (keydown.enter)="irANombre(i, $event)">
+
+                                            <input type="text"
+                                                class="form-control form-control-sm border-0 py-2 px-2 m-0 flex-grow-1"
+                                                [(ngModel)]="item.nombre" name="nombre_{{i}}"
+                                                [ngModelOptions]="{standalone: true}" placeholder="Nombre del producto"
+                                                style="font-size: 0.95rem;"
+                                                (keydown.enter)="agregarNuevoRegistro($event, i)">
+
+
+                                            <button type="button"
+                                                class="btn btn-sm btn-outline-danger rounded-circle d-flex align-items-center justify-content-center ms-1"
+                                                style="width: 30px; height: 30px;" (click)="eliminarFila(i)">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+
+                                        </div>
+                                    </div>
 
                                 </div>
+
+                                <small class="text-success mt-2 d-block px-1">
+                                    <i class="bi bi-shield-check"></i> Barra deslizante activa: Ya sube, baja y funciona
+                                    con el
+                                    ratón.
+                                </small>
+
                             </div>
 
                         </div>
 
-                        <small class="text-success mt-2 d-block px-1">
-                            <i class="bi bi-shield-check"></i> Barra deslizante activa: Ya sube, baja y funciona con el
-                            ratón.
-                        </small>
+                    </div>
+                    <!-- FIN COLUMNA IZQUIERDA -->
+
+
+                    <!-- COLUMNA DERECHA: CRUCE (TAL CUAL LO TENÍAS) -->
+                    <div class="col-12 col-md-6">
+
+                        <!-- ===================================== -->
+                        <!-- CRUCE -->
+                        <!-- ===================================== -->
+                        <div *ngIf="TieneCruce === true" class="card border-0 shadow-sm rounded-2 mt-3 overflow-hidden"
+                            style="height: 425px;">
+
+
+
+                            <div class="card-header border-0 py-2"
+                                style="background: linear-gradient(135deg,#1e3a5f,#3d5a80);">
+
+
+                                <h6 class="fw-bold mb-0 text-white">
+
+
+                                    <i class="bi bi-shuffle me-1"></i>
+
+                                    Producto Cruce
+
+                                </h6>
+
+                            </div>
+
+                            <div class="card-body bg-white">
+
+                                <div class="row g-3">
+
+
+                                    <div class="col-6 col-md-4">
+
+                                        <label class="form-label small fw-semibold text-secondary">
+
+                                            Código Cruce
+
+                                        </label>
+
+                                        <input type="number" class="form-control rounded-4 border-0 shadow-sm py-2"
+                                            [(ngModel)]="CodigoCruce" name="CodigoCruce">
+
+                                    </div>
+
+
+                                    <div class="col-6 col-md-4">
+
+                                        <label class="form-label small fw-semibold text-secondary">
+
+                                            Cantidad Cruce
+
+                                        </label>
+
+                                        <input type="number" class="form-control rounded-4 border-0 shadow-sm py-2"
+                                            [(ngModel)]="CantidadCruce" name="CantidadCruce">
+
+                                    </div>
+
+
+                                    <div class="col-12">
+
+                                        <label class="form-label small fw-semibold text-secondary">
+
+                                            Nombre Cruce
+
+                                        </label>
+
+                                        <input type="text" class="form-control rounded-4 border-0 shadow-sm py-2"
+                                            [(ngModel)]="NombreCruce" name="NombreCruce">
+
+                                    </div>
+
+
+                                    <div class="col-12 col-md-4">
+
+                                        <label class="form-label small fw-semibold text-secondary">
+
+                                            Tipo Cruce
+
+                                        </label>
+
+                                        <select class="form-select rounded-4 border-0 shadow-sm py-2"
+                                            [(ngModel)]="TipoCruce" name="TipoCruce">
+
+                                            <option value="SOBRANTE">
+
+                                                SOBRANTE
+
+                                            </option>
+
+                                            <option value="FALTANTE">
+
+                                                FALTANTE
+
+                                            </option>
+
+                                        </select>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
 
                     </div>
+                    <!-- FIN COLUMNA DERECHA -->
 
                 </div>
+                <!-- ===================================== -->
+                <!-- FIN CONTENEDOR DOS COLUMNAS -->
+                <!-- ===================================== -->
 
-                <!-- ✅ ESTILOS FUERTES PARA FORZAR QUE SE VEA Y FUNCIONE -->
+
+                <!-- ✅ ESTILOS FUERTES PARA FORZAR QUE SE VEA Y FUNCIONE (LOS TUYOS, INTACTOS) -->
                 <style>
-                    /* Forzamos que la barra SIEMPRE aparezca y funcione */
                     div[style*="overflow-y: scroll"] {
                         overflow-y: scroll !important;
                         overflow-x: hidden !important;
                         scroll-behavior: auto !important;
                     }
 
-                    /* Diseño de la barra para que se vea bien gruesa y fácil de usar */
                     div[style*="overflow-y: scroll"]::-webkit-scrollbar {
                         width: 10px !important;
                         display: block !important;
@@ -434,15 +559,105 @@
                     }
                 </style>
 
+                <!-- ===================================== -->
+                <!-- FIN CONTENEDOR DOS COLUMNAS -->
+                <!-- ===================================== -->
+
+                <!-- ===================================== -->
+                <!-- ESPACIO PARA LISTADO (SOLO VISIBLE SI ACTIVA EL SWITCH) -->
+                <!-- ===================================== -->
+
+                <!-- <div *ngIf="TieneSinExistencia === true" class="card border-0 shadow-sm rounded-4 mt-3">
 
 
+                    <div class="card-header border-0 py-2" style="background: linear-gradient(135deg,#1e3a5f,#3d5a80);">
+                        <h6 class="fw-bold mb-0 text-white">
+                            <i class="bi bi-list-columns me-1"></i>
+                            Listado de productos sin existencia
+                        </h6>
+                    </div>
+
+                    <div class="card-body bg-white p-3">
 
 
+                        <div class="d-flex bg-light rounded-3 mb-2 py-2 px-3">
+                            <div class="fw-bold text-primary" style="width: 130px;">CÓDIGO</div>
+                            <div class="fw-bold text-primary flex-grow-1 ps-2">PRODUCTO</div>
+                            <div class="fw-bold text-secondary text-center" style="width: 45px;">❌</div>
+                        </div>
+
+              
+                        <div class="border rounded-4 shadow-sm"
+                            style="height: 280px; overflow-y: scroll; position: relative;">
+
+                            <div class="p-2">
+                                <div *ngFor="let item of listaProductos; let i = index"
+                                    class="d-flex align-items-center mb-1 pb-1 border-bottom">
+
+                                    <input type="text" class="form-control form-control-sm border-0 py-2 px-2 m-0"
+                                        [(ngModel)]="item.codigo" name="codigo_{{i}}"
+                                        [ngModelOptions]="{standalone: true}" placeholder="Código"
+                                        style="width: 130px; font-family: monospace; font-size: 0.95rem; background-color: #f8fafc;"
+                                        (keydown.enter)="irANombre(i, $event)">
+
+                                    <input type="text"
+                                        class="form-control form-control-sm border-0 py-2 px-2 m-0 flex-grow-1"
+                                        [(ngModel)]="item.nombre" name="nombre_{{i}}"
+                                        [ngModelOptions]="{standalone: true}" placeholder="Nombre del producto"
+                                        style="font-size: 0.95rem;" (keydown.enter)="agregarNuevoRegistro($event, i)">
+
+      
+                                    <button type="button"
+                                        class="btn btn-sm btn-outline-danger rounded-circle d-flex align-items-center justify-content-center ms-1"
+                                        style="width: 30px; height: 30px;" (click)="eliminarFila(i)">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <small class="text-success mt-2 d-block px-1">
+                            <i class="bi bi-shield-check"></i> Barra deslizante activa: Ya sube, baja y funciona con el
+                            ratón.
+                        </small>
+
+                    </div>
+
+                </div> -->
+
+                <!-- ✅ ESTILOS FUERTES PARA FORZAR QUE SE VEA Y FUNCIONE -->
+                <!-- <style>
+                    div[style*="overflow-y: scroll"] {
+                        overflow-y: scroll !important;
+                        overflow-x: hidden !important;
+                        scroll-behavior: auto !important;
+                    }
+
+                    div[style*="overflow-y: scroll"]::-webkit-scrollbar {
+                        width: 10px !important;
+                        display: block !important;
+                    }
+
+                    div[style*="overflow-y: scroll"]::-webkit-scrollbar-track {
+                        background: #e9ecef !important;
+                    }
+
+                    div[style*="overflow-y: scroll"]::-webkit-scrollbar-thumb {
+                        background: #6c757d !important;
+                        border-radius: 5px !important;
+                    }
+
+                    div[style*="overflow-y: scroll"]::-webkit-scrollbar-thumb:hover {
+                        background: #495057 !important;
+                    }
+                </style> -->
                 <!-- ===================================== -->
                 <!-- CRUCE -->
                 <!-- ===================================== -->
 
-                <div *ngIf="TieneCruce === true" class="card border-0 shadow-sm rounded-4 mt-3 overflow-hidden">
+                <!-- <div *ngIf="TieneCruce === true" class="card border-0 shadow-sm rounded-4 mt-3 overflow-hidden">
 
 
                     <div class="card-header border-0 py-2" style="background: linear-gradient(135deg,#dbeafe,#eff6ff);">
@@ -461,7 +676,7 @@
 
                         <div class="row g-3">
 
-                            <!-- CODIGO -->
+ 
 
                             <div class="col-6 col-md-4">
 
@@ -476,7 +691,6 @@
 
                             </div>
 
-                            <!-- CANTIDAD -->
 
                             <div class="col-6 col-md-4">
 
@@ -491,7 +705,7 @@
 
                             </div>
 
-                            <!-- NOMBRE -->
+                   
 
                             <div class="col-12">
 
@@ -506,8 +720,7 @@
 
                             </div>
 
-                            <!-- TIPO -->
-
+       
                             <div class="col-12 col-md-4">
 
                                 <label class="form-label small fw-semibold text-secondary">
@@ -539,7 +752,7 @@
 
                     </div>
 
-                </div>
+                </div> -->
 
                 <!-- ===================================== -->
                 <!-- BOTONES -->
@@ -797,7 +1010,7 @@
 
                                 <!-- PRODUCTO -->
 
-                                <div class="col-4">
+                                <div class="col-3">
 
                                     <div class="fw-semibold small text-truncate">
 
@@ -809,7 +1022,7 @@
 
                                 <!-- ESTADO -->
 
-                                <div class="col-2 text-end">
+                                <!-- <div class="col-2 text-end">
 
                                     <span class="badge px-2 py-1" [ngClass]="{
                                         'bg-danger': Item.estado == 'PENDIENTE',
@@ -823,7 +1036,41 @@
 
                                     </span>
 
+                                </div> -->
+                                <!-- ESTADO -->
+                                <div class="col-3 text-end d-flex justify-content-end align-items-center gap-1">
+
+                                    <!-- 📌 COLUMNA 1: ESTADO PRINCIPAL (SIEMPRE FIJO EN SU LUGAR) -->
+                                    <div style="width: 28px; text-align: center;">
+                                        <span class="badge px-2 py-1" [ngClass]="{
+            'bg-danger': Item.estado == 'PENDIENTE',
+            'bg-success': Item.estado == 'SOLUCIONADO'
+        }">
+                                            <i class="bi" [ngClass]="{
+                'bi-exclamation-circle-fill': Item.estado == 'PENDIENTE',
+                'bi-check-circle-fill': Item.estado == 'SOLUCIONADO'
+            }"></i>
+                                        </span>
+                                    </div>
+
+                                    <!-- 📌 COLUMNA 2: ESTADO SIN EXISTENCIA (SIEMPRE EN SU COLUMNA, OCULTO SI NO EXISTE) -->
+                                    <div style="width: 28px; text-align: center;">
+                                        <span *ngIf="Item.tieneSinExistencia" class="badge px-2 py-1" [ngClass]="{
+            'bg-danger': Item.estadoSinExistencia == 'PENDIENTE_AGREGAR',
+            'bg-primary': Item.estadoSinExistencia == 'AGREGADO'
+        }" title="Estado productos sin existencia">
+                                            <i class="bi" [ngClass]="{
+                'bi-list-columns': Item.estadoSinExistencia == 'PENDIENTE_AGREGAR',
+                'bi-list-check': Item.estadoSinExistencia == 'AGREGADO'
+            }"></i>
+                                        </span>
+                                        <!-- Si NO tiene datos, aquí queda vacío, pero la columna sigue existiendo -->
+                                    </div>
+
                                 </div>
+
+
+
 
                             </div>
 
@@ -1035,10 +1282,11 @@
                                         <!-- ===================================== -->
                                         <button *ngIf="Item.tieneSinExistencia" class="btn w-100 mt-2"
                                             style="background-color: #1e3a5f; color: white; border: none;"
-                                            (click)="VerSinExistencia(Item.listadoSinExistencia); $event.stopPropagation()">
+                                            (click)="VerSinExistencia(Item); $event.stopPropagation()">
                                             <i class="bi bi-list-columns me-1"></i>
                                             Ver Prod. Sin Existencia
                                         </button>
+
 
 
 
@@ -1173,20 +1421,27 @@
                     <!-- CONTENIDO FORMATEADO (LETRAS MÁS FUERTES Y OSCURAS) -->
                     <div class="bg-white rounded-3 p-4 shadow-sm" style="min-height: 200px;">
                         <pre class="mb-0"
-                            style="font-family: 'Courier New', monospace; font-size: 0.95rem; line-height: 1.7; color: #1e293b; font-weight: 500;">
+                            style="font-family: 'Courier New', monospace; font-size: 0.95rem; line-height: 1.7; color: #1e293b; font-weight: 500; white-space: pre-line;">
 {{ DatosModalSinExistencia }}
-          </pre>
+</pre>
+
+
                     </div>
 
                 </div>
-
                 <!-- PIE MODAL -->
                 <div class="modal-footer bg-white border-0 py-3">
-                    <button type="button" class="btn btn-primary rounded-pill px-4 shadow-sm" (click)="CerrarModal()">
-                        <i class="bi bi-check-lg me-1"></i>
+                    <!-- ✅ NUEVO: BOTÓN AGREGADO -->
+                    <button type="button" class="btn btn-primary rounded-pill px-4 shadow-sm me-auto"
+                        (click)="MarcarComoAgregado()">
+                        <i class="bi bi-check2-all me-1"></i> Agregado
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4 shadow-sm"
+                        (click)="CerrarModal()">
                         Cerrar
                     </button>
                 </div>
+
 
             </div>
         </div>
