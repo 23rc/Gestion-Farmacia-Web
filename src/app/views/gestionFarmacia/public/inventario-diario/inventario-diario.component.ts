@@ -4,11 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { FirebaseRealTimeDatabaseService } from '../../../../services/firebase-Realtime-Database.service';
 import { Router } from '@angular/router';
 import { SesionService } from '../../../../services/sesion.service';
+import { environment } from '../../../../../environments/environment';
 import {
 
   alertExito,
   alertError,
-  alertEliminar
+  alertEliminar,
+  alertEliminarSinRedirigir,
+  alertExitoSinRedirigir
 
 } from '../../../../services/utils';
 
@@ -24,6 +27,7 @@ export class InventarioDiarioComponent implements OnInit {
   MostrarModalSinExistencia: boolean = false;
   public listaProductos: Array<{ codigo: string, nombre: string }> = [{ codigo: '', nombre: '' }];
   public DatosModalSinExistencia: string = '';
+  public ListaUsuarios = environment.usuarios;
   FiltroRevisor: string = 'TODOS';
   NombreUsuario: string = '';
   rol: string = '';
@@ -39,6 +43,47 @@ export class InventarioDiarioComponent implements OnInit {
   InventarioFiltrado: any[] = [];
 
   Editando: boolean = false;
+
+
+
+  // Variables
+  MostrarModalImpulsos = false;
+  abrirFormulario = false;
+  Impulsos: any[] = [];
+
+  codigo = '';
+  nombre = '';
+  cantidad: number | null = null;
+  fechaVenc = '';
+  // Variables nuevas
+  productoSeleccionado: any = '';
+  cantidadDisponible = 0;
+  usuarioDestino = '';
+  cantidadAsignar: number | null = null;
+  asignaciones: any[] = [];
+  filtroUsuario = '';
+  // Nuevas variables
+  filtroMedicamento = '';
+  asignacionesFiltradas: any[] = [];
+
+  // Variables para ventas
+  // --- VARIABLES ACTUALIZADAS ---
+  modalVentaAbierto = false;
+  prodSeleccionado: any = {};
+  noFactura = '';
+  cantidadVender: number | null = null;
+  ventasDelProducto: any[] = [];
+  // --- NUEVAS VARIABLES PARA VENTAS DE AYUDA ---
+  // --- NUEVAS VARIABLES ---
+  mostrarAyuda = false;
+  listaOtrasAsignaciones: any[] = [];
+  asignacionAyudaSeleccionada: any = null;
+  // --- VARIABLES QUE YA USAS ---
+  productoEditar: any = null;
+  cantidadNuevasAsignaciones = 0;
+
+
+
 
   // =========================
   // ID FIREBASE
@@ -774,6 +819,430 @@ export class InventarioDiarioComponent implements OnInit {
       .catch(() => {
         alertError("Error al actualizar el estado");
       });
+  }
+
+
+
+
+
+  // // Llamar al abrir el modal
+  // AbrirModalImpulsos() {
+  //   this.MostrarModalImpulsos = true;
+  //   this.cargarAsignaciones(); // Carga siempre para todos
+  //   if (this.esEncargado()) this.cargarProductos(); // Solo encargado carga globales
+  // }
+
+
+  // cargarProductos() {
+  //   this.FirebaseRealtimeDatabaseService.listado("Impulsos")
+  //     .subscribe(res => this.Impulsos = res || []);
+  // }
+
+  // guardarProducto() {
+  //   if (!this.esEncargado() || !this.codigo || !this.nombre || !this.cantidad || !this.fechaVenc) {
+  //     return alertError("Complete todos los campos");
+  //   }
+
+  //   const datos = {
+  //     codigo: this.codigo.toUpperCase(),
+  //     nombre: this.nombre.toUpperCase(),
+  //     cantidadTotal: this.cantidad,
+  //     fechaVencimiento: this.fechaVenc,
+  //     fechaCreacion: Date.now()
+  //   };
+
+  //   this.FirebaseRealtimeDatabaseService.insertar("Impulsos", datos)
+  //     .then(() => {
+  //       alertExito("Guardado", "Producto creado", this.router, '/inventario-diario');
+  //       this.abrirFormulario = false;
+  //       this.codigo = this.nombre = this.fechaVenc = '';
+  //       this.cantidad = null;
+  //       this.cargarProductos();
+  //     })
+  //     .catch(() => alertError("Error al guardar"));
+  // }
+
+  calcularDisponible() {
+    if (!this.productoSeleccionado) {
+      this.cantidadDisponible = 0;
+      return;
+    }
+    // Restamos lo ya asignado del total
+    this.FirebaseRealtimeDatabaseService.listado("AsignacionesImpulso").subscribe(asignadas => {
+      const yaAsignado = asignadas
+        .filter((a: any) => a.idImpulso === this.productoSeleccionado.id)
+        .reduce((suma: number, a: any) => suma + a.cantidadAsignada, 0);
+
+      this.cantidadDisponible = this.productoSeleccionado.cantidadTotal - yaAsignado;
+    });
+  }
+
+
+  // Asignar con control de cantidad
+  asignarProducto() {
+    if (!this.productoSeleccionado || !this.usuarioDestino || !this.cantidadAsignar) {
+      return alertError("Completa todos los datos");
+    }
+
+    if (this.cantidadAsignar > this.cantidadDisponible) {
+      return alertError(`Solo quedan ${this.cantidadDisponible} unidades disponibles`);
+    }
+
+    const datos = {
+      idImpulso: this.productoSeleccionado.id,
+      codigo: this.productoSeleccionado.codigo,
+      nombre: this.productoSeleccionado.nombre,
+      fechaVencimiento: this.productoSeleccionado.fechaVencimiento,
+      cantidadAsignada: this.cantidadAsignar,
+      asignadoA: this.usuarioDestino,
+      fechaAsignacion: Date.now()
+    };
+
+    this.FirebaseRealtimeDatabaseService.insertar("AsignacionesImpulso", datos)
+      .then(() => {
+        alertExito("Asignado", "Producto enviado correctamente", this.router, '/inventario-diario');
+        this.calcularDisponible(); // Actualiza la cantidad disponible
+        this.usuarioDestino = '';
+        this.cantidadAsignar = null;
+      })
+      .catch(() => alertError("Error al asignar"));
+  }
+  // 👇 REEMPLAZA ESTA FUNCIÓN COMPLETAMENTE
+  // cargarAsignaciones() {
+  //   this.FirebaseRealtimeDatabaseService.listado("AsignacionesImpulso").subscribe(todas => {
+  //     if (this.esEncargado()) {
+  //       this.asignaciones = todas;
+  //     } else {
+  //       this.asignaciones = todas.filter((a: any) => a.asignadoA === this.usuarioActivo.nombre);
+  //     }
+  //     // Aplicamos filtros cada vez que cargan los datos
+  //     this.aplicarFiltros();
+  //   });
+  // }
+
+
+  // // Función para aplicar todos los filtros juntos
+  // aplicarFiltros() {
+  //   let resultado = [...this.asignaciones];
+
+  //   // Filtro por usuario (solo encargado)
+  //   if (this.esEncargado() && this.filtroUsuario) {
+  //     resultado = resultado.filter(a => a.asignadoA === this.filtroUsuario);
+  //   }
+
+  //   // Filtro por código o nombre
+  //   const texto = this.filtroMedicamento.trim().toLowerCase();
+  //   if (texto) {
+  //     resultado = resultado.filter(a =>
+  //       a.codigo.toLowerCase().includes(texto) ||
+  //       a.nombre.toLowerCase().includes(texto)
+  //     );
+  //   }
+
+  //   this.asignacionesFiltradas = resultado;
+  // }
+
+  // Abrir modal principal
+  AbrirModalImpulsos() {
+    this.MostrarModalImpulsos = true;
+    this.cargarAsignaciones();
+    if (this.esEncargado()) this.cargarProductos();
+  }
+
+  CerrarModalImpulsos() {
+    this.MostrarModalImpulsos = false;
+    this.ventasDelProducto = [];
+  }
+
+
+  // Cargar productos globales
+  cargarProductos() {
+    this.FirebaseRealtimeDatabaseService.listado("Impulsos")
+      .subscribe(res => this.Impulsos = res || []);
+  }
+
+  // Aplicar filtros
+  aplicarFiltros() {
+    let res = [...this.asignaciones];
+    if (this.esEncargado() && this.filtroUsuario) res = res.filter(a => a.asignadoA === this.filtroUsuario);
+    const texto = this.filtroMedicamento.trim().toLowerCase();
+    if (texto) res = res.filter(a => a.codigo.toLowerCase().includes(texto) || a.nombre.toLowerCase().includes(texto));
+    this.asignacionesFiltradas = res;
+  }
+
+
+
+  cargarAsignaciones() {
+    this.FirebaseRealtimeDatabaseService.listado("AsignacionesImpulso").subscribe(asignaciones => {
+      this.FirebaseRealtimeDatabaseService.listado("VentasImpulso").subscribe(ventas => {
+        let lista = this.esEncargado()
+          ? asignaciones
+          : asignaciones.filter((a: any) => a.asignadoA === this.usuarioActivo.nombre);
+
+        // Agregar total vendido a cada asignación
+        this.asignaciones = lista.map((a: any) => {
+          const vendido = ventas
+            .filter((v: any) => v.idAsignacion === a.id)
+            .reduce((sum: number, v: any) => sum + v.cantidadVendida, 0);
+          return { ...a, vendido };
+        });
+
+        this.aplicarFiltros();
+      });
+    });
+  }
+
+
+  // --- FUNCIÓN CARGAR VENTAS POR PRODUCTO (AHORA MUESTRA SIEMPRE) ---
+  cargarVentasDelProducto(producto: any) {
+    this.prodSeleccionado = producto;
+    this.noFactura = '';
+    this.cantidadVender = null;
+    this.mostrarAyuda = false;
+    this.asignacionAyudaSeleccionada = null;
+    this.FirebaseRealtimeDatabaseService.listado("VentasImpulso").subscribe(ventas => {
+      this.ventasDelProducto = ventas
+        .filter((v: any) => v.idAsignacion === producto.id)
+        .sort((a: any, b: any) => b.fecha - a.fecha);
+
+      // ✅ ACTUALIZAMOS EL TOTAL VENDIDO EN LA ASIGNACIÓN
+      this.prodSeleccionado.vendido = this.ventasDelProducto.reduce((sum: number, v: any) => sum + v.cantidadVendida, 0);
+    });
+  }
+
+
+
+  // Calcula el porcentaje de venta para usarlo en la tarjeta
+  calcularPorcentajeVendido(asignacion: any): number {
+    const total = asignacion.cantidadAsignada;
+    const vendido = asignacion.vendido || 0;
+    if (total <= 0) return 0;
+    return Math.round((vendido / total) * 100);
+  }
+  // Calcula la diferencia en meses entre hoy y la fecha de vencimiento
+  diferenciaMeses(fecha: string | Date): number {
+    const hoy = new Date();
+    const vence = new Date(fecha);
+    return (vence.getFullYear() - hoy.getFullYear()) * 12 + (vence.getMonth() - hoy.getMonth());
+  }
+
+  // Devuelve la clase de color según los meses que faltan
+  colorVencimiento(fecha: string | Date): string {
+    const meses = this.diferenciaMeses(fecha);
+    if (meses <= 1) return 'text-danger';
+    if (meses === 2) return 'text-warning';
+    if (meses === 3) return 'text-warning';
+    return 'text-success';
+  }
+
+
+
+
+  abrirModalVenta() {
+    this.noFactura = '';
+    this.cantidadVender = null;
+    this.mostrarAyuda = false;
+    this.asignacionAyudaSeleccionada = null;
+    this.modalVentaAbierto = true;
+
+    // ✅ Carga la lista de otros usuarios CADA VEZ que abres el modal
+    this.cargarOtrasAsignaciones();
+  }
+
+
+  cerrarModalVenta() {
+    this.modalVentaAbierto = false;
+    this.mostrarAyuda = false;
+    this.asignacionAyudaSeleccionada = null;
+  }
+
+  // --- NUEVA FUNCIÓN ---
+  cambiarModoAyuda() {
+    this.mostrarAyuda = !this.mostrarAyuda;
+  }
+
+  // --- NUEVA FUNCIÓN ---
+  cargarOtrasAsignaciones() {
+    this.FirebaseRealtimeDatabaseService.listado("AsignacionesImpulso").subscribe(asignaciones => {
+      this.FirebaseRealtimeDatabaseService.listado("VentasImpulso").subscribe(ventas => {
+        this.listaOtrasAsignaciones = asignaciones
+          .filter((a: any) =>
+            a.idImpulso === this.prodSeleccionado.idImpulso && // Mismo medicamento
+            a.asignadoA !== this.usuarioActivo.nombre // No soy yo
+          )
+          .map((a: any) => {
+            const vendido = ventas.filter(v => v.idAsignacion === a.id).reduce((suma: number, v: any) => suma + v.cantidadVendida, 0);
+            return { ...a, vendido, disponible: a.cantidadAsignada - vendido };
+          })
+          .filter(a => a.disponible > 0); // Solo los que tienen saldo
+      });
+    });
+  }
+
+  // --- FUNCIÓN GUARDAR VENTA (CON TU LLAMADA ORIGINAL) ---
+  guardarVenta() {
+    const asignacionFinal = this.mostrarAyuda ? this.asignacionAyudaSeleccionada : this.prodSeleccionado;
+    const disponible = asignacionFinal.cantidadAsignada - (asignacionFinal.vendido || 0);
+
+    if (!this.noFactura || !this.cantidadVender || this.cantidadVender < 1) {
+      return alertError("Completa todos los campos obligatorios");
+    }
+
+    if (this.cantidadVender > disponible) {
+      return alertError(`Solo hay ${disponible} unidades disponibles para vender`);
+    }
+
+    const datos = {
+      idAsignacion: asignacionFinal.id,
+      idImpulso: asignacionFinal.idImpulso,
+      codigo: asignacionFinal.codigo,
+      nombre: asignacionFinal.nombre,
+      cantidadVendida: this.cantidadVender,
+      noFactura: this.noFactura.toUpperCase().trim(),
+      asignadoA: asignacionFinal.asignadoA,
+      vendidoPor: this.usuarioActivo.nombre,
+      esAyuda: this.mostrarAyuda,
+      fecha: Date.now()
+    };
+
+    this.FirebaseRealtimeDatabaseService.insertar("VentasImpulso", datos)
+      .then(() => {
+        // ✅ ACTUALIZAMOS EL VALOR LOCAL PARA QUE SE REFLEJE INMEDIATAMENTE
+        asignacionFinal.vendido = (asignacionFinal.vendido || 0) + this.cantidadVender;
+
+        // ✅ TU MENSAJE Y LLAMADAS ORIGINALES
+        alertExito("Venta registrada", "Se actualizó tu saldo", this.router, '/inventario-diario');
+        this.cerrarModalVenta();
+        this.cargarAsignaciones();
+        this.cargarVentasDelProducto(this.prodSeleccionado);
+      })
+      .catch(() => alertError("No se pudo guardar la venta"));
+  }
+
+  editarProducto(producto: any) {
+    this.productoEditar = producto;
+    // ✅ CARGA TUS DATOS EN LOS CAMPOS
+    this.codigo = producto.codigo;
+    this.nombre = producto.nombre;
+    this.cantidad = producto.cantidadTotal;
+    this.fechaVenc = producto.fechaVencimiento;
+    this.abrirFormulario = true;
+  }
+
+
+
+  guardarProducto() {
+    if (!this.esEncargado() || !this.codigo || !this.nombre || !this.cantidad || !this.fechaVenc) {
+      return alertError("Complete todos los campos");
+    }
+
+    const datos = {
+      codigo: this.codigo.toUpperCase(),
+      nombre: this.nombre.toUpperCase(),
+      cantidadTotal: this.cantidad,
+      fechaVencimiento: this.fechaVenc,
+      fechaCreacion: Date.now()
+    };
+
+    if (this.productoEditar) {
+      // ✅ USAMOS TU MÉTODO "editar" DEL SERVICIO
+      this.FirebaseRealtimeDatabaseService.editar("Impulsos", {
+        id: this.productoEditar.id,
+        ...datos
+      })
+        .then(() => {
+          alertExito("Actualizado", "Producto modificado correctamente", this.router, '/inventario-diario');
+          this.cerrarFormulario();
+          this.cargarProductos();
+        })
+        .catch(() => alertError("Error al actualizar"));
+    } else {
+      // ✅ TU LÓGICA ORIGINAL PARA AGREGAR NUEVO
+      this.FirebaseRealtimeDatabaseService.insertar("Impulsos", datos)
+        .then(() => {
+          alertExito("Guardado", "Producto creado", this.router, '/inventario-diario');
+          this.cerrarFormulario();
+          this.cargarProductos();
+        })
+        .catch(() => alertError("Error al guardar"));
+    }
+  }
+
+
+  eliminarProducto(producto: any) {
+    const nombre = `${producto.codigo} - ${producto.nombre}`;
+
+    alertEliminarSinRedirigir(
+      () => this.FirebaseRealtimeDatabaseService.eliminar(producto.id, "Impulsos")
+        .then(() => {
+          // ✅ USAMOS EL ÉXITO SIN REDIRIGIR
+          alertExitoSinRedirigir("Eliminado", "Producto eliminado correctamente");
+          this.cargarProductos();
+          this.productoEditar = null;
+        })
+        .catch(() => alertError("No se pudo eliminar el producto")),
+      nombre
+    );
+  }
+
+
+
+
+
+
+
+
+  // --- CERRAR Y LIMPIAR FORMULARIO ---
+  cerrarFormulario() {
+    this.abrirFormulario = false;
+    this.productoEditar = null;
+    this.codigo = this.nombre = this.fechaVenc = '';
+    this.cantidad = null;
+  }
+  // --- ELIMINAR ASIGNACIÓN ---
+  // --- ELIMINAR ASIGNACIÓN (SE QUEDA EN EL MODAL) ---
+  eliminarAsignacion(asignacion: any) {
+    const nombreAsignacion = `${asignacion.codigo} - ${asignacion.nombre} (para ${asignacion.asignadoA})`;
+
+    alertEliminarSinRedirigir(
+      () => this.FirebaseRealtimeDatabaseService.eliminar(asignacion.id, "AsignacionesImpulso")
+        .then(() => {
+          alertExitoSinRedirigir("Eliminado", "Asignación eliminada correctamente");
+          this.cargarAsignaciones(); // Refresca la lista adentro
+        }),
+      nombreAsignacion
+    );
+  }
+
+
+  // --- ELIMINAR REGISTRO DE VENTA (SE QUEDA EN EL MODAL) ---
+  eliminarVenta(venta: any) {
+    const nombreVenta = `Factura ${venta.noFactura} - Cantidad: ${venta.cantidadVendida}`;
+
+    alertEliminarSinRedirigir(
+      () => this.FirebaseRealtimeDatabaseService.eliminar(venta.id, "VentasImpulso")
+        .then(() => {
+          alertExitoSinRedirigir("Eliminado", "Venta eliminada correctamente");
+          this.cargarVentasDelProducto(this.prodSeleccionado); // Refresca el historial
+        }),
+      nombreVenta
+    );
+  }
+
+  // --- CALCULAR FECHAS PARA COLOREAR ---
+  estaVencido(fecha: any): boolean {
+    if (!fecha) return false;
+    const hoy = new Date();
+    const fechaVenc = new Date(fecha);
+    return fechaVenc < hoy;
+  }
+
+  proximoAVencer(fecha: any): boolean {
+    if (!fecha) return false;
+    const hoy = new Date();
+    const fechaVenc = new Date(fecha);
+    const diasDiferencia = Math.ceil((fechaVenc.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24));
+    return diasDiferencia >= 0 && diasDiferencia <= 15; // Menos de 15 días para vencer
   }
 
 

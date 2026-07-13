@@ -50,6 +50,21 @@ export function alertExito(titulo: string, mensaje: string, router: Router, url:
   });
 }
 
+// ✅ NUEVA FUNCIÓN: MUESTRA ÉXITO SIN REDIRIGIR NI CERRAR MODAL
+export function alertExitoSinRedirigir(titulo: string, mensaje: string) {
+  Swal.fire({
+    toast: true,
+    position: 'top-end',
+    icon: 'success',
+    title: titulo,
+    text: mensaje,
+    showConfirmButton: false, 
+    timer: 700,
+    timerProgressBar: true,
+    background: '#ffffff', 
+    confirmButtonColor: '#3085d6',
+  });
+}
 
 
 export function alertError(mensaje: string) {
@@ -87,6 +102,43 @@ export function alertEliminar(onConfirm: () => Promise<void>, nombreMedicamento:
           ).then(() => {
             window.location.href = rutaRedireccion;
           });
+        })
+        .catch(() => {
+          Swal.fire(
+            'Error!',
+            'Hubo un problema al eliminar el registro. Intenta nuevamente.',
+            'error'
+          );
+        });
+    } else {
+      Swal.fire(
+        'Cancelado',
+        'El registro no ha sido eliminado.',
+        'info'
+      );
+    }
+  });
+}
+// ✅ NUEVA: ELIMINA SIN REDIRIGIR A NINGÚN LADO (PARA MODALES)
+export function alertEliminarSinRedirigir(onConfirm: () => Promise<void>, nombreMedicamento: string) {
+  Swal.fire({
+    title: `¿Estás seguro de eliminar el registro "${nombreMedicamento}"?`,
+    text: 'Esta acción no se puede deshacer.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      onConfirm()
+        .then(() => {
+          Swal.fire(
+            'Eliminado!',
+            `El registro "${nombreMedicamento}" ha sido eliminado correctamente.`,
+            'success'
+          ); // ✅ SIN REDIRECCIÓN
         })
         .catch(() => {
           Swal.fire(
