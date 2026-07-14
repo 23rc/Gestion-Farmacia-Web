@@ -59,41 +59,42 @@
     style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);
            gap: 0.5rem; max-width: 100%; box-sizing: border-box;">
 
-    <!-- BLOQUE IZQUIERDA (se adapta al espacio disponible) -->
-    <div class="d-flex align-items-center gap-2 flex-shrink-1 min-width: 0;">
+    <!-- BLOQUE IZQUIERDA: 25% DE ANCHO FIJO, TEXTO EN VARIAS LÍNEAS SI ES NECESARIO -->
+    <div class="d-flex align-items-start gap-2 flex-shrink-0" style="width: 25%;">
         <div class="bg-white bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" 
-            style="width: 36px; height: 36px;">
+            style="width: 32px; height: 32px; margin-top: 2px;">
             <i class="bi bi-person-fill fs-6 text-white"></i>
         </div>
 
-        <div class="min-width: 0; width: 100%;">
-            <div class="small opacity-75" style="font-size: 0.75rem;">Bienvenido</div>
-            <div class="fw-bold text-truncate m-0" style="font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+        <div style="width: 100%;">
+            <div class="small opacity-75 m-0" style="font-size: 0.7rem;">Bienvenido</div>
+            <div class="fw-bold m-0" style="font-size: 0.8rem; line-height: 1.1; word-wrap: break-word; white-space: normal;">
                 {{ NombreUsuario }}
             </div>
         </div>
     </div>
 
-    <!-- BLOQUE DERECHA (botones con tamaño fijo, nunca se encogen) -->
+    <!-- BLOQUE DERECHA: SIEMPRE VISIBLE, NO SE MUEVE NI SE ENCOGE -->
     <div class="d-flex align-items-center gap-2 flex-shrink-0">
         <button class="btn btn-light rounded-pill px-2 py-1 shadow-sm border-0 text-nowrap" 
             (click)="AbrirModalImpulsos()"
-            style="font-size: 0.75rem;">
+            style="font-size: 0.7rem;">
             <i class="bi bi-lightning-charge me-1 text-primary"></i> Impulsos
         </button>
 
         <div class="text-end d-none d-md-block flex-shrink-0">
-            <div class="small opacity-75" style="font-size: 0.75rem;">Sistema</div>
-            <div class="fw-semibold small" style="font-size: 0.75rem;">Inventario Diario</div>
+            <div class="small opacity-75 m-0" style="font-size: 0.7rem;">Sistema</div>
+            <div class="fw-semibold small m-0" style="font-size: 0.7rem;">Inventario Diario</div>
         </div>
 
         <button class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center p-0 flex-shrink-0" 
-            style="width: 32px; height: 32px;"
+            style="width: 32px; height: 32px; flex-shrink: 0;"
             (click)="CerrarSesion()">
             <i class="bi bi-x-lg" style="color: #1e3a5f; font-size: 0.8rem;"></i>
         </button>
     </div>
 </div>
+
 
 
     <!-- ===================================== -->
