@@ -3,10 +3,8 @@
     <!-- BIENVENIDA USUARIO -->
     <!-- ===================================== -->
 
-    <div class="d-flex justify-content-between align-items-center 
+    <!-- <div class="d-flex justify-content-between align-items-center 
         mb-3 px-3 py-2 rounded-4 shadow-sm text-white" style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);">
-
-        <!-- IZQUIERDA -->
 
         <div class="d-flex align-items-center gap-2">
 
@@ -35,44 +33,61 @@
 
         </div>
 
-        <!-- DERECHA -->
-
         <div class="d-flex align-items-center gap-3">
-            <!-- BOTÓN IMPULSOS -->
+
             <button class="btn btn-light rounded-pill px-3 py-1 shadow-sm me-2 border-0" (click)="AbrirModalImpulsos()">
                 <i class="bi bi-lightning-charge me-1 text-primary"></i> Impulsos
             </button>
-
             <div class="text-end">
-
                 <div class="small opacity-75">
-
                     Sistema
-
                 </div>
-
                 <div class="fw-semibold small">
-
                     Inventario Diario
-
                 </div>
-
             </div>
-
-            <!-- CERRAR -->
 
             <button class="btn btn-light rounded-circle shadow-sm d-flex 
                    align-items-center justify-content-center p-0" style="width: 38px; height: 38px;"
                 (click)="CerrarSesion()">
-
                 <i class="bi bi-x-lg" style="color: #1e3a5f;"></i>
-
             </button>
-
-
         </div>
+    </div> -->
+   <div class="d-flex justify-content-between align-items-center 
+    mb-3 px-2 py-2 rounded-4 shadow-sm text-white" 
+    style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);
+           min-width: 0; gap: 0.25rem;">
 
+    <div class="d-flex align-items-center gap-2 min-width: 0;">
+        <div class="bg-white bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center" 
+            style="width: 36px; height: 36px; flex-shrink: 0;">
+            <i class="bi bi-person-fill fs-6 text-white"></i>
+        </div>
+        <div class="min-width: 0;">
+            <div class="small opacity-75" style="font-size: 0.75rem;">Bienvenido</div>
+            <div class="fw-bold text-truncate" style="font-size: 0.85rem;">{{ NombreUsuario }}</div>
+        </div>
     </div>
+
+    <div class="d-flex align-items-center gap-1 flex-shrink: 1; min-width: 0;">
+        <button class="btn btn-light rounded-pill px-2 py-1 shadow-sm border-0" 
+            (click)="AbrirModalImpulsos()"
+            style="font-size: 0.75rem;">
+            <i class="bi bi-lightning-charge me-1 text-primary"></i> Impulsos
+        </button>
+        <div class="text-end d-none d-md-block">
+            <div class="small opacity-75" style="font-size: 0.75rem;">Sistema</div>
+            <div class="fw-semibold small" style="font-size: 0.75rem;">Inventario Diario</div>
+        </div>
+        <button class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center p-0 flex-shrink: 0" 
+            style="width: 32px; height: 32px;"
+            (click)="CerrarSesion()">
+            <i class="bi bi-x-lg" style="color: #1e3a5f; font-size: 0.8rem;"></i>
+        </button>
+    </div>
+</div>
+
     <!-- ===================================== -->
     <!-- BOTONES SUPERIORES -->
     <!-- ===================================== -->
@@ -1619,7 +1634,8 @@
                                                 </div>
                                             </div>
                                             <div *ngIf="esEncargado()" class="mb-3 small text-muted">👤 Asignado a:
-                                                <strong>{{a.asignadoA}}</strong></div>
+                                                <strong>{{a.asignadoA}}</strong>
+                                            </div>
                                             <div class="d-flex gap-2 justify-content-center mt-auto">
                                                 <button class="btn btn-sm rounded-pill px-3"
                                                     [class.btn-outline-danger]="(a.cantidadAsignada - (a.vendido || 0)) > 0"
@@ -1641,8 +1657,6 @@
             </div>
         </div>
     </div>
-
-
 
     <!-- ✅ MODAL FORMULARIO NUEVO PRODUCTO -->
     <div *ngIf="abrirFormulario" class="modal d-block position-fixed top-0 start-0 w-100 h-100"
@@ -1700,158 +1714,163 @@
             </div>
         </div>
     </div>
+    <!-- ✅ MODAL HISTORIAL DE VENTAS - UN POCO MÁS AMPLIO -->
+    <div *ngIf="modalHistorialAbierto" class="modal d-block position-fixed top-0 start-0 w-100 h-100"
+        style="background: rgba(0,0,0,0.5); z-index:1080; display: flex !important; align-items: flex-start; justify-content: center; padding: 0.5rem 0;">
+        <div class="modal-dialog modal-xl modal-dialog-centered m-2 m-md-3"
+            style="max-width: 92vw; width: 1200px; max-height: 92vh;">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden d-flex flex-column"
+                style="max-height: 90vh;">
 
-<div *ngIf="modalHistorialAbierto" class="modal d-block position-fixed top-0 start-0 w-100 h-100"
-     style="background: rgba(0,0,0,0.5); z-index:1080; display: flex !important; align-items: flex-start; justify-content: center; padding: 0.5rem 0;">
-  <div class="modal-dialog modal-xl modal-dialog-centered m-2 m-md-3" style="max-width: 92vw; width: 1200px; max-height: 92vh;">
-    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden d-flex flex-column"
-         style="max-height: 90vh;">
+                <div class="modal-header border-0 text-white p-3 p-md-4 flex-shrink-0 d-flex align-items-center justify-content-between"
+                    style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);">
+                    <h6 class="modal-title fw-semibold m-0 fs-6 fs-md-5">
+                        📋 Historial: {{prodSeleccionado?.codigo}} - {{prodSeleccionado?.nombre}}
+                    </h6>
+                    <button type="button" class="btn-close btn-close-white flex-shrink-0"
+                        (click)="cerrarModalHistorial()"></button>
+                </div>
 
-      <div class="modal-header border-0 text-white p-3 p-md-4 flex-shrink-0 d-flex align-items-center justify-content-between"
-           style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);">
-        <h6 class="modal-title fw-semibold m-0 fs-6 fs-md-5">
-          📋 Historial: {{prodSeleccionado?.codigo}} - {{prodSeleccionado?.nombre}}
-        </h6>
-        <button type="button" class="btn-close btn-close-white flex-shrink-0"
-                (click)="cerrarModalHistorial()"></button>
-      </div>
+                <div class="modal-body p-3 p-md-5 bg-white overflow-y-auto flex-grow-1">
+                    <div *ngIf="ventasDelProducto.length === 0" class="text-center text-secondary py-5 small">
+                        ℹ️ Aún no hay ventas registradas para este producto
+                    </div>
 
-      <div class="modal-body p-3 p-md-5 bg-white overflow-y-auto flex-grow-1">
-        <div *ngIf="ventasDelProducto.length === 0" class="text-center text-secondary py-5 small">
-          ℹ️ Aún no hay ventas registradas para este producto
-        </div>
+                    <div class="table-responsive" *ngIf="ventasDelProducto.length > 0">
+                        <table class="table table-sm table-borderless mb-0 align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="text-center">🧾 N° Factura</th>
+                                    <th class="text-center">📦 Cantidad</th>
+                                    <th class="text-center">⏰ Fecha</th>
+                                    <th class="text-center">ℹ️ Información</th>
+                                    <th *ngIf="esEncargado()" class="text-center">⚙️ Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let v of ventasDelProducto" [class.bg-light-blue]="v.esAyuda"
+                                    [class.text-primary]="v.esAyuda">
+                                    <td class="text-center">{{v.noFactura}}</td>
+                                    <td class="text-center">{{v.cantidadVendida}}</td>
+                                    <td class="text-center">{{v.fecha | date:'dd/MM HH:mm'}}</td>
+                                    <td class="text-center small">
+                                        {{ v.esAyuda ? '👤 Vendido por: ' + v.vendidoPor : '' }}
+                                    </td>
+                                    <td *ngIf="esEncargado()" class="text-center">
+                                        <button class="btn btn-sm btn-outline-danger rounded-pill px-2"
+                                            (click)="eliminarVenta(v)">
+                                            🗑️
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
-        <div class="table-responsive" *ngIf="ventasDelProducto.length > 0">
-          <table class="table table-sm table-borderless mb-0 align-middle">
-            <thead class="table-light">
-              <tr>
-                <th class="text-center">🧾 N° Factura</th>
-                <th class="text-center">📦 Cantidad</th>
-                <th class="text-center">⏰ Fecha</th>
-                <th class="text-center">ℹ️ Información</th>
-                <th *ngIf="esEncargado()" class="text-center">⚙️ Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let v of ventasDelProducto" [class.bg-light-blue]="v.esAyuda"
-                  [class.text-primary]="v.esAyuda">
-                <td class="text-center">{{v.noFactura}}</td>
-                <td class="text-center">{{v.cantidadVendida}}</td>
-                <td class="text-center">{{v.fecha | date:'dd/MM HH:mm'}}</td>
-                <td class="text-center small">
-                  {{ v.esAyuda ? '👤 Vendido por: ' + v.vendidoPor : '' }}
-                </td>
-                <td *ngIf="esEncargado()" class="text-center">
-                  <button class="btn btn-sm btn-outline-danger rounded-pill px-2"
-                          (click)="eliminarVenta(v)">
-                    🗑️
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="mt-4 d-flex justify-content-end">
-          <button class="btn btn-sm rounded-pill text-white"
-                  style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);" (click)="abrirModalVenta()">
-            ➕ Registrar Nueva Venta
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<!-- ✅ MODAL REGISTRAR NUEVA VENTA - UN POCO MÁS AMPLIO Y CÓMODO -->
-<div *ngIf="modalVentaAbierto" class="modal d-block position-fixed top-0 start-0 w-100 h-100"
-     style="background: rgba(0,0,0,0.5); z-index:1080; display: flex !important; align-items: flex-start; justify-content: center; padding: 0.5rem 0;">
-  <div class="modal-dialog modal-xl modal-dialog-centered m-2 m-md-3" style="max-width: 85vw; width: 1000px; max-height: 92vh;">
-    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden d-flex flex-column"
-         style="max-height: 90vh;">
-
-      <div class="modal-header border-0 text-white p-3 p-md-4 flex-shrink-0 d-flex align-items-center justify-content-between"
-           style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);">
-        <h5 class="modal-title fw-semibold fs-6 fs-md-5">
-          {{ mostrarAyuda ? '🤝 Ayudar a otro usuario' : '🛒 Registrar Venta' }}
-        </h5>
-        <button type="button" class="btn-close btn-close-white flex-shrink-0"
-                (click)="cerrarModalVenta()"></button>
-      </div>
-
-      <div class="modal-body p-3 p-md-5 bg-light overflow-y-auto flex-grow-1">
-
-        <div class="card border-0 shadow-sm rounded-3 mb-3 mb-md-4 p-3 p-md-4">
-          <div class="d-flex align-items-center">
-            <div class="flex-shrink-0 me-2 me-md-3">
-              <div class="rounded-circle bg-primary bg-opacity-10 p-3 p-md-4">
-                💊
-              </div>
+                    <div class="mt-4 d-flex justify-content-end">
+                        <button class="btn btn-sm rounded-pill text-white"
+                            style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);" (click)="abrirModalVenta()">
+                            ➕ Registrar Nueva Venta
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div>
-              <h6 class="mb-1 fw-bold text-dark fs-6">{{prodSeleccionado?.nombre}}</h6>
-              <p class="mb-0 small text-muted">🔢 Código: {{prodSeleccionado?.codigo}}</p>
-              <span *ngIf="!mostrarAyuda" class="d-inline-block mt-1 small">
-                📊 Disponible: <strong class="text-success">{{prodSeleccionado?.cantidadAsignada - (prodSeleccionado?.vendido || 0)}} uds</strong>
-              </span>
-            </div>
-          </div>
         </div>
-
-        <div *ngIf="(prodSeleccionado?.cantidadAsignada - (prodSeleccionado?.vendido || 0)) <= 0"
-             class="mb-3 mb-md-4">
-          <button type="button"
-                  class="btn btn-outline-primary rounded-3 w-100 d-flex align-items-center justify-content-center gap-2 py-2 small"
-                  (click)="cambiarModoAyuda()">
-            ✋ No tienes saldo → Ayudar a vender
-          </button>
-        </div>
-
-        <div *ngIf="mostrarAyuda"
-             class="mb-3 mb-md-4 p-3 p-md-4 rounded-3 bg-white border border-primary border-opacity-25 shadow-sm">
-          <label class="form-label fw-medium mb-2 small">
-            👤 Usuario a quien se le resta:
-          </label>
-          <select class="form-select rounded-3 shadow-sm small" [(ngModel)]="asignacionAyudaSeleccionada" required>
-            <option [ngValue]="null" disabled>-- Elige usuario con existencia --</option>
-            <option *ngFor="let a of listaOtrasAsignaciones" [ngValue]="a">
-              {{a.asignadoA}} | 📦 Disponible: {{a.disponible}} uds
-            </option>
-          </select>
-        </div>
-
-        <div class="row g-3 g-md-4 mb-3 mb-md-4">
-          <div class="col-12 col-md-6">
-            <label class="form-label fw-medium small">
-              🧾 N° Factura
-            </label>
-            <input type="text" class="form-control rounded-3 shadow-sm small" [(ngModel)]="noFactura" required placeholder="Ej: FCG421-014254">
-          </div>
-          <div class="col-12 col-md-6">
-            <label class="form-label fw-medium small">
-              📦 Cantidad Vendida
-            </label>
-            <input type="number" class="form-control rounded-3 shadow-sm small"
-                   [(ngModel)]="cantidadVender" min="1" required
-                   [max]="mostrarAyuda ? (asignacionAyudaSeleccionada?.disponible || 0) : (prodSeleccionado?.cantidadAsignada - (prodSeleccionado?.vendido || 0))"
-                   placeholder="1">
-          </div>
-        </div>
-
-        <div class="d-flex gap-3 gap-md-4">
-          <button class="btn btn-light rounded-3 flex-grow-1 shadow-sm small py-2" (click)="cerrarModalVenta()">
-            ❌ Cancelar
-          </button>
-          <button class="btn btn-success rounded-3 flex-grow-1 shadow-sm small py-2" (click)="guardarVenta()">
-            ✅ Guardar Venta
-          </button>
-        </div>
-
-      </div>
     </div>
-  </div>
-</div>
+    <!-- ✅ MODAL REGISTRAR NUEVA VENTA - UN POCO MÁS AMPLIO Y CÓMODO -->
+    <div *ngIf="modalVentaAbierto" class="modal d-block position-fixed top-0 start-0 w-100 h-100"
+        style="background: rgba(0,0,0,0.5); z-index:1080; display: flex !important; align-items: flex-start; justify-content: center; padding: 0.5rem 0;">
+        <div class="modal-dialog modal-xl modal-dialog-centered m-2 m-md-3"
+            style="max-width: 85vw; width: 1000px; max-height: 92vh;">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden d-flex flex-column"
+                style="max-height: 90vh;">
+
+                <div class="modal-header border-0 text-white p-3 p-md-4 flex-shrink-0 d-flex align-items-center justify-content-between"
+                    style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);">
+                    <h5 class="modal-title fw-semibold fs-6 fs-md-5">
+                        {{ mostrarAyuda ? '🤝 Ayudar a otro usuario' : '🛒 Registrar Venta' }}
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white flex-shrink-0"
+                        (click)="cerrarModalVenta()"></button>
+                </div>
+
+                <div class="modal-body p-3 p-md-5 bg-light overflow-y-auto flex-grow-1">
+
+                    <div class="card border-0 shadow-sm rounded-3 mb-3 mb-md-4 p-3 p-md-4">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0 me-2 me-md-3">
+                                <div class="rounded-circle bg-primary bg-opacity-10 p-3 p-md-4">
+                                    💊
+                                </div>
+                            </div>
+                            <div>
+                                <h6 class="mb-1 fw-bold text-dark fs-6">{{prodSeleccionado?.nombre}}</h6>
+                                <p class="mb-0 small text-muted">🔢 Código: {{prodSeleccionado?.codigo}}</p>
+                                <span *ngIf="!mostrarAyuda" class="d-inline-block mt-1 small">
+                                    📊 Disponible: <strong class="text-success">{{prodSeleccionado?.cantidadAsignada -
+                                        (prodSeleccionado?.vendido || 0)}} uds</strong>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div *ngIf="(prodSeleccionado?.cantidadAsignada - (prodSeleccionado?.vendido || 0)) <= 0"
+                        class="mb-3 mb-md-4">
+                        <button type="button"
+                            class="btn btn-outline-primary rounded-3 w-100 d-flex align-items-center justify-content-center gap-2 py-2 small"
+                            (click)="cambiarModoAyuda()">
+                            ✋ No tienes saldo → Ayudar a vender
+                        </button>
+                    </div>
+
+                    <div *ngIf="mostrarAyuda"
+                        class="mb-3 mb-md-4 p-3 p-md-4 rounded-3 bg-white border border-primary border-opacity-25 shadow-sm">
+                        <label class="form-label fw-medium mb-2 small">
+                            👤 Usuario a quien se le resta:
+                        </label>
+                        <select class="form-select rounded-3 shadow-sm small" [(ngModel)]="asignacionAyudaSeleccionada"
+                            required>
+                            <option [ngValue]="null" disabled>-- Elige usuario con existencia --</option>
+                            <option *ngFor="let a of listaOtrasAsignaciones" [ngValue]="a">
+                                {{a.asignadoA}} | 📦 Disponible: {{a.disponible}} uds
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="row g-3 g-md-4 mb-3 mb-md-4">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-medium small">
+                                🧾 N° Factura
+                            </label>
+                            <input type="text" class="form-control rounded-3 shadow-sm small" [(ngModel)]="noFactura"
+                                required placeholder="Ej: FCG421-014254">
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-medium small">
+                                📦 Cantidad Vendida
+                            </label>
+                            <input type="number" class="form-control rounded-3 shadow-sm small"
+                                [(ngModel)]="cantidadVender" min="1" required
+                                [max]="mostrarAyuda ? (asignacionAyudaSeleccionada?.disponible || 0) : (prodSeleccionado?.cantidadAsignada - (prodSeleccionado?.vendido || 0))"
+                                placeholder="1">
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3 gap-md-4">
+                        <button class="btn btn-light rounded-3 flex-grow-1 shadow-sm small py-2"
+                            (click)="cerrarModalVenta()">
+                            ❌ Cancelar
+                        </button>
+                        <button class="btn btn-success rounded-3 flex-grow-1 shadow-sm small py-2"
+                            (click)="guardarVenta()">
+                            ✅ Guardar Venta
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 
