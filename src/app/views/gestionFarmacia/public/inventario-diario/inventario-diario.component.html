@@ -1453,56 +1453,57 @@
 
     </div>
 
-    <!-- MODAL PRINCIPAL - SOLO PARTE DE PRODUCTOS GLOBALES -->
+    <!-- ✅ MODAL PRINCIPAL - TAMAÑO FIJO + 3 TARJETAS POR FILA SIEMPRE -->
     <div *ngIf="MostrarModalImpulsos" class="modal d-block position-fixed top-0 start-0 w-100 h-100"
-        style="background: rgba(42, 42, 42, 0.362); z-index:1060;">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg rounded-4">
-                <div class="modal-header text-white" style="background: linear-gradient(135deg,#1e3a5f,#444a52);">
-                    <h5 class="modal-title"><i class="bi bi-lightning-charge me-2"></i> Productos de Impulso</h5>
-                    <button type="button" class="btn-close btn-close-white"
+        style="background: rgba(42, 42, 42, 0.362); z-index:1060; display: flex !important; align-items: flex-start; justify-content: center; padding: 0.5rem 0;">
+        <div class="modal-dialog modal-xl modal-dialog-centered m-2 m-md-3"
+            style="max-width: 90vw; width: 1400px; max-height: 90vh;">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden d-flex flex-column"
+                style="max-height: 88vh;">
+
+                <div class="modal-header text-white p-2 p-md-4 flex-shrink-0 d-flex align-items-center justify-content-between"
+                    style="background: linear-gradient(135deg,#1e3a5f,#444a52);">
+                    <h5 class="modal-title fs-6 fs-md-4"><i class="bi bi-lightning-charge me-2"></i> Productos de
+                        Impulso</h5>
+                    <button type="button" class="btn-close btn-close-white flex-shrink-0"
                         (click)="MostrarModalImpulsos = false"></button>
                 </div>
-                <div class="modal-body p-4 bg-light">
 
-                    <!-- 👇 SOLO ESTA PARTE (PRODUCTOS GLOBALES) SOLO LA VEN LOS ENCARGADOS -->
+                <div class="modal-body p-3 p-md-5 bg-light overflow-y-auto flex-grow-1">
+
                     <ng-container *ngIf="esEncargado()">
-                        <button class="btn btn-primary btn-sm rounded-pill mb-2" (click)="abrirFormulario = true">
+                        <button class="btn btn-primary btn-sm rounded-pill mb-3" (click)="abrirFormulario = true">
                             <i class="bi bi-plus-lg me-1"></i> Agregar Producto
                         </button>
 
-                        <h6 class="fw-bold text-primary border-bottom pb-1 mb-2 fs-6">📦 Inventario Global</h6>
+                        <h6 class="fw-bold text-primary border-bottom pb-2 mb-3 fs-6 fs-md-5">📦 Inventario Global</h6>
 
-                        <div class="bg-white rounded-2 shadow-sm p-2">
-                            <div *ngIf="Impulsos.length === 0" class="text-center text-white py-1 small">Sin productos
+                        <div class="bg-white rounded-2 shadow-sm p-3 p-md-4">
+                            <div *ngIf="Impulsos.length === 0" class="text-center text-muted py-4 small">Sin productos
                                 registrados</div>
-
                             <div class="table-responsive">
-                                <table class="table table-sm table-borderless mb-0 small">
+                                <table class="table table-sm table-borderless mb-0 align-middle">
                                     <thead class="table-light">
                                         <tr>
-                                            <th>Código</th>
-                                            <th>Nombre</th>
-                                            <th class="text-end">Cantidad</th>
-                                            <th class="text-end">Vencimiento</th>
+                                            <th class="text-center">Código</th>
+                                            <th class="text-center">Nombre</th>
+                                            <th class="text-center">Cant.</th>
+                                            <th class="text-center">Venc.</th>
                                             <th class="text-center">Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let p of Impulsos">
-                                            <td><strong class="text-primary">{{p.codigo}}</strong></td>
-                                            <td>{{p.nombre}}</td>
-                                            <td class="text-end">{{p.cantidadTotal}}</td>
-                                            <td class="text-end">{{p.fechaVencimiento | date:'dd/MM/yyyy'}}</td>
+                                            <td class="text-center"><strong class="text-primary">{{p.codigo}}</strong>
+                                            </td>
+                                            <td class="text-center">{{p.nombre}}</td>
+                                            <td class="text-center">{{p.cantidadTotal}}</td>
+                                            <td class="text-center">{{p.fechaVencimiento | date:'dd/MM/yy'}}</td>
                                             <td class="text-center">
                                                 <button class="btn btn-sm btn-outline-warning rounded-pill px-2 me-1"
-                                                    (click)="editarProducto(p)">
-                                                    <i class="bi bi-pencil"></i>
-                                                </button>
+                                                    (click)="editarProducto(p)"><i class="bi bi-pencil"></i></button>
                                                 <button class="btn btn-sm btn-outline-danger rounded-pill px-2"
-                                                    (click)="eliminarProducto(p)">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
+                                                    (click)="eliminarProducto(p)"><i class="bi bi-trash"></i></button>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -1511,213 +1512,239 @@
                         </div>
                     </ng-container>
 
-
-                    <!-- 👇 ASIGNAR PRODUCTOS - SOLO ENCARGADOS -->
-<ng-container *ngIf="esEncargado()">
-  <h6 class="fw-bold pb-2 mt-4 mb-3 border-bottom" style="color: #1e3a5f; border-color: #3d5a80;">
-    📤 Asignar Productos
-  </h6>
-
-  <div class="bg-white rounded-3 shadow-sm p-3 mb-3 border-top border-3" style="border-color: #3d5a80;">
-    <label class="form-label small fw-semibold text-secondary mb-2">Selecciona producto</label>
-    <select class="form-select rounded-3 border-0 py-2" style="background: #f8f9fa;" [(ngModel)]="productoSeleccionado" (change)="calcularDisponible()">
-      <option value="" disabled selected class="text-muted">-- Elige un producto --</option>
-      <option *ngFor="let p of Impulsos" [ngValue]="p">{{p.codigo}} - {{p.nombre}}</option>
-    </select>
-  </div>
-
-  <div *ngIf="productoSeleccionado" class="bg-white rounded-3 shadow-sm p-3 border-top border-3" style="border-color: #3d5a80;">
-    <div class="d-flex align-items-center justify-content-between rounded-2 p-2 mb-3" style="background: #e8f3ff;">
-      <span class="small text-secondary">Disponible:</span>
-      <strong class="fs-6" style="color: #1e3a5f;">{{cantidadDisponible}} unidades</strong>
-    </div>
-
-    <div class="row g-3">
-      <div class="col-md-6">
-        <label class="form-label small fw-semibold text-secondary mb-1">Usuario</label>
-        <select class="form-select rounded-3 border-0 py-2" style="background: #f8f9fa;" [(ngModel)]="usuarioDestino">
-          <option value="" class="text-muted">-- Elige usuario --</option>
-          <option *ngFor="let u of ListaUsuarios" [ngValue]="u.nombre">{{u.nombre}}</option>
-        </select>
-      </div>
-      <div class="col-md-6">
-        <label class="form-label small fw-semibold text-secondary mb-1">Cantidad a asignar</label>
-        <input type="number" class="form-control rounded-3 border-0 py-2" style="background: #f8f9fa;" [(ngModel)]="cantidadAsignar" min="1" [max]="cantidadDisponible">
-      </div>
-    </div>
-
-    <button class="btn rounded-pill mt-4 px-4 text-white" style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);" (click)="asignarProducto()">
-      <i class="bi bi-check-circle me-1"></i> Asignar
-    </button>
-  </div>
-</ng-container>
-
-                    <!-- 👇 SECCIÓN DE ASIGNACIONES - VISIBLE PARA TODOS -->
-                    <div class="mt-4">
-                        <h6 class="fw-bold text-secondary border-bottom pb-1 mb-2 fs-6">📋 Mis Productos Asignados</h6>
-
-                        <div class="bg-white rounded-2 shadow-sm p-2">
-
-                            <!-- 🔍 FILTROS EN UNA SOLA FILA -->
-                            <div class="row g-2 mb-2">
-                                <div [class.col-md-6]="esEncargado()" [class.col-12]="!esEncargado()">
-                                    <label class="form-label small text-secondary mb-1">Buscar medicamento:</label>
-                                    <input type="text" class="form-control form-control-sm rounded-2"
-                                        placeholder="Escribe código o nombre..." [(ngModel)]="filtroMedicamento"
-                                        (input)="aplicarFiltros()">
-                                </div>
-
-                                <div *ngIf="esEncargado()" class="col-md-6">
-                                    <label class="form-label small text-secondary mb-1">Ver asignaciones de:</label>
-                                    <select class="form-select form-select-sm rounded-2" [(ngModel)]="filtroUsuario"
-                                        (change)="aplicarFiltros()">
-                                        <option value="" disabled selected class="text-muted">-- Todos los usuarios --
+                    <ng-container *ngIf="esEncargado()">
+                        <h6 class="fw-bold pb-2 mt-5 mb-4 border-bottom fs-6 fs-md-5"
+                            style="color: #1e3a5f; border-color: #3d5a80;">📤 Asignar Productos</h6>
+                        <div class="bg-white rounded-3 shadow-sm p-3 p-md-4 mb-4 border-top border-3"
+                            style="border-color: #3d5a80;">
+                            <label class="form-label small fw-semibold text-secondary mb-2">Selecciona producto</label>
+                            <select class="form-select rounded-3 border-0 py-2" style="background: #f8f9fa;"
+                                [(ngModel)]="productoSeleccionado" (change)="calcularDisponible()">
+                                <option value="" disabled selected class="text-muted">-- Elige --</option>
+                                <option *ngFor="let p of Impulsos" [ngValue]="p">{{p.codigo}} - {{p.nombre}}</option>
+                            </select>
+                        </div>
+                        <div *ngIf="productoSeleccionado"
+                            class="bg-white rounded-3 shadow-sm p-3 p-md-4 border-top border-3"
+                            style="border-color: #3d5a80;">
+                            <div class="d-flex align-items-center justify-content-between rounded-2 p-3 mb-4"
+                                style="background: #e8f3ff;">
+                                <span class="small text-secondary">Disponible:</span>
+                                <strong class="fs-6" style="color: #1e3a5f;">{{cantidadDisponible}} uds</strong>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label small fw-semibold text-secondary mb-2">Usuario</label>
+                                    <select class="form-select rounded-3 border-0 py-2" style="background: #f8f9fa;"
+                                        [(ngModel)]="usuarioDestino">
+                                        <option value="" class="text-muted">-- Elige --</option>
+                                        <option *ngFor="let u of ListaUsuarios" [ngValue]="u.nombre">{{u.nombre}}
                                         </option>
+                                    </select>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label small fw-semibold text-secondary mb-2">Cantidad</label>
+                                    <input type="number" class="form-control rounded-3 border-0 py-2"
+                                        style="background: #f8f9fa;" [(ngModel)]="cantidadAsignar" min="1"
+                                        [max]="cantidadDisponible">
+                                </div>
+                            </div>
+                            <button class="btn btn-md rounded-pill mt-4 w-100 text-white"
+                                style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);"
+                                (click)="asignarProducto()">
+                                <i class="bi bi-check-circle me-1"></i> Asignar
+                            </button>
+                        </div>
+                    </ng-container>
+
+                    <div class="mt-5">
+                        <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3 fs-6 fs-md-5">📋 Mis Productos
+                            Asignados</h6>
+                        <div class="bg-white rounded-2 shadow-sm p-3 p-md-4">
+                            <div class="row g-3 mb-4">
+                                <div [class.col-md-6]="esEncargado()" [class.col-12]="!esEncargado()">
+                                    <label class="form-label small text-secondary mb-2">Buscar:</label>
+                                    <input type="text" class="form-control rounded-2" placeholder="Código/nombre..."
+                                        [(ngModel)]="filtroMedicamento" (input)="aplicarFiltros()">
+                                </div>
+                                <div *ngIf="esEncargado()" class="col-md-6">
+                                    <label class="form-label small text-secondary mb-2">Ver de:</label>
+                                    <select class="form-select rounded-2" [(ngModel)]="filtroUsuario"
+                                        (change)="aplicarFiltros()">
+                                        <option value="" disabled selected class="text-muted">-- Todos --</option>
                                         <option *ngFor="let u of ListaUsuarios" [ngValue]="u.nombre">{{u.nombre}}
                                         </option>
                                     </select>
                                 </div>
                             </div>
-
-                            <!-- Mensaje vacío -->
                             <div *ngIf="asignacionesFiltradas.length === 0"
-                                class="text-center text-secondary py-2 small">
-                                Sin productos asignados que coincidan
-                            </div>
+                                class="text-center text-secondary py-5 small">Sin coincidencias</div>
 
-                            <!-- Tarjetas con toda la información -->
-                            <div class="row g-3" *ngIf="asignacionesFiltradas.length > 0">
-                                <div class="col-lg-4 col-md-6" *ngFor="let a of asignacionesFiltradas">
-                                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
-                                        <!-- Encabezado -->
-                                        <div class="p-3" style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);">
-                                            <h5 class="mb-0 text-white fw-bold text-truncate">{{a.nombre}}</h5>
-                                            <span class="badge bg-white text-primary mt-1 small">Código:
+                            <!-- ✅ TARJETAS: 3 POR FILA EN ESCRITORIO, TAMAÑO FIJO INALTERABLE -->
+                            <div class="row g-3 g-md-4" *ngIf="asignacionesFiltradas.length > 0">
+                                <div class="col-12 col-md-6 col-xl-4 d-flex" *ngFor="let a of asignacionesFiltradas">
+                                    <div class="card w-100 border-0 shadow-sm rounded-4 overflow-hidden"
+                                        style="min-height: 100%;">
+                                        <div class="p-3 p-md-4"
+                                            style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);">
+                                            <h6 class="mb-0 text-white fw-bold text-truncate">{{a.nombre}}</h6>
+                                            <span class="badge bg-white text-primary mt-2 small">Cód:
                                                 {{a.codigo}}</span>
                                         </div>
-
-                                        <div class="card-body p-3">
-                                            <!-- Fechas: VISIBLES PARA TODOS -->
+                                        <div class="card-body p-3 p-md-4 d-flex flex-column">
                                             <div class="mb-3 small">
-                                                <div class="d-flex justify-content-between mb-1">
+                                                <div class="d-flex justify-content-between mb-2">
                                                     <span class="text-muted">📅 Asignado:</span>
                                                     <span class="fw-medium">{{a.fechaAsignacion |
-                                                        date:'dd/MM/yyyy'}}</span>
+                                                        date:'dd/MM/yy'}}</span>
                                                 </div>
                                                 <div class="d-flex justify-content-between">
-                                                    <span class="text-muted">⏳ Vence:</span>
+                                                    <span class="text-muted">⚠️ Vence:</span>
                                                     <span class="fw-bold"
-                                                        [ngClass]="colorVencimiento(a.fechaVencimiento)">
-                                                        {{a.fechaVencimiento | date:'dd/MM/yyyy'}}
-                                                    </span>
+                                                        [ngClass]="colorVencimiento(a.fechaVencimiento)">{{a.fechaVencimiento
+                                                        | date:'dd/MM/yy'}}</span>
                                                 </div>
-
                                             </div>
-
-                                            <!-- Cantidades con color solo en Disponible -->
-                                            <div class="bg-light rounded-3 p-2 mb-3 small">
-                                                <div class="d-flex justify-content-between mb-1">
-                                                    <span>Total:</span>
-                                                    <span>{{a.cantidadAsignada}}</span>
-                                                </div>
-                                                <div class="d-flex justify-content-between mb-1">
-                                                    <span>Vendido:</span>
-                                                    <span>{{a.vendido || 0}}</span>
-                                                </div>
-                                                <div class="d-flex justify-content-between border-top pt-1 mt-1">
-                                                    <span class="fw-semibold">Disponible:</span>
-                                                    <span class="fw-bold fs-6"
+                                            <div class="bg-light rounded-3 p-3 mb-3 small">
+                                                <div class="d-flex justify-content-between mb-2"><span>📦
+                                                        Total:</span><span>{{a.cantidadAsignada}}</span></div>
+                                                <div class="d-flex justify-content-between mb-2"><span>✅
+                                                        Vendido:</span><span>{{a.vendido || 0}}</span></div>
+                                                <div class="d-flex justify-content-between border-top pt-2 mt-2">
+                                                    <span class="fw-semibold">📊 Disp:</span>
+                                                    <span class="fw-bold"
                                                         [class.text-danger]="(a.cantidadAsignada - (a.vendido || 0)) > 0"
-                                                        [class.text-success]="(a.cantidadAsignada - (a.vendido || 0)) <= 0">
-                                                        {{(a.cantidadAsignada - (a.vendido || 0))}}
-                                                    </span>
+                                                        [class.text-success]="(a.cantidadAsignada - (a.vendido || 0)) <= 0">{{(a.cantidadAsignada
+                                                        - (a.vendido || 0))}}</span>
                                                 </div>
                                             </div>
-
-                                            <!-- Asignado a: SOLO PARA ENCARGADOS -->
-                                            <div *ngIf="esEncargado()" class="mb-3 small text-muted">
-                                                Asignado a: <strong>{{a.asignadoA}}</strong>
-                                            </div>
-
-                                            <!-- Botones -->
-                                            <div class="d-flex gap-3 justify-content-center">
+                                            <div *ngIf="esEncargado()" class="mb-3 small text-muted">👤 Asignado a:
+                                                <strong>{{a.asignadoA}}</strong></div>
+                                            <div class="d-flex gap-2 justify-content-center mt-auto">
                                                 <button class="btn btn-sm rounded-pill px-3"
                                                     [class.btn-outline-danger]="(a.cantidadAsignada - (a.vendido || 0)) > 0"
                                                     [class.btn-outline-success]="(a.cantidadAsignada - (a.vendido || 0)) <= 0"
-                                                    (click)="cargarVentasDelProducto(a)" title="Ver y vender">
-                                                    <i class="bi bi-eye fs-6"></i>
-                                                </button>
-
+                                                    (click)="cargarVentasDelProducto(a)"><i
+                                                        class="bi bi-eye"></i></button>
                                                 <button *ngIf="esEncargado()"
-                                                    class="btn btn-sm btn-danger rounded-pill px-3 shadow-sm"
-                                                    (click)="eliminarAsignacion(a)" title="Eliminar asignación">
-                                                    <i class="bi bi-trash fs-6"></i>
-                                                </button>
+                                                    class="btn btn-sm btn-danger rounded-pill px-3"
+                                                    (click)="eliminarAsignacion(a)"><i class="bi bi-trash"></i></button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-
-
-
-
-
-
-
-
-
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
-                    <!-- 🧾 HISTORIAL DE VENTAS - SIEMPRE VISIBLE AL SELECCIONAR -->
+
+    <!-- ✅ MODAL FORMULARIO NUEVO PRODUCTO -->
+    <div *ngIf="abrirFormulario" class="modal d-block position-fixed top-0 start-0 w-100 h-100"
+        style="background: rgba(56, 63, 83, 0.55); z-index:1070; display: flex !important; align-items: flex-start; justify-content: center; padding: 0.5rem 0;">
+        <div class="modal-dialog modal-md modal-dialog-centered m-2" style="max-height: 92vh;">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden d-flex flex-column"
+                style="max-height: 90vh;">
+
+                <div class="modal-header text-white p-2 p-md-3 flex-shrink-0"
+                    style="background: linear-gradient(135deg, #1e3a5f, #3b82f6);">
+                    <h6 class="modal-title fw-semibold fs-6"><i class="bi bi-box-seam me-2"></i> Nuevo Producto</h6>
+                    <button type="button" class="btn-close btn-close-white flex-shrink-0"
+                        (click)="abrirFormulario = false"></button>
+                </div>
+
+                <div class="modal-body p-2 p-md-4 bg-light overflow-y-auto flex-grow-1">
+                    <div class="row g-2 g-md-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-medium text-secondary mb-1 x-small"><i
+                                    class="bi bi-upc-scan me-1"></i> Código</label>
+                            <input type="text" class="form-control rounded-3 shadow-sm small" [(ngModel)]="codigo"
+                                required>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-medium text-secondary mb-1 x-small"><i
+                                    class="bi bi-123 me-1"></i> Cantidad</label>
+                            <input type="number" class="form-control rounded-3 shadow-sm small" [(ngModel)]="cantidad"
+                                min="1" required>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-medium text-secondary mb-1 x-small"><i
+                                    class="bi bi-tag me-1"></i> Nombre</label>
+                            <input type="text" class="form-control rounded-3 shadow-sm small" [(ngModel)]="nombre"
+                                required>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-medium text-secondary mb-1 x-small"><i
+                                    class="bi bi-calendar-x me-1"></i> Vencimiento</label>
+                            <input type="date" class="form-control rounded-3 shadow-sm small" [(ngModel)]="fechaVenc"
+                                required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0 bg-white p-2 p-md-3 flex-shrink-0">
+                    <button type="button" class="btn btn-light rounded-pill px-3 shadow-sm small"
+                        (click)="abrirFormulario = false">
+                        <i class="bi bi-x-lg me-1"></i> Cancelar
+                    </button>
+                    <button type="button" class="btn btn-primary rounded-pill px-3 shadow-sm small"
+                        (click)="guardarProducto()">
+                        <i class="bi bi-check-lg me-1"></i> Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <div *ngIf="modalHistorialAbierto" class="modal d-block position-fixed top-0 start-0 w-100 h-100"
-     style="background: rgba(0,0,0,0.5); z-index:1070; display: flex !important; align-items: center; justify-content: center;">
-  <div class="modal-dialog modal-lg modal-dialog-centered m-3">
-    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-      
-      <div class="modal-header border-0 text-white p-3 d-flex align-items-center justify-content-between"
+     style="background: rgba(0,0,0,0.5); z-index:1080; display: flex !important; align-items: flex-start; justify-content: center; padding: 0.5rem 0;">
+  <div class="modal-dialog modal-xl modal-dialog-centered m-2 m-md-3" style="max-width: 92vw; width: 1200px; max-height: 92vh;">
+    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden d-flex flex-column"
+         style="max-height: 90vh;">
+
+      <div class="modal-header border-0 text-white p-3 p-md-4 flex-shrink-0 d-flex align-items-center justify-content-between"
            style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);">
-        <h5 class="modal-title fw-semibold m-0">
-          <i class="bi bi-receipt-cutoff me-2"></i>
-          Historial: {{prodSeleccionado.codigo}} - {{prodSeleccionado.nombre}}
-        </h5>
-        <button type="button" class="btn-close btn-close-white ms-2"
+        <h6 class="modal-title fw-semibold m-0 fs-6 fs-md-5">
+          📋 Historial: {{prodSeleccionado?.codigo}} - {{prodSeleccionado?.nombre}}
+        </h6>
+        <button type="button" class="btn-close btn-close-white flex-shrink-0"
                 (click)="cerrarModalHistorial()"></button>
       </div>
 
-      <div class="modal-body p-4 bg-white">
-        <div *ngIf="ventasDelProducto.length === 0"
-             class="text-center text-secondary py-4 small">
-          Aún no hay ventas registradas para este producto
+      <div class="modal-body p-3 p-md-5 bg-white overflow-y-auto flex-grow-1">
+        <div *ngIf="ventasDelProducto.length === 0" class="text-center text-secondary py-5 small">
+          ℹ️ Aún no hay ventas registradas para este producto
         </div>
 
         <div class="table-responsive" *ngIf="ventasDelProducto.length > 0">
-          <table class="table table-sm table-borderless mb-0 small align-middle">
+          <table class="table table-sm table-borderless mb-0 align-middle">
             <thead class="table-light">
               <tr>
-                <th class="text-center">N° Factura</th>
-                <th class="text-center">Cantidad</th>
-                <th class="text-center">Fecha</th>
-                <th class="text-center">Información</th>
-                <th *ngIf="esEncargado()" class="text-center">Acción</th>
+                <th class="text-center">🧾 N° Factura</th>
+                <th class="text-center">📦 Cantidad</th>
+                <th class="text-center">⏰ Fecha</th>
+                <th class="text-center">ℹ️ Información</th>
+                <th *ngIf="esEncargado()" class="text-center">⚙️ Acción</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let v of ventasDelProducto"
-                  [class.bg-light-blue]="v.esAyuda" [class.text-primary]="v.esAyuda">
+              <tr *ngFor="let v of ventasDelProducto" [class.bg-light-blue]="v.esAyuda"
+                  [class.text-primary]="v.esAyuda">
                 <td class="text-center">{{v.noFactura}}</td>
                 <td class="text-center">{{v.cantidadVendida}}</td>
-                <td class="text-center">{{v.fecha | date:'dd/MM/yyyy HH:mm'}}</td>
+                <td class="text-center">{{v.fecha | date:'dd/MM HH:mm'}}</td>
                 <td class="text-center small">
-                  {{ v.esAyuda ? 'Vendido por: ' + v.vendidoPor : '' }}
+                  {{ v.esAyuda ? '👤 Vendido por: ' + v.vendidoPor : '' }}
                 </td>
                 <td *ngIf="esEncargado()" class="text-center">
                   <button class="btn btn-sm btn-outline-danger rounded-pill px-2"
                           (click)="eliminarVenta(v)">
-                    <i class="bi bi-trash"></i>
+                    🗑️
                   </button>
                 </td>
               </tr>
@@ -1727,10 +1754,8 @@
 
         <div class="mt-4 d-flex justify-content-end">
           <button class="btn btn-sm rounded-pill text-white"
-                  style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);"
-                  (click)="abrirModalVenta()"
-                  [disabled]="false">
-            <i class="bi bi-plus-lg me-1"></i> Registrar Nueva Venta
+                  style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);" (click)="abrirModalVenta()">
+            ➕ Registrar Nueva Venta
           </button>
         </div>
       </div>
@@ -1739,190 +1764,139 @@
 </div>
 
 
+<!-- ✅ MODAL REGISTRAR NUEVA VENTA - UN POCO MÁS AMPLIO Y CÓMODO -->
+<div *ngIf="modalVentaAbierto" class="modal d-block position-fixed top-0 start-0 w-100 h-100"
+     style="background: rgba(0,0,0,0.5); z-index:1080; display: flex !important; align-items: flex-start; justify-content: center; padding: 0.5rem 0;">
+  <div class="modal-dialog modal-xl modal-dialog-centered m-2 m-md-3" style="max-width: 85vw; width: 1000px; max-height: 92vh;">
+    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden d-flex flex-column"
+         style="max-height: 90vh;">
 
-                    <!-- MODAL PARA REGISTRAR VENTA -->
-                    <!-- MODAL PARA REGISTRAR VENTA - DISEÑO MEJORADO -->
-                    <div *ngIf="modalVentaAbierto" class="modal d-block position-fixed top-0 start-0 w-100 h-100"
-                        style="background: rgba(0,0,0,0.5); z-index:1080;">
-                        <div class="modal-dialog modal-md modal-dialog-centered">
-                            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+      <div class="modal-header border-0 text-white p-3 p-md-4 flex-shrink-0 d-flex align-items-center justify-content-between"
+           style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);">
+        <h5 class="modal-title fw-semibold fs-6 fs-md-5">
+          {{ mostrarAyuda ? '🤝 Ayudar a otro usuario' : '🛒 Registrar Venta' }}
+        </h5>
+        <button type="button" class="btn-close btn-close-white flex-shrink-0"
+                (click)="cerrarModalVenta()"></button>
+      </div>
 
-                                <!-- ENCABEZADO CON COLOR -->
-                                <div class="modal-header border-0 text-white p-3"
-                                    style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);">
-                                    <h5 class="modal-title fw-semibold">
-                                        <i class="bi bi-receipt-cutoff me-2"></i>
-                                        {{ mostrarAyuda ? '🤝 Ayudar a otro usuario' : '🛒 Registrar Venta' }}
-                                    </h5>
-                                    <button type="button" class="btn-close btn-close-white"
-                                        (click)="cerrarModalVenta()"></button>
-                                </div>
+      <div class="modal-body p-3 p-md-5 bg-light overflow-y-auto flex-grow-1">
 
-                                <div class="modal-body p-4 bg-light">
-
-                                    <!-- TARJETA DE PRODUCTO DESTACADA -->
-                                    <div class="card border-0 shadow-sm rounded-3 mb-4 p-3">
-                                        <div class="d-flex align-items-center">
-                                            <div class="flex-shrink-0 me-3">
-                                                <div class="rounded-circle bg-primary bg-opacity-10 p-3">
-                                                    <i class="bi bi-capsule text-primary fs-4"></i>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <h6 class="mb-1 fw-bold text-dark">{{prodSeleccionado.nombre}}</h6>
-                                                <p class="mb-0 small text-muted">Código: {{prodSeleccionado.codigo}}</p>
-                                                <span *ngIf="!mostrarAyuda" class="d-inline-block mt-1 small">
-                                                    Disponible: <strong
-                                                        class="text-success fs-6">{{prodSeleccionado.cantidadAsignada -
-                                                        (prodSeleccionado.vendido || 0)}} uds</strong>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- ✅ BOTÓN DE AYUDA SI NO TIENES SALDO -->
-                                    <div *ngIf="(prodSeleccionado.cantidadAsignada - (prodSeleccionado.vendido || 0)) <= 0"
-                                        class="mb-4">
-                                        <button type="button"
-                                            class="btn btn-outline-primary rounded-3 w-100 d-flex align-items-center justify-content-center gap-2 py-2"
-                                            (click)="cambiarModoAyuda()">
-                                            <i class="bi bi-hand-thumbs-up"></i>
-                                            No tienes saldo → Ayudar a vender
-                                        </button>
-                                    </div>
-
-                                    <!-- ✅ SELECCIÓN DE USUARIO PARA AYUDA -->
-                                    <!-- ✅ SELECCIÓN DE USUARIO PARA AYUDA -->
-                                    <div *ngIf="mostrarAyuda"
-                                        class="mb-4 p-3 rounded-3 bg-white border border-primary border-opacity-25 shadow-sm">
-                                        <label class="form-label fw-medium mb-2 small">
-                                            <i class="bi bi-person-arrow-down me-1"></i>Usuario a quien se le resta:
-                                        </label>
-                                        <select class="form-select rounded-3 shadow-sm"
-                                            [(ngModel)]="asignacionAyudaSeleccionada" required>
-                                            <!-- Opción que funciona como placeholder -->
-                                            <option [ngValue]="null" disabled>-- Elige usuario con existencia --
-                                            </option>
-                                            <option *ngFor="let a of listaOtrasAsignaciones" [ngValue]="a">
-                                                {{a.asignadoA}} | Disponible: {{a.disponible}} uds
-                                            </option>
-                                        </select>
-                                    </div>
-
-
-                                    <!-- ✅ CAMPOS DEL FORMULARIO -->
-                                    <div class="row g-3 mb-4">
-                                        <div class="col-md-6">
-                                            <label class="form-label fw-medium small">
-                                                <i class="bi bi-hash me-1"></i>N° Factura
-                                            </label>
-                                            <input type="text" class="form-control rounded-3 shadow-sm"
-                                                [(ngModel)]="noFactura" required placeholder="Ej: FCG421-014254">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label fw-medium small">
-                                                <i class="bi bi-box-seam me-1"></i>Cantidad Vendida
-                                            </label>
-                                            <input type="number" class="form-control rounded-3 shadow-sm"
-                                                [(ngModel)]="cantidadVender" min="1" required
-                                                [max]="mostrarAyuda ? (asignacionAyudaSeleccionada?.disponible || 0) 
-                                                               : (prodSeleccionado.cantidadAsignada - (prodSeleccionado.vendido || 0))" placeholder="1">
-                                        </div>
-                                    </div>
-
-                                    <!-- ✅ BOTONES DE ACCIÓN -->
-                                    <div class="d-flex gap-3">
-                                        <button class="btn btn-light rounded-3 w-50 shadow-sm"
-                                            (click)="cerrarModalVenta()">
-                                            <i class="bi bi-x-circle me-2"></i>Cancelar
-                                        </button>
-                                        <button class="btn btn-success rounded-3 w-50 shadow-sm"
-                                            (click)="guardarVenta()">
-                                            <i class="bi bi-check-circle me-2"></i>Guardar Venta
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <style>
-                        .bg-light-blue {
-                            background-color: #e6f2ff !important;
-                        }
-                    </style>
-
-
-
-
-
-                    <!-- 👇 AQUÍ MÁS ADELANTE IRA EL RESTO DE SECCIONES QUE SÍ VERÁN TODOS LOS USUARIOS -->
-                    <!-- Por ahora está vacío, lo iremos llenando paso a paso -->
-
-                </div>
+        <div class="card border-0 shadow-sm rounded-3 mb-3 mb-md-4 p-3 p-md-4">
+          <div class="d-flex align-items-center">
+            <div class="flex-shrink-0 me-2 me-md-3">
+              <div class="rounded-circle bg-primary bg-opacity-10 p-3 p-md-4">
+                💊
+              </div>
             </div>
-        </div>
-    </div>
-
-    <!-- MODAL FORMULARIO -->
-    <div *ngIf="abrirFormulario" class="modal d-block position-fixed top-0 start-0 w-100 h-100"
-        style="background: rgba(56, 63, 83, 0.55); z-index:1070;">
-        <div class="modal-dialog modal-md modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-
-                <div class="modal-header text-white" style="background: linear-gradient(135deg, #1e3a5f, #3b82f6);">
-                    <h5 class="modal-title fw-semibold">
-                        <i class="bi bi-box-seam me-2"></i> Nuevo Producto
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" (click)="abrirFormulario = false"></button>
-                </div>
-
-                <div class="modal-body p-4 bg-light">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-medium text-secondary mb-1">
-                                <i class="bi bi-upc-scan me-1"></i> Código
-                            </label>
-                            <input type="text" class="form-control rounded-3 shadow-sm" [(ngModel)]="codigo" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-medium text-secondary mb-1">
-                                <i class="bi bi-123 me-1"></i> Cantidad Total
-                            </label>
-                            <input type="number" class="form-control rounded-3 shadow-sm" [(ngModel)]="cantidad" min="1"
-                                required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-medium text-secondary mb-1">
-                                <i class="bi bi-tag me-1"></i> Nombre
-                            </label>
-                            <input type="text" class="form-control rounded-3 shadow-sm" [(ngModel)]="nombre" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-medium text-secondary mb-1">
-                                <i class="bi bi-calendar-x me-1"></i> Fecha Vencimiento
-                            </label>
-                            <input type="date" class="form-control rounded-3 shadow-sm" [(ngModel)]="fechaVenc"
-                                required>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-footer border-0 bg-white">
-                    <button type="button" class="btn btn-light rounded-pill px-4 shadow-sm"
-                        (click)="abrirFormulario = false">
-                        <i class="bi bi-x-lg me-1"></i> Cancelar
-                    </button>
-                    <button type="button" class="btn btn-primary rounded-pill px-4 shadow-sm"
-                        (click)="guardarProducto()">
-                        <i class="bi bi-check-lg me-1"></i> Guardar
-                    </button>
-                </div>
-
+            <div>
+              <h6 class="mb-1 fw-bold text-dark fs-6">{{prodSeleccionado?.nombre}}</h6>
+              <p class="mb-0 small text-muted">🔢 Código: {{prodSeleccionado?.codigo}}</p>
+              <span *ngIf="!mostrarAyuda" class="d-inline-block mt-1 small">
+                📊 Disponible: <strong class="text-success">{{prodSeleccionado?.cantidadAsignada - (prodSeleccionado?.vendido || 0)}} uds</strong>
+              </span>
             </div>
+          </div>
         </div>
+
+        <div *ngIf="(prodSeleccionado?.cantidadAsignada - (prodSeleccionado?.vendido || 0)) <= 0"
+             class="mb-3 mb-md-4">
+          <button type="button"
+                  class="btn btn-outline-primary rounded-3 w-100 d-flex align-items-center justify-content-center gap-2 py-2 small"
+                  (click)="cambiarModoAyuda()">
+            ✋ No tienes saldo → Ayudar a vender
+          </button>
+        </div>
+
+        <div *ngIf="mostrarAyuda"
+             class="mb-3 mb-md-4 p-3 p-md-4 rounded-3 bg-white border border-primary border-opacity-25 shadow-sm">
+          <label class="form-label fw-medium mb-2 small">
+            👤 Usuario a quien se le resta:
+          </label>
+          <select class="form-select rounded-3 shadow-sm small" [(ngModel)]="asignacionAyudaSeleccionada" required>
+            <option [ngValue]="null" disabled>-- Elige usuario con existencia --</option>
+            <option *ngFor="let a of listaOtrasAsignaciones" [ngValue]="a">
+              {{a.asignadoA}} | 📦 Disponible: {{a.disponible}} uds
+            </option>
+          </select>
+        </div>
+
+        <div class="row g-3 g-md-4 mb-3 mb-md-4">
+          <div class="col-12 col-md-6">
+            <label class="form-label fw-medium small">
+              🧾 N° Factura
+            </label>
+            <input type="text" class="form-control rounded-3 shadow-sm small" [(ngModel)]="noFactura" required placeholder="Ej: FCG421-014254">
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label fw-medium small">
+              📦 Cantidad Vendida
+            </label>
+            <input type="number" class="form-control rounded-3 shadow-sm small"
+                   [(ngModel)]="cantidadVender" min="1" required
+                   [max]="mostrarAyuda ? (asignacionAyudaSeleccionada?.disponible || 0) : (prodSeleccionado?.cantidadAsignada - (prodSeleccionado?.vendido || 0))"
+                   placeholder="1">
+          </div>
+        </div>
+
+        <div class="d-flex gap-3 gap-md-4">
+          <button class="btn btn-light rounded-3 flex-grow-1 shadow-sm small py-2" (click)="cerrarModalVenta()">
+            ❌ Cancelar
+          </button>
+          <button class="btn btn-success rounded-3 flex-grow-1 shadow-sm small py-2" (click)="guardarVenta()">
+            ✅ Guardar Venta
+          </button>
+        </div>
+
+      </div>
     </div>
+  </div>
+</div>
+
+
+
+
+    <style>
+        .bg-light-blue {
+            background-color: #e6f2ff !important;
+        }
+
+        .form-control-xs,
+        .form-select-xs {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        .btn-xs {
+            padding: 0.25rem 0.4rem;
+            font-size: 0.75rem;
+        }
+
+        .table-xs {
+            font-size: 0.75rem;
+        }
+
+        .x-small {
+            font-size: 0.78rem;
+        }
+
+        .modal-body.overflow-y-auto {
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+
+        .modal-body.overflow-y-auto::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .modal-body.overflow-y-auto::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 3px;
+        }
+    </style>
+
+
+
 
 
 
