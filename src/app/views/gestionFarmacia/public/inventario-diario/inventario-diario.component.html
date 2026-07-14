@@ -1453,7 +1453,6 @@
 
     </div>
 
-
     <!-- MODAL PRINCIPAL - SOLO PARTE DE PRODUCTOS GLOBALES -->
     <div *ngIf="MostrarModalImpulsos" class="modal d-block position-fixed top-0 start-0 w-100 h-100"
         style="background: rgba(42, 42, 42, 0.362); z-index:1060;">
@@ -1514,43 +1513,45 @@
 
 
                     <!-- 👇 ASIGNAR PRODUCTOS - SOLO ENCARGADOS -->
-                    <ng-container *ngIf="esEncargado()">
-                        <h6 class="fw-bold text-success border-bottom pb-2 mt-4 mb-3">📤 Asignar Productos</h6>
+<ng-container *ngIf="esEncargado()">
+  <h6 class="fw-bold pb-2 mt-4 mb-3 border-bottom" style="color: #1e3a5f; border-color: #3d5a80;">
+    📤 Asignar Productos
+  </h6>
 
-                        <div class="bg-white rounded-3 shadow-sm p-3 mb-3">
-                            <label class="form-label fw-medium">Selecciona producto</label>
-                            <select class="form-select rounded-3" [(ngModel)]="productoSeleccionado"
-                                (change)="calcularDisponible()">
-                                <option value="" disabled selected class="text-muted">-- Elige un producto --</option>
-                                <option *ngFor="let p of Impulsos" [ngValue]="p">{{p.codigo}} - {{p.nombre}}</option>
-                            </select>
-                        </div>
+  <div class="bg-white rounded-3 shadow-sm p-3 mb-3 border-top border-3" style="border-color: #3d5a80;">
+    <label class="form-label small fw-semibold text-secondary mb-2">Selecciona producto</label>
+    <select class="form-select rounded-3 border-0 py-2" style="background: #f8f9fa;" [(ngModel)]="productoSeleccionado" (change)="calcularDisponible()">
+      <option value="" disabled selected class="text-muted">-- Elige un producto --</option>
+      <option *ngFor="let p of Impulsos" [ngValue]="p">{{p.codigo}} - {{p.nombre}}</option>
+    </select>
+  </div>
 
+  <div *ngIf="productoSeleccionado" class="bg-white rounded-3 shadow-sm p-3 border-top border-3" style="border-color: #3d5a80;">
+    <div class="d-flex align-items-center justify-content-between rounded-2 p-2 mb-3" style="background: #e8f3ff;">
+      <span class="small text-secondary">Disponible:</span>
+      <strong class="fs-6" style="color: #1e3a5f;">{{cantidadDisponible}} unidades</strong>
+    </div>
 
-                        <div *ngIf="productoSeleccionado" class="bg-white rounded-3 shadow-sm p-3">
-                            <p class="text-muted mb-3">Disponible: <strong>{{cantidadDisponible}}</strong> unidades</p>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label small fw-semibold text-secondary mb-1">Usuario</label>
+        <select class="form-select rounded-3 border-0 py-2" style="background: #f8f9fa;" [(ngModel)]="usuarioDestino">
+          <option value="" class="text-muted">-- Elige usuario --</option>
+          <option *ngFor="let u of ListaUsuarios" [ngValue]="u.nombre">{{u.nombre}}</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label small fw-semibold text-secondary mb-1">Cantidad a asignar</label>
+        <input type="number" class="form-control rounded-3 border-0 py-2" style="background: #f8f9fa;" [(ngModel)]="cantidadAsignar" min="1" [max]="cantidadDisponible">
+      </div>
+    </div>
 
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label fw-medium">Usuario</label>
-                                    <select class="form-select rounded-3" [(ngModel)]="usuarioDestino">
-                                        <option value="">-- Elige usuario --</option>
-                                        <option *ngFor="let u of ListaUsuarios" [ngValue]="u.nombre">{{u.nombre}}
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-medium">Cantidad a asignar</label>
-                                    <input type="number" class="form-control rounded-3" [(ngModel)]="cantidadAsignar"
-                                        min="1" [max]="cantidadDisponible">
-                                </div>
-                            </div>
+    <button class="btn rounded-pill mt-4 px-4 text-white" style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);" (click)="asignarProducto()">
+      <i class="bi bi-check-circle me-1"></i> Asignar
+    </button>
+  </div>
+</ng-container>
 
-                            <button class="btn btn-success rounded-pill mt-4" (click)="asignarProducto()">
-                                <i class="bi bi-check-circle me-1"></i> Asignar
-                            </button>
-                        </div>
-                    </ng-container>
                     <!-- 👇 SECCIÓN DE ASIGNACIONES - VISIBLE PARA TODOS -->
                     <div class="mt-4">
                         <h6 class="fw-bold text-secondary border-bottom pb-1 mb-2 fs-6">📋 Mis Productos Asignados</h6>
@@ -1672,56 +1673,71 @@
 
 
                     <!-- 🧾 HISTORIAL DE VENTAS - SIEMPRE VISIBLE AL SELECCIONAR -->
-                    <div class="mt-4" *ngIf="ventasDelProducto.length > 0 || prodSeleccionado.id">
-                        <h6 class="fw-bold text-secondary border-bottom pb-1 mb-2 fs-6">
-                            🧾 Ventas: {{prodSeleccionado.codigo}} - {{prodSeleccionado.nombre}}
-                        </h6>
-                        <div class="bg-white rounded-2 shadow-sm p-2">
-                            <div *ngIf="ventasDelProducto.length === 0" class="text-center text-secondary py-2 small">
-                                Aún no hay ventas registradas para este producto
-                            </div>
-                            <div class="table-responsive" *ngIf="ventasDelProducto.length > 0">
-                                <table class="table table-sm table-borderless mb-0 small">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>N° Factura</th>
-                                            <th class="text-end">Cantidad</th>
-                                            <th class="text-end">Fecha</th>
-                                            <th>Información</th>
-                                            <th *ngIf="esEncargado()" class="text-center">Acción</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr *ngFor="let v of ventasDelProducto" [class.bg-light-blue]="v.esAyuda"
-                                            [class.text-primary]="v.esAyuda">
-                                            <td>{{v.noFactura}}</td>
-                                            <td class="text-end">{{v.cantidadVendida}}</td>
-                                            <td class="text-end">{{v.fecha | date:'dd/MM/yyyy HH:mm'}}</td>
-                                            <td class="small">
-                                                {{ v.esAyuda ? 'Vendido por: ' + v.vendidoPor : '' }}
-                                            </td>
-                                            <!-- ✅ SOLO EL ENCARGADO VE EL BOTÓN -->
-                                            <td *ngIf="esEncargado()" class="text-center">
-                                                <button class="btn btn-sm btn-outline-danger rounded-pill px-2"
-                                                    (click)="eliminarVenta(v)">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+<div *ngIf="modalHistorialAbierto" class="modal d-block position-fixed top-0 start-0 w-100 h-100"
+     style="background: rgba(0,0,0,0.5); z-index:1070; display: flex !important; align-items: center; justify-content: center;">
+  <div class="modal-dialog modal-lg modal-dialog-centered m-3">
+    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+      
+      <div class="modal-header border-0 text-white p-3 d-flex align-items-center justify-content-between"
+           style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);">
+        <h5 class="modal-title fw-semibold m-0">
+          <i class="bi bi-receipt-cutoff me-2"></i>
+          Historial: {{prodSeleccionado.codigo}} - {{prodSeleccionado.nombre}}
+        </h5>
+        <button type="button" class="btn-close btn-close-white ms-2"
+                (click)="cerrarModalHistorial()"></button>
+      </div>
 
+      <div class="modal-body p-4 bg-white">
+        <div *ngIf="ventasDelProducto.length === 0"
+             class="text-center text-secondary py-4 small">
+          Aún no hay ventas registradas para este producto
+        </div>
 
-                            <!-- ✅ BOTÓN SIEMPRE ACTIVO -->
-                            <div class="mt-3 text-end">
-                                <button class="btn btn-sm btn-success rounded-pill" (click)="abrirModalVenta()"
-                                    [disabled]="false">
-                                    <i class="bi bi-plus-lg me-1"></i> Registrar Nueva Venta
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+        <div class="table-responsive" *ngIf="ventasDelProducto.length > 0">
+          <table class="table table-sm table-borderless mb-0 small align-middle">
+            <thead class="table-light">
+              <tr>
+                <th class="text-center">N° Factura</th>
+                <th class="text-center">Cantidad</th>
+                <th class="text-center">Fecha</th>
+                <th class="text-center">Información</th>
+                <th *ngIf="esEncargado()" class="text-center">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let v of ventasDelProducto"
+                  [class.bg-light-blue]="v.esAyuda" [class.text-primary]="v.esAyuda">
+                <td class="text-center">{{v.noFactura}}</td>
+                <td class="text-center">{{v.cantidadVendida}}</td>
+                <td class="text-center">{{v.fecha | date:'dd/MM/yyyy HH:mm'}}</td>
+                <td class="text-center small">
+                  {{ v.esAyuda ? 'Vendido por: ' + v.vendidoPor : '' }}
+                </td>
+                <td *ngIf="esEncargado()" class="text-center">
+                  <button class="btn btn-sm btn-outline-danger rounded-pill px-2"
+                          (click)="eliminarVenta(v)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-end">
+          <button class="btn btn-sm rounded-pill text-white"
+                  style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);"
+                  (click)="abrirModalVenta()"
+                  [disabled]="false">
+            <i class="bi bi-plus-lg me-1"></i> Registrar Nueva Venta
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
                     <!-- MODAL PARA REGISTRAR VENTA -->
@@ -1848,8 +1864,6 @@
             </div>
         </div>
     </div>
-
-
 
     <!-- MODAL FORMULARIO -->
     <div *ngIf="abrirFormulario" class="modal d-block position-fixed top-0 start-0 w-100 h-100"

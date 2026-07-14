@@ -5,6 +5,7 @@ import { FirebaseRealTimeDatabaseService } from '../../../../services/firebase-R
 import { Router } from '@angular/router';
 import { SesionService } from '../../../../services/sesion.service';
 import { environment } from '../../../../../environments/environment';
+import { firstValueFrom } from 'rxjs';
 import {
 
   alertExito,
@@ -81,6 +82,8 @@ export class InventarioDiarioComponent implements OnInit {
   // --- VARIABLES QUE YA USAS ---
   productoEditar: any = null;
   cantidadNuevasAsignaciones = 0;
+  modalHistorialAbierto = false;
+
 
 
 
@@ -1008,8 +1011,8 @@ export class InventarioDiarioComponent implements OnInit {
       // ✅ ACTUALIZAMOS EL TOTAL VENDIDO EN LA ASIGNACIÓN
       this.prodSeleccionado.vendido = this.ventasDelProducto.reduce((sum: number, v: any) => sum + v.cantidadVendida, 0);
     });
+      this.modalHistorialAbierto = true;
   }
-
 
 
   // Calcula el porcentaje de venta para usarlo en la tarjeta
@@ -1034,8 +1037,6 @@ export class InventarioDiarioComponent implements OnInit {
     if (meses === 3) return 'text-warning';
     return 'text-success';
   }
-
-
 
 
   abrirModalVenta() {
@@ -1200,16 +1201,32 @@ export class InventarioDiarioComponent implements OnInit {
     this.cantidad = null;
   }
   // --- ELIMINAR ASIGNACIÓN ---
-  // --- ELIMINAR ASIGNACIÓN (SE QUEDA EN EL MODAL) ---
-  eliminarAsignacion(asignacion: any) {
+  async eliminarAsignacion(asignacion: any) {
     const nombreAsignacion = `${asignacion.codigo} - ${asignacion.nombre} (para ${asignacion.asignadoA})`;
 
     alertEliminarSinRedirigir(
-      () => this.FirebaseRealtimeDatabaseService.eliminar(asignacion.id, "AsignacionesImpulso")
-        .then(() => {
-          alertExitoSinRedirigir("Eliminado", "Asignación eliminada correctamente");
-          this.cargarAsignaciones(); // Refresca la lista adentro
-        }),
+      async () => {
+        try {
+          // Cargar y eliminar ventas asociadas
+          const ventas = await firstValueFrom(
+            this.FirebaseRealtimeDatabaseService.listado("VentasImpulso")
+          );
+
+          const ventasAsociadas = ventas.filter((v: any) => v.idAsignacion === asignacion.id);
+
+          for (const venta of ventasAsociadas) {
+            await this.FirebaseRealtimeDatabaseService.eliminar(venta.id, "VentasImpulso");
+          }
+
+          // Eliminar asignación
+          await this.FirebaseRealtimeDatabaseService.eliminar(asignacion.id, "AsignacionesImpulso");
+
+          alertExitoSinRedirigir("Eliminado", "Asignación y sus ventas eliminadas correctamente");
+          this.cargarAsignaciones();
+        } catch (error) {
+          alertError("No se pudo eliminar, intenta nuevamente");
+        }
+      },
       nombreAsignacion
     );
   }
@@ -1244,6 +1261,13 @@ export class InventarioDiarioComponent implements OnInit {
     const diasDiferencia = Math.ceil((fechaVenc.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24));
     return diasDiferencia >= 0 && diasDiferencia <= 15; // Menos de 15 días para vencer
   }
+
+
+
+// Función para cerrar el modal
+cerrarModalHistorial() {
+  this.modalHistorialAbierto = false;
+}
 
 
 }
