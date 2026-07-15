@@ -83,6 +83,9 @@ export class InventarioDiarioComponent implements OnInit {
   productoEditar: any = null;
   cantidadNuevasAsignaciones = 0;
   modalHistorialAbierto = false;
+  // Variable para controlar el despliegue de la tabla
+tablaInventarioAbierta = false;
+
 
 
 
@@ -865,20 +868,48 @@ export class InventarioDiarioComponent implements OnInit {
   //     .catch(() => alertError("Error al guardar"));
   // }
 
-  calcularDisponible() {
-    if (!this.productoSeleccionado) {
-      this.cantidadDisponible = 0;
-      return;
-    }
-    // Restamos lo ya asignado del total
-    this.FirebaseRealtimeDatabaseService.listado("AsignacionesImpulso").subscribe(asignadas => {
-      const yaAsignado = asignadas
-        .filter((a: any) => a.idImpulso === this.productoSeleccionado.id)
-        .reduce((suma: number, a: any) => suma + a.cantidadAsignada, 0);
-
-      this.cantidadDisponible = this.productoSeleccionado.cantidadTotal - yaAsignado;
-    });
+// ✅ TU FUNCIÓN ORIGINAL SIGUE INTACTA
+calcularDisponible() {
+  if (!this.productoSeleccionado) {
+    this.cantidadDisponible = 0;
+    return;
   }
+  this.FirebaseRealtimeDatabaseService.listado("AsignacionesImpulso").subscribe(asignadas => {
+    const yaAsignado = asignadas
+      .filter((a: any) => a.idImpulso === this.productoSeleccionado.id)
+      .reduce((suma: number, a: any) => suma + a.cantidadAsignada, 0);
+
+    this.cantidadDisponible = this.productoSeleccionado.cantidadTotal - yaAsignado;
+  });
+}
+
+// ✅ NUEVA: Vendido Global
+calcularVendidoGlobal(producto: any): number {
+  if (!producto?.id || !this.asignaciones.length) return 0;
+  return this.asignaciones
+    .filter(asig => asig.idImpulso === producto.id)
+    .reduce((total, asig) => total + (asig.vendido || 0), 0);
+}
+
+// ✅ NUEVA: Disponible para Venta
+calcularDisponibleVenta(producto: any): number {
+  if (!producto?.cantidadTotal) return 0;
+  return producto.cantidadTotal - this.calcularVendidoGlobal(producto);
+}
+
+// ✅ NUEVA: Disponible para Reparto (igual lógica que tu función original, para el select)
+calcularDisponibleReparto(producto: any): number {
+  if (!producto?.id) return 0;
+  const yaAsignado = this.asignaciones
+    .filter(asig => asig.idImpulso === producto.id)
+    .reduce((suma, asig) => suma + (asig.cantidadAsignada || 0), 0);
+  return producto.cantidadTotal - yaAsignado;
+}
+// ✅ Devuelve el Total General del producto
+obtenerTotalProducto(producto: any): number {
+  return producto?.cantidadTotal || 0;
+}
+
 
 
   // Asignar con control de cantidad
@@ -1267,6 +1298,10 @@ export class InventarioDiarioComponent implements OnInit {
 // Función para cerrar el modal
 cerrarModalHistorial() {
   this.modalHistorialAbierto = false;
+}
+
+alternarTablaInventario() {
+  this.tablaInventarioAbierta = !this.tablaInventarioAbierta;
 }
 
 
