@@ -1624,17 +1624,32 @@
                                     </select>
                                 </div>
                             </div>
+                                                        <!-- 🆕 BOTÓN DE AYUDA - DISEÑO MEJORADO -->
+                            <div class="mt-4 mb-3">
+                                <button class="btn w-100 py-3 rounded-pill text-white shadow d-flex align-items-center justify-content-center gap-2 fw-semibold"
+                                    style="background: linear-gradient(135deg, #1e3a5f, #3d5a80); border: none;"
+                                    (click)="abrirModalAyudaGeneral()">
+                                    <i class="bi bi-hand-thumbs-up fs-5"></i>
+                                    🤝 Ayudar a otro usuario con sus productos
+                                </button>
+                            </div>
+
+                            <div *ngIf="asignacionesFiltradas.length === 0"
+                                class="text-center text-secondary py-5 small">Sin coincidencias</div>
+
                             <div *ngIf="asignacionesFiltradas.length === 0"
                                 class="text-center text-secondary py-5 small">Sin coincidencias</div>
 
                             <!-- 👉 SOLO CAMBIAMOS AQUÍ: 5 tarjetas por fila | TAMAÑO DEL MODAL SE QUEDA IGUAL -->
-                            <div class="row g-2 g-md-3 row-cols-md-3 row-cols-xl-5" *ngIf="asignacionesFiltradas.length > 0">
+                            <div class="row g-2 g-md-3 row-cols-md-3 row-cols-xl-5"
+                                *ngIf="asignacionesFiltradas.length > 0">
                                 <div class="col d-flex" *ngFor="let a of asignacionesFiltradas">
                                     <div class="card w-100 border-0 shadow-sm rounded-3 overflow-hidden">
                                         <div class="p-2 p-md-3"
                                             style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);">
                                             <h6 class="mb-0 text-white fw-bold text-truncate small">{{a.nombre}}</h6>
-                                            <span class="badge bg-white text-primary mt-1" style="font-size:0.75rem;">Cód:
+                                            <span class="badge bg-white text-primary mt-1"
+                                                style="font-size:0.75rem;">Cód:
                                                 {{a.codigo}}</span>
                                         </div>
                                         <div class="card-body p-2 p-md-3 d-flex flex-column small">
@@ -1664,7 +1679,8 @@
                                                         - (a.vendido || 0))}}</span>
                                                 </div>
                                             </div>
-                                            <div *ngIf="esEncargado()" class="mb-2 text-muted" style="font-size:0.75rem;">👤 Asignado a:
+                                            <div *ngIf="esEncargado()" class="mb-2 text-muted"
+                                                style="font-size:0.75rem;">👤 Asignado a:
                                                 <strong>{{a.asignadoA}}</strong>
                                             </div>
                                             <div class="d-flex gap-1 justify-content-center mt-auto">
@@ -1674,8 +1690,9 @@
                                                     (click)="cargarVentasDelProducto(a)"><i
                                                         class="bi bi-eye"></i></button>
                                                 <button *ngIf="esEncargado()"
-                                                    class="btn btn-sm btn-danger rounded-pill px-2" style="font-size:0.75rem;"
-                                                    (click)="eliminarAsignacion(a)"><i class="bi bi-trash"></i></button>
+                                                    class="btn btn-sm btn-danger rounded-pill px-2"
+                                                    style="font-size:0.75rem;" (click)="eliminarAsignacion(a)"><i
+                                                        class="bi bi-trash"></i></button>
                                             </div>
                                         </div>
                                     </div>
@@ -1687,7 +1704,6 @@
             </div>
         </div>
     </div>
-
     <!-- ✅ MODAL FORMULARIO NUEVO PRODUCTO -->
     <div *ngIf="abrirFormulario" class="modal d-block position-fixed top-0 start-0 w-100 h-100"
         style="background: rgba(56, 63, 83, 0.55); z-index:1060; display: flex !important; align-items: flex-start; justify-content: center; padding: 0.5rem 0;">
@@ -1801,7 +1817,9 @@
 
                     <div class="mt-4 d-flex justify-content-end">
                         <button class="btn btn-sm rounded-pill text-white"
-                            style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);" (click)="abrirModalVenta()">
+                            style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);"
+                            [disabled]="(prodSeleccionado?.cantidadAsignada - (prodSeleccionado?.vendido || 0)) <= 0"
+                            (click)="abrirModalVenta()">
                             ➕ Registrar Nueva Venta
                         </button>
                     </div>
@@ -1809,7 +1827,7 @@
             </div>
         </div>
     </div>
-    <!-- ✅ MODAL REGISTRAR NUEVA VENTA - UN POCO MÁS AMPLIO Y CÓMODO -->
+    <!-- ✅ MODAL REGISTRAR NUEVA VENTA - ORDENADO: USUARIO → PRODUCTO -->
     <div *ngIf="modalVentaAbierto" class="modal d-block position-fixed top-0 start-0 w-100 h-100"
         style="background: rgba(0,0,0,0.5); z-index:1080; display: flex !important; align-items: flex-start; justify-content: center; padding: 0.5rem 0;">
         <div class="modal-dialog modal-xl modal-dialog-centered m-2 m-md-3"
@@ -1828,7 +1846,7 @@
 
                 <div class="modal-body p-3 p-md-5 bg-light overflow-y-auto flex-grow-1">
 
-                    <div class="card border-0 shadow-sm rounded-3 mb-3 mb-md-4 p-3 p-md-4">
+                    <div *ngIf="!mostrarAyuda" class="card border-0 shadow-sm rounded-3 mb-3 mb-md-4 p-3 p-md-4">
                         <div class="d-flex align-items-center">
                             <div class="flex-shrink-0 me-2 me-md-3">
                                 <div class="rounded-circle bg-primary bg-opacity-10 p-3 p-md-4">
@@ -1838,7 +1856,7 @@
                             <div>
                                 <h6 class="mb-1 fw-bold text-dark fs-6">{{prodSeleccionado?.nombre}}</h6>
                                 <p class="mb-0 small text-muted">🔢 Código: {{prodSeleccionado?.codigo}}</p>
-                                <span *ngIf="!mostrarAyuda" class="d-inline-block mt-1 small">
+                                <span class="d-inline-block mt-1 small">
                                     📊 Disponible: <strong class="text-success">{{prodSeleccionado?.cantidadAsignada -
                                         (prodSeleccionado?.vendido || 0)}} uds</strong>
                                 </span>
@@ -1846,7 +1864,7 @@
                         </div>
                     </div>
 
-                    <div *ngIf="(prodSeleccionado?.cantidadAsignada - (prodSeleccionado?.vendido || 0)) <= 0"
+                    <div *ngIf="!mostrarAyuda && (prodSeleccionado?.cantidadAsignada - (prodSeleccionado?.vendido || 0)) <= 0"
                         class="mb-3 mb-md-4">
                         <button type="button"
                             class="btn btn-outline-primary rounded-3 w-100 d-flex align-items-center justify-content-center gap-2 py-2 small"
@@ -1855,21 +1873,42 @@
                         </button>
                     </div>
 
-                    <div *ngIf="mostrarAyuda"
-                        class="mb-3 mb-md-4 p-3 p-md-4 rounded-3 bg-white border border-primary border-opacity-25 shadow-sm">
-                        <label class="form-label fw-medium mb-2 small">
-                            👤 Usuario a quien se le resta:
-                        </label>
-                        <select class="form-select rounded-3 shadow-sm small" [(ngModel)]="asignacionAyudaSeleccionada"
-                            required>
-                            <option [ngValue]="null" disabled>-- Elige usuario con existencia --</option>
-                            <option *ngFor="let a of listaOtrasAsignaciones" [ngValue]="a">
-                                {{a.asignadoA}} | 📦 Disponible: {{a.disponible}} uds
-                            </option>
-                        </select>
+                    <!-- 🆕 SECCIÓN DE AYUDA: PRIMERO USUARIO, LUEGO PRODUCTO -->
+                    <div *ngIf="mostrarAyuda">
+                        <!-- PASO 1: ELEGIR USUARIO -->
+                        <div class="mb-3 mb-md-4 p-3 p-md-4 rounded-3 bg-white border border-primary border-opacity-25 shadow-sm">
+                            <label class="form-label fw-medium mb-2 small">
+                                👤 1. Elige al usuario al que vas a ayudar:
+                            </label>
+                            <select class="form-select rounded-3 shadow-sm small" [(ngModel)]="usuarioAyudaSeleccionado"
+                                (change)="asignacionAyudaSeleccionada = null" required>
+                                <option [ngValue]="null" disabled>-- Selecciona un usuario --</option>
+                                <option *ngFor="let u of ListaUsuarios" [ngValue]="u.nombre">
+                                    {{u.nombre}}
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- PASO 2: ELEGIR PRODUCTO DE ESE USUARIO -->
+                        <div *ngIf="usuarioAyudaSeleccionado"
+                            class="mb-3 mb-md-4 p-3 p-md-4 rounded-3 bg-white border border-success border-opacity-25 shadow-sm">
+                            <label class="form-label fw-medium mb-2 small">
+                                📦 2. Elige el producto que le vas a vender:
+                            </label>
+<select class="form-select rounded-3 shadow-sm small" [(ngModel)]="asignacionAyudaSeleccionada" required>
+    <option [ngValue]="null" disabled>-- Productos disponibles --</option>
+    <option *ngFor="let a of listaOtrasAsignaciones" 
+        [hidden]="(a.asignadoA+'').trim() !== (usuarioAyudaSeleccionado+'').trim()" 
+        [ngValue]="a">
+        {{a.nombre}} (Cód: {{a.codigo}}) | 📦 Disponible: {{a.disponible}} uds
+    </option>
+</select>
+
+                        </div>
                     </div>
 
-                    <div class="row g-3 g-md-4 mb-3 mb-md-4">
+                    <!-- FORMULARIO DE VENTA -->
+                    <div *ngIf="asignacionAyudaSeleccionada || (prodSeleccionado?.nombre && !mostrarAyuda)" class="row g-3 g-md-4 mb-3 mb-md-4">
                         <div class="col-12 col-md-6">
                             <label class="form-label fw-medium small">
                                 🧾 N° Factura
@@ -1888,7 +1927,8 @@
                         </div>
                     </div>
 
-                    <div class="d-flex gap-3 gap-md-4">
+                    <!-- BOTONES -->
+                    <div class="d-flex gap-3 gap-md-4" *ngIf="asignacionAyudaSeleccionada || (prodSeleccionado?.nombre && !mostrarAyuda)">
                         <button class="btn btn-light rounded-3 flex-grow-1 shadow-sm small py-2"
                             (click)="cerrarModalVenta()">
                             ❌ Cancelar
@@ -1903,6 +1943,7 @@
             </div>
         </div>
     </div>
+
 
     <style>
         .bg-light-blue {

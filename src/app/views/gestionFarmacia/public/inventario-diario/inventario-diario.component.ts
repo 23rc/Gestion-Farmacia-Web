@@ -88,6 +88,12 @@ tablaInventarioAbierta = false;
 
 
 
+modoAyudaGeneral = false;
+usuarioAyudaSeleccionado: string | null = null;
+
+
+
+
 
 
 
@@ -1302,6 +1308,50 @@ cerrarModalHistorial() {
 
 alternarTablaInventario() {
   this.tablaInventarioAbierta = !this.tablaInventarioAbierta;
+}
+
+
+// ✅ Función para abrir el modal de ayuda
+abrirModalAyudaGeneral() {
+  this.modoAyudaGeneral = true;
+  this.mostrarAyuda = true;
+  // Limpiamos selecciones anteriores
+  this.asignacionAyudaSeleccionada = null;
+  this.noFactura = '';
+  this.cantidadVender = null;
+  // Cargamos los productos disponibles
+  this.cargarListaOtrasAsignaciones();
+  // Abrimos el modal de venta que ya tienes
+  this.modalVentaAbierto = true;
+}
+
+cargarListaOtrasAsignaciones() {
+  // ✅ CARGAMOS DIRECTAMENTE TODAS LAS ASIGNACIONES DE LA BASE (SIN FILTRO DE ROL)
+  this.FirebaseRealtimeDatabaseService.listado("AsignacionesImpulso").subscribe(todasAsignaciones => {
+    this.FirebaseRealtimeDatabaseService.listado("VentasImpulso").subscribe(ventas => {
+      
+      if (!Array.isArray(todasAsignaciones)) {
+        this.listaOtrasAsignaciones = [];
+        return;
+      }
+
+      // ✅ Procesamos TODOS los productos de TODOS los usuarios
+      this.listaOtrasAsignaciones = todasAsignaciones
+        .map((a: any) => {
+          const vendido = ventas
+            .filter((v: any) => v.idAsignacion === a.id)
+            .reduce((sum: number, v: any) => sum + v.cantidadVendida, 0);
+          
+          return {
+            ...a,
+            vendido: vendido,
+            disponible: Number(a.cantidadAsignada || 0) - vendido,
+            asignadoA: (a.asignadoA || '').trim()
+          };
+        })
+        .filter(a => a.disponible > 0); 
+    });
+  });
 }
 
 
