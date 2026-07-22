@@ -1549,8 +1549,16 @@
                     </ng-container>
 
                     <ng-container *ngIf="esEncargado()">
-                        <h6 class="fw-bold pb-2 mt-5 mb-4 border-bottom fs-6 fs-md-5"
-                            style="color: #1e3a5f; border-color: #3d5a80;">📤 Asignar Productos</h6>
+                        <div class="d-flex align-items-center justify-content-between pb-2 mt-5 mb-4 border-bottom">
+                            <h6 class="fw-bold fs-6 fs-md-5 m-0" style="color: #1e3a5f; border-color: #3d5a80;">📤 Asignar Productos</h6>
+                            <button class="btn btn-sm rounded-pill text-white shadow d-flex align-items-center gap-2 px-3 py-1"
+                                style="background: linear-gradient(135deg, #198754, #157347);"
+                                (click)="abrirResumenTotal()">
+                                <i class="bi bi-bar-chart-line"></i>
+                                Resumen Total
+                            </button>
+                        </div>
+
                         <div class="bg-white rounded-3 shadow-sm p-3 p-md-4 mb-4 border-top border-3"
                             style="border-color: #3d5a80;">
                             <label class="form-label small fw-semibold text-secondary mb-2">Selecciona producto</label>
@@ -1604,6 +1612,7 @@
                         </div>
                     </ng-container>
 
+
                     <div class="mt-5">
                         <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3 fs-6 fs-md-5">📋 Mis Productos
                             Asignados</h6>
@@ -1618,36 +1627,70 @@
                                     <label class="form-label small text-secondary mb-2">Ver de:</label>
                                     <select class="form-select rounded-2" [(ngModel)]="filtroUsuario"
                                         (change)="aplicarFiltros()">
-                                        <option value="" disabled selected class="text-muted">-- Todos --</option>
-                                        <option *ngFor="let u of ListaUsuarios" [ngValue]="u.nombre">{{u.nombre}}
-                                        </option>
+                                        <option value="" class="text-muted">-- Todos --</option>
+                                        <option *ngFor="let u of ListaUsuarios" [ngValue]="u.nombre">{{u.nombre}}</option>
                                     </select>
                                 </div>
                             </div>
-                                                        <!-- 🆕 BOTÓN DE AYUDA - DISEÑO MEJORADO -->
-                            <div class="mt-4 mb-3">
-                                <button class="btn w-100 py-3 rounded-pill text-white shadow d-flex align-items-center justify-content-center gap-2 fw-semibold"
+
+                            <!-- 🆕 BOTÓN DE AYUDA - DISEÑO MEJORADO -->
+                            <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between mt-4 mb-3">
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-sm rounded-pill px-3 py-1 fw-medium small"
+                                        [class.btn-danger]="filtroPrioridad === 'ROJO'"
+                                        [class.btn-outline-danger]="filtroPrioridad !== 'ROJO'"
+                                        (click)="filtroPrioridad = 'ROJO'; aplicarFiltros()">
+                                        🔴 Urgente
+                                    </button>
+
+                                    <button class="btn btn-sm rounded-pill px-3 py-1 fw-medium small"
+                                        [class.btn-warning]="filtroPrioridad === 'AMARILLO'"
+                                        [class.btn-outline-warning]="filtroPrioridad !== 'AMARILLO'"
+                                        (click)="filtroPrioridad = 'AMARILLO'; aplicarFiltros()">
+                                        🟡 Pentiente
+                                    </button>
+
+                                    <button class="btn btn-sm rounded-pill px-3 py-1 fw-medium small"
+                                        [class.btn-success]="filtroPrioridad === 'VERDE'"
+                                        [class.btn-outline-success]="filtroPrioridad !== 'VERDE'"
+                                        (click)="filtroPrioridad = 'VERDE'; aplicarFiltros()">
+                                        🟢 Con tiempo
+                                    </button>
+
+                                    <button
+                                        class="btn btn-sm rounded-pill px-3 py-1 fw-medium small btn-outline-secondary"
+                                        (click)="filtroPrioridad = 'TODOS'; aplicarFiltros()">
+                                        Todos
+                                    </button>
+
+                                </div>
+
+                                <button
+                                    class="btn rounded-pill text-white shadow d-flex align-items-center justify-content-center gap-2 fw-semibold small px-4 py-2"
                                     style="background: linear-gradient(135deg, #1e3a5f, #3d5a80); border: none;"
                                     (click)="abrirModalAyudaGeneral()">
-                                    <i class="bi bi-hand-thumbs-up fs-5"></i>
-                                    🤝 Ayudar a otro usuario con sus productos
+                                    <i class="bi bi-hand-thumbs-up"></i>
+                                    🤝 Ayudar
                                 </button>
                             </div>
 
                             <div *ngIf="asignacionesFiltradas.length === 0"
                                 class="text-center text-secondary py-5 small">Sin coincidencias</div>
 
-                            <div *ngIf="asignacionesFiltradas.length === 0"
-                                class="text-center text-secondary py-5 small">Sin coincidencias</div>
-
-                            <!-- 👉 SOLO CAMBIAMOS AQUÍ: 5 tarjetas por fila | TAMAÑO DEL MODAL SE QUEDA IGUAL -->
+                            <!-- 🆕 TARJETAS CON COLOR DE PRIORIDAD -->
+                            <!-- 🆕 TARJETAS CON TOOLTIP PARA NOMBRES LARGOS -->
                             <div class="row g-2 g-md-3 row-cols-md-3 row-cols-xl-5"
                                 *ngIf="asignacionesFiltradas.length > 0">
                                 <div class="col d-flex" *ngFor="let a of asignacionesFiltradas">
-                                    <div class="card w-100 border-0 shadow-sm rounded-3 overflow-hidden">
+                                    <div class="card w-100 border-0 shadow-sm rounded-3 overflow-hidden" [ngClass]="{
+                                            'border-2 border-danger': diferenciaMeses(a.fechaVencimiento) <= 1,
+                                            'border-warning': diferenciaMeses(a.fechaVencimiento) >= 2 && diferenciaMeses(a.fechaVencimiento) <= 3,
+                                            'border-success': diferenciaMeses(a.fechaVencimiento) > 3
+                                        }">
                                         <div class="p-2 p-md-3"
                                             style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);">
-                                            <h6 class="mb-0 text-white fw-bold text-truncate small">{{a.nombre}}</h6>
+                                            <!-- ✅ TOOLTIP NATIVO: al pasar el cursor ves el nombre completo -->
+                                            <h6 class="mb-0 text-white fw-bold text-truncate small" [title]="a.nombre">{{a.nombre}}</h6>
                                             <span class="badge bg-white text-primary mt-1"
                                                 style="font-size:0.75rem;">Cód:
                                                 {{a.codigo}}</span>
@@ -1698,6 +1741,9 @@
                                     </div>
                                 </div>
                             </div>
+
+
+
                         </div>
                     </div>
                 </div>
@@ -1876,7 +1922,8 @@
                     <!-- 🆕 SECCIÓN DE AYUDA: PRIMERO USUARIO, LUEGO PRODUCTO -->
                     <div *ngIf="mostrarAyuda">
                         <!-- PASO 1: ELEGIR USUARIO -->
-                        <div class="mb-3 mb-md-4 p-3 p-md-4 rounded-3 bg-white border border-primary border-opacity-25 shadow-sm">
+                        <div
+                            class="mb-3 mb-md-4 p-3 p-md-4 rounded-3 bg-white border border-primary border-opacity-25 shadow-sm">
                             <label class="form-label fw-medium mb-2 small">
                                 👤 1. Elige al usuario al que vas a ayudar:
                             </label>
@@ -1895,20 +1942,22 @@
                             <label class="form-label fw-medium mb-2 small">
                                 📦 2. Elige el producto que le vas a vender:
                             </label>
-<select class="form-select rounded-3 shadow-sm small" [(ngModel)]="asignacionAyudaSeleccionada" required>
-    <option [ngValue]="null" disabled>-- Productos disponibles --</option>
-    <option *ngFor="let a of listaOtrasAsignaciones" 
-        [hidden]="(a.asignadoA+'').trim() !== (usuarioAyudaSeleccionado+'').trim()" 
-        [ngValue]="a">
-        {{a.nombre}} (Cód: {{a.codigo}}) | 📦 Disponible: {{a.disponible}} uds
-    </option>
-</select>
+                            <select class="form-select rounded-3 shadow-sm small"
+                                [(ngModel)]="asignacionAyudaSeleccionada" required>
+                                <option [ngValue]="null" disabled>-- Productos disponibles --</option>
+                                <option *ngFor="let a of listaOtrasAsignaciones"
+                                    [hidden]="(a.asignadoA+'').trim() !== (usuarioAyudaSeleccionado+'').trim()"
+                                    [ngValue]="a">
+                                    {{a.nombre}} (Cód: {{a.codigo}}) | 📦 Disponible: {{a.disponible}} uds
+                                </option>
+                            </select>
 
                         </div>
                     </div>
 
                     <!-- FORMULARIO DE VENTA -->
-                    <div *ngIf="asignacionAyudaSeleccionada || (prodSeleccionado?.nombre && !mostrarAyuda)" class="row g-3 g-md-4 mb-3 mb-md-4">
+                    <div *ngIf="asignacionAyudaSeleccionada || (prodSeleccionado?.nombre && !mostrarAyuda)"
+                        class="row g-3 g-md-4 mb-3 mb-md-4">
                         <div class="col-12 col-md-6">
                             <label class="form-label fw-medium small">
                                 🧾 N° Factura
@@ -1928,7 +1977,8 @@
                     </div>
 
                     <!-- BOTONES -->
-                    <div class="d-flex gap-3 gap-md-4" *ngIf="asignacionAyudaSeleccionada || (prodSeleccionado?.nombre && !mostrarAyuda)">
+                    <div class="d-flex gap-3 gap-md-4"
+                        *ngIf="asignacionAyudaSeleccionada || (prodSeleccionado?.nombre && !mostrarAyuda)">
                         <button class="btn btn-light rounded-3 flex-grow-1 shadow-sm small py-2"
                             (click)="cerrarModalVenta()">
                             ❌ Cancelar
@@ -1943,8 +1993,6 @@
             </div>
         </div>
     </div>
-
-
     <style>
         .bg-light-blue {
             background-color: #e6f2ff !important;
@@ -2011,8 +2059,109 @@
         }
     </style>
 
+    <!-- ✅ MODAL RESUMEN TOTAL -->
+     <!-- ✅ MODAL RESUMEN - VERSIÓN FINAL PRODUCCIÓN -->
+    <div *ngIf="MostrarResumenTotal" class="modal d-block position-fixed top-0 start-0 w-100 h-100"
+        style="background: rgba(20, 30, 50, 0.5); z-index:1060; display: flex !important; align-items: center; justify-content: center; padding: 0.5rem;">
+        
+        <div class="modal-dialog m-0" style="max-width: 1100px; width: 95%; max-height: 80vh;">
+            <div class="modal-content overflow-hidden d-flex flex-column" style="border-radius: 16px; border: none; box-shadow: 0 12px 40px rgba(30, 58, 95, 0.25);">
+                <!-- ENCABEZADO -->
+                <div class="modal-header text-white p-3 flex-shrink-0" style="background: linear-gradient(135deg, #1e3a5f, #3d5a80); border-bottom: 1px solid rgba(255,255,255,0.15);">
+                    <h5 class="modal-title fs-6 fw-semibold mb-0">📈 Resumen General de Productos 📦</h5>
+                    <button type="button" class="btn-close btn-close-white" (click)="MostrarResumenTotal = false"></button>
+                </div>
 
+                <!-- CUERPO -->
+                <div class="modal-body p-3" style="background-color: #f0f4f9; overflow-y: auto; flex-grow-1;">
+                    <!-- FILTRO SIN FONDO AZUL -->
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold mb-1" style="color: #1e3a5f;">👤 Ver resumen de:</label>
+                        <select class="form-select rounded-3 form-select-sm" [(ngModel)]="filtroResumenUsuario" (change)="calcularResumen()" style="max-width: 300px; border-color: #b8cdf0;">
+                            <option value="">📊 Todos los usuarios</option>
+                            <option *ngFor="let u of ListaUsuarios" [ngValue]="u.nombre">👉 {{u.nombre}}</option>
+                        </select>
+                    </div>
 
+                    <!-- TARJETAS CON ACABADO PROFESIONAL -->
+                    <div class="row g-2 mb-3">
+                        <div class="col-6 col-md-3">
+                            <div class="rounded-3 text-center p-2 shadow-sm" style="background: #ffffff; border-left: 4px solid #1e3a5f;">
+                                <div class="text-muted small mb-1">📦 Total Productos</div>
+                                <div class="fs-5 fw-bold" style="color: #1e3a5f;">{{resumen.totalProductos}}</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="rounded-3 text-center p-2 shadow-sm" style="background: #fffbf0; border-left: 4px solid #f59e0b;">
+                                <div class="text-muted small mb-1">📊 Cantidad Total</div>
+                                <div class="fs-5 fw-bold" style="color: #d97706;">{{resumen.cantidadTotal}}</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="rounded-3 text-center p-2 shadow-sm" style="background: #f0fdf4; border-left: 4px solid #10b981;">
+                                <div class="text-muted small mb-1">✅ Vendido</div>
+                                <div class="fs-5 fw-bold" style="color: #059669;">{{resumen.totalVendido}}</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="rounded-3 text-center p-2 shadow-sm" style="background: #fef2f2; border-left: 4px solid #ef4444;">
+                                <div class="text-muted small mb-1">⚠️ Disponible</div>
+                                <div class="fs-5 fw-bold" style="color: #dc2626;">{{resumen.disponibleTotal}}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLA LIMPIA Y ELEGANTE -->
+                    <div class="rounded-3 shadow-sm p-2" style="background-color: #ffffff; border: 1px solid #d1d5db;">
+                        <h6 class="fw-semibold mb-2 pb-1 small" style="color: #1e3a5f; border-bottom: 1px solid #e5e7eb;">📋 Detalle por producto</h6>
+                        <div class="table-responsive" style="max-height: 260px; overflow-y: auto;">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr style="background-color: #f8fafc; color: #1e3a5f;">
+                                        <th class="text-start small fw-semibold rounded-start-2">Producto</th>
+                                        <th class="text-center small fw-semibold">Total</th>
+                                        <th class="text-center small fw-semibold">Vendido</th>
+                                        <th class="text-center small fw-semibold">Disp.</th>
+                                        <th class="text-center small fw-semibold rounded-end-2">Avance</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let r of resumen.detalle" style="border-bottom: 1px solid #f9fafb;">
+                                        <td class="text-start small fw-medium" style="color: #1f2937;">{{r.nombre}}</td>
+                                        <td class="text-center small fw-semibold" style="color: #475569;">{{r.total}}</td>
+                                        <td class="text-center small fw-semibold" style="color: #059669;">{{r.vendido}}</td>
+                                        <td class="text-center small fw-semibold" [ngStyle]="{
+                                            'color': r.disponible === 0 ? '#dc2626' : r.disponible < 5 ? '#f59e0b' : '#10b981'
+                                        }">
+                                            {{r.disponible}}
+                                        </td>
+                                        <td class="text-center small">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="progress flex-grow-1 rounded-pill overflow-hidden" style="height: 6px; background: #e5e7eb;">
+                                                    <div class="progress-bar" role="progressbar" [style.width]="r.porcentaje + '%'" [ngStyle]="{
+                                                        'backgroundColor': r.porcentaje >= 80 ? '#10b981' : r.porcentaje >= 50 ? '#f59e0b' : '#ef4444'
+                                                    }"></div>
+                                                </div>
+                                                <span class="fw-semibold" [ngStyle]="{
+                                                    'color': r.porcentaje >= 80 ? '#10b981' : r.porcentaje >= 50 ? '#f59e0b' : '#ef4444'
+                                                }">{{r.porcentaje}}%</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer p-2 border-0 flex-shrink-0" style="background-color: #f8fafc;">
+                    <button class="btn btn-sm rounded-pill px-4 text-white shadow-sm" style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);" (click)="MostrarResumenTotal = false">
+                        ✖️ Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 

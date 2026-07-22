@@ -85,11 +85,22 @@ export class InventarioDiarioComponent implements OnInit {
   modalHistorialAbierto = false;
   // Variable para controlar el despliegue de la tabla
 tablaInventarioAbierta = false;
+MostrarResumenTotal = false;
+filtroResumenUsuario = '';
+resumen = {
+  totalProductos: 0,
+  cantidadTotal: 0,
+  totalVendido: 0,
+  disponibleTotal: 0,
+  detalle: [] as any[]
+};
+
 
 
 
 modoAyudaGeneral = false;
 usuarioAyudaSeleccionado: string | null = null;
+filtroPrioridad: string = 'TODOS';
 
 
 
@@ -1001,14 +1012,14 @@ obtenerTotalProducto(producto: any): number {
       .subscribe(res => this.Impulsos = res || []);
   }
 
-  // Aplicar filtros
-  aplicarFiltros() {
-    let res = [...this.asignaciones];
-    if (this.esEncargado() && this.filtroUsuario) res = res.filter(a => a.asignadoA === this.filtroUsuario);
-    const texto = this.filtroMedicamento.trim().toLowerCase();
-    if (texto) res = res.filter(a => a.codigo.toLowerCase().includes(texto) || a.nombre.toLowerCase().includes(texto));
-    this.asignacionesFiltradas = res;
-  }
+  // // Aplicar filtros
+  // aplicarFiltros() {
+  //   let res = [...this.asignaciones];
+  //   if (this.esEncargado() && this.filtroUsuario) res = res.filter(a => a.asignadoA === this.filtroUsuario);
+  //   const texto = this.filtroMedicamento.trim().toLowerCase();
+  //   if (texto) res = res.filter(a => a.codigo.toLowerCase().includes(texto) || a.nombre.toLowerCase().includes(texto));
+  //   this.asignacionesFiltradas = res;
+  // }
 
 
 
@@ -1354,5 +1365,91 @@ cargarListaOtrasAsignaciones() {
   });
 }
 
+aplicarFiltros() {
+  console.log('--- [INICIO aplicarFiltros] ---');
+  console.log('filtroPrioridad actual:', this.filtroPrioridad);
+  console.log('Total asignaciones sin filtrar:', this.asignaciones.length);
 
+  let res = [...this.asignaciones];
+
+  // Filtro por usuario
+  if (this.esEncargado() && this.filtroUsuario && this.filtroUsuario.trim() !== '') {
+    res = res.filter(a => (a.asignadoA || '').trim() === this.filtroUsuario.trim());
+    console.log('Después de filtro usuario:', res.length);
+  }
+
+  // Filtro por texto
+  const texto = (this.filtroMedicamento || '').trim().toLowerCase();
+  if (texto !== '') {
+    res = res.filter(a =>
+      (a.codigo || '').toLowerCase().includes(texto) ||
+      (a.nombre || '').toLowerCase().includes(texto)
+    );
+    console.log('Después de filtro texto:', res.length);
+  }
+
+  // Filtro por prioridad
+  if (this.filtroPrioridad === 'ROJO') {
+    res = res.filter(a => {
+      const m = this.diferenciaMeses(a.fechaVencimiento);
+      return !isNaN(m) && m <= 1;
+    });
+    console.log('Después de filtro ROJO:', res.length);
+  } else if (this.filtroPrioridad === 'AMARILLO') {
+    res = res.filter(a => {
+      const m = this.diferenciaMeses(a.fechaVencimiento);
+      return !isNaN(m) && m >= 2 && m <= 3;
+    });
+    console.log('Después de filtro AMARILLO:', res.length);
+  } else if (this.filtroPrioridad === 'VERDE') {
+    res = res.filter(a => {
+      const m = this.diferenciaMeses(a.fechaVencimiento);
+      return !isNaN(m) && m > 3;
+    });
+    console.log('Después de filtro VERDE:', res.length);
+  }
+
+  this.asignacionesFiltradas = res;
+  console.log('✅ Resultado final tarjetas:', this.asignacionesFiltradas.length);
+}
+
+abrirResumenTotal() {
+  this.MostrarResumenTotal = true;
+  this.filtroResumenUsuario = '';
+  this.calcularResumen();
+}
+
+calcularResumen() {
+  let lista = [...this.asignaciones];
+
+  // Filtrar por usuario si se elige
+  if (this.filtroResumenUsuario) {
+    lista = lista.filter(a => (a.asignadoA || '').trim() === this.filtroResumenUsuario.trim());
+  }
+
+  // Agrupar por producto
+  const agrupado: any = {};
+  lista.forEach(a => {
+    const key = a.nombre;
+    if (!agrupado[key]) {
+      agrupado[key] = { nombre: a.nombre, total: 0, vendido: 0, disponible: 0 };
+    }
+    agrupado[key].total += Number(a.cantidadAsignada || 0);
+    agrupado[key].vendido += Number(a.vendido || 0);
+    agrupado[key].disponible += (Number(a.cantidadAsignada || 0) - Number(a.vendido || 0));
+  });
+
+  const detalle = Object.values(agrupado).map((p: any) => ({
+    ...p,
+    porcentaje: p.total > 0 ? Math.round((p.vendido / p.total) * 100) : 0
+  }));
+
+  this.resumen = {
+    totalProductos: detalle.length,
+    cantidadTotal: detalle.reduce((s: number, p: any) => s + p.total, 0),
+    totalVendido: detalle.reduce((s: number, p: any) => s + p.vendido, 0),
+    disponibleTotal: detalle.reduce((s: number, p: any) => s + p.disponible, 0),
+    detalle: detalle
+  };
+}
 }
