@@ -1678,7 +1678,6 @@
                                 class="text-center text-secondary py-5 small">Sin coincidencias</div>
 
                             <!-- 🆕 TARJETAS CON COLOR DE PRIORIDAD -->
-                            <!-- 🆕 TARJETAS CON TOOLTIP PARA NOMBRES LARGOS -->
                             <div class="row g-2 g-md-3 row-cols-md-3 row-cols-xl-5"
                                 *ngIf="asignacionesFiltradas.length > 0">
                                 <div class="col d-flex" *ngFor="let a of asignacionesFiltradas">
@@ -1726,17 +1725,31 @@
                                                 style="font-size:0.75rem;">👤 Asignado a:
                                                 <strong>{{a.asignadoA}}</strong>
                                             </div>
-                                            <div class="d-flex gap-1 justify-content-center mt-auto">
-                                                <button class="btn btn-sm rounded-pill px-2" style="font-size:0.75rem;"
-                                                    [class.btn-outline-danger]="(a.cantidadAsignada - (a.vendido || 0)) > 0"
-                                                    [class.btn-outline-success]="(a.cantidadAsignada - (a.vendido || 0)) <= 0"
-                                                    (click)="cargarVentasDelProducto(a)"><i
-                                                        class="bi bi-eye"></i></button>
-                                                <button *ngIf="esEncargado()"
-                                                    class="btn btn-sm btn-danger rounded-pill px-2"
-                                                    style="font-size:0.75rem;" (click)="eliminarAsignacion(a)"><i
-                                                        class="bi bi-trash"></i></button>
-                                            </div>
+<div class="d-flex align-items-center justify-content-between mt-auto w-100">
+  <!-- Texto con más tamaño, negrita y colores más fuertes -->
+  <span class="fw-bold" style="font-size:0.9rem;"
+        [class.text-danger]="(a.cantidadAsignada - (a.vendido || 0)) > 0"
+        [class.text-success]="(a.cantidadAsignada - (a.vendido || 0)) <= 0">
+    {{ (a.cantidadAsignada - (a.vendido || 0)) > 0 ? 'Pendiente' : 'Terminado' }}
+  </span>
+
+  <!-- Iconos IGUALES a los que tenías, sin cambios -->
+  <div class="d-flex gap-1">
+    <button class="btn btn-sm rounded-pill px-2" style="font-size:0.75rem;"
+        [class.btn-outline-danger]="(a.cantidadAsignada - (a.vendido || 0)) > 0"
+        [class.btn-outline-success]="(a.cantidadAsignada - (a.vendido || 0)) <= 0"
+        (click)="cargarVentasDelProducto(a)">
+      <i class="bi bi-eye"></i>
+    </button>
+    <button *ngIf="esEncargado()"
+        class="btn btn-sm btn-danger rounded-pill px-2"
+        style="font-size:0.75rem;" (click)="eliminarAsignacion(a)">
+      <i class="bi bi-trash"></i>
+    </button>
+  </div>
+</div>
+
+
                                         </div>
                                     </div>
                                 </div>
