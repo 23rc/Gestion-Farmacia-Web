@@ -22,28 +22,28 @@ export const environment = {
             usuario: "10008450",
             rol: "SUB_ENCARGADO",
             revisa_a: 'ROBERTO CARLOS YOXON CUJ',
-            password: "1879"
+            password: "3497"
         },
         {
             nombre: "DORCAS ELIZABETH YOXON TERETA",
             usuario: "10014453",
             rol: "DEPENDIENTE",
             revisa_a: 'GERSON EMMANUEL BARRENO GARCIA',
-            password: "2222"
+            password: "4321"
         },
         {
             nombre: "GERSON EMMANUEL BARRENO GARCIA",
             usuario: "10019034",
             rol: "DEPENDIENTE",
             revisa_a: 'ROSEMARY EDITH MORALES SACUJ',
-            password: "2222"
+            password: "5855"
         },
         {
             nombre: "ROSEMARY EDITH MORALES SACUJ",
             usuario: "10018698",
             rol: "DEPENDIENTE",
             revisa_a: 'DORCAS ELIZABETH YOXON TERETA',
-            password: "2222"
+            password: "8698"
         }
     ]
 };

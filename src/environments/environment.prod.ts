@@ -12,31 +12,68 @@ export const environment = {
         appId: "1:370812908336:web:3be229ced0f28c752a4ef5"
     },
 
+    // usuarios: [
+    //     {
+    //         nombre: "ROBERTO CARLOS YOXON CUJ",
+    //         usuario: "10001400",
+    //         password: "7897"
+    //     },
+    //     {
+    //         nombre: "MARIA ELENA AJCALON SAPUT",
+    //         usuario: "10008450",
+    //         password: "1879"
+    //     },
+    //     {
+    //         nombre: "DORCAS ELIZABETH YOXON TERETA",
+    //         usuario: "10014453",
+    //         password: "2222"
+    //     },
+    //     {
+    //         nombre: "GERSON EMMANUEL BARRENO GARCIA",
+    //         usuario: "10019034",
+    //         password: "2222"
+    //     },
+    //     {
+    //         nombre: "ROSEMARY EDITH MORALES SACUJ",
+    //         usuario: "10018698",
+    //         password: "2222"
+    //     }
+    // ]
     usuarios: [
         {
             nombre: "ROBERTO CARLOS YOXON CUJ",
             usuario: "10001400",
+            rol: "ENCARGADO",
+            revisa_a: 'MARIA ELENA AJCALON SAPUT',
             password: "7897"
         },
         {
             nombre: "MARIA ELENA AJCALON SAPUT",
             usuario: "10008450",
-            password: "1879"
+            rol: "SUB_ENCARGADO",
+            revisa_a: 'ROBERTO CARLOS YOXON CUJ',
+            password: "3497"
         },
         {
             nombre: "DORCAS ELIZABETH YOXON TERETA",
             usuario: "10014453",
-            password: "2222"
+            rol: "DEPENDIENTE",
+            revisa_a: 'GERSON EMMANUEL BARRENO GARCIA',
+            password: "4321"
         },
         {
             nombre: "GERSON EMMANUEL BARRENO GARCIA",
             usuario: "10019034",
-            password: "2222"
+            rol: "DEPENDIENTE",
+            revisa_a: 'ROSEMARY EDITH MORALES SACUJ',
+            password: "5855"
         },
         {
             nombre: "ROSEMARY EDITH MORALES SACUJ",
             usuario: "10018698",
-            password: "2222"
+            rol: "DEPENDIENTE",
+            revisa_a: 'DORCAS ELIZABETH YOXON TERETA',
+            password: "8698"
         }
     ]
 };
