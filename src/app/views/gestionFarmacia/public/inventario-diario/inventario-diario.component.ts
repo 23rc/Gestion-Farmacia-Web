@@ -84,24 +84,25 @@ export class InventarioDiarioComponent implements OnInit {
   cantidadNuevasAsignaciones = 0;
   modalHistorialAbierto = false;
   // Variable para controlar el despliegue de la tabla
-tablaInventarioAbierta = false;
-MostrarResumenTotal = false;
-filtroResumenUsuario = '';
-resumen = {
-  totalProductos: 0,
-  cantidadTotal: 0,
-  totalVendido: 0,
-  disponibleTotal: 0,
-  detalle: [] as any[]
-};
+  tablaInventarioAbierta = false;
+  MostrarResumenTotal = false;
+  filtroResumenUsuario = '';
+  resumen = {
+    totalProductos: 0,
+    cantidadTotal: 0,
+    totalVendido: 0,
+    disponibleTotal: 0,
+    detalle: [] as any[]
+  };
 
 
 
 
-modoAyudaGeneral = false;
-usuarioAyudaSeleccionado: string | null = null;
-filtroPrioridad: string = 'TODOS';
-
+  modoAyudaGeneral = false;
+  usuarioAyudaSeleccionado: string | null = null;
+  filtroPrioridad: string = 'TODOS';
+  filtroMes: number | null = null;  // 1=Enero, 9=Septiembre
+  filtroAnio: number = 2026;
 
 
 
@@ -885,47 +886,47 @@ filtroPrioridad: string = 'TODOS';
   //     .catch(() => alertError("Error al guardar"));
   // }
 
-// ✅ TU FUNCIÓN ORIGINAL SIGUE INTACTA
-calcularDisponible() {
-  if (!this.productoSeleccionado) {
-    this.cantidadDisponible = 0;
-    return;
+  // ✅ TU FUNCIÓN ORIGINAL SIGUE INTACTA
+  calcularDisponible() {
+    if (!this.productoSeleccionado) {
+      this.cantidadDisponible = 0;
+      return;
+    }
+    this.FirebaseRealtimeDatabaseService.listado("AsignacionesImpulso").subscribe(asignadas => {
+      const yaAsignado = asignadas
+        .filter((a: any) => a.idImpulso === this.productoSeleccionado.id)
+        .reduce((suma: number, a: any) => suma + a.cantidadAsignada, 0);
+
+      this.cantidadDisponible = this.productoSeleccionado.cantidadTotal - yaAsignado;
+    });
   }
-  this.FirebaseRealtimeDatabaseService.listado("AsignacionesImpulso").subscribe(asignadas => {
-    const yaAsignado = asignadas
-      .filter((a: any) => a.idImpulso === this.productoSeleccionado.id)
-      .reduce((suma: number, a: any) => suma + a.cantidadAsignada, 0);
 
-    this.cantidadDisponible = this.productoSeleccionado.cantidadTotal - yaAsignado;
-  });
-}
+  // ✅ NUEVA: Vendido Global
+  calcularVendidoGlobal(producto: any): number {
+    if (!producto?.id || !this.asignaciones.length) return 0;
+    return this.asignaciones
+      .filter(asig => asig.idImpulso === producto.id)
+      .reduce((total, asig) => total + (asig.vendido || 0), 0);
+  }
 
-// ✅ NUEVA: Vendido Global
-calcularVendidoGlobal(producto: any): number {
-  if (!producto?.id || !this.asignaciones.length) return 0;
-  return this.asignaciones
-    .filter(asig => asig.idImpulso === producto.id)
-    .reduce((total, asig) => total + (asig.vendido || 0), 0);
-}
+  // ✅ NUEVA: Disponible para Venta
+  calcularDisponibleVenta(producto: any): number {
+    if (!producto?.cantidadTotal) return 0;
+    return producto.cantidadTotal - this.calcularVendidoGlobal(producto);
+  }
 
-// ✅ NUEVA: Disponible para Venta
-calcularDisponibleVenta(producto: any): number {
-  if (!producto?.cantidadTotal) return 0;
-  return producto.cantidadTotal - this.calcularVendidoGlobal(producto);
-}
-
-// ✅ NUEVA: Disponible para Reparto (igual lógica que tu función original, para el select)
-calcularDisponibleReparto(producto: any): number {
-  if (!producto?.id) return 0;
-  const yaAsignado = this.asignaciones
-    .filter(asig => asig.idImpulso === producto.id)
-    .reduce((suma, asig) => suma + (asig.cantidadAsignada || 0), 0);
-  return producto.cantidadTotal - yaAsignado;
-}
-// ✅ Devuelve el Total General del producto
-obtenerTotalProducto(producto: any): number {
-  return producto?.cantidadTotal || 0;
-}
+  // ✅ NUEVA: Disponible para Reparto (igual lógica que tu función original, para el select)
+  calcularDisponibleReparto(producto: any): number {
+    if (!producto?.id) return 0;
+    const yaAsignado = this.asignaciones
+      .filter(asig => asig.idImpulso === producto.id)
+      .reduce((suma, asig) => suma + (asig.cantidadAsignada || 0), 0);
+    return producto.cantidadTotal - yaAsignado;
+  }
+  // ✅ Devuelve el Total General del producto
+  obtenerTotalProducto(producto: any): number {
+    return producto?.cantidadTotal || 0;
+  }
 
 
 
@@ -1059,7 +1060,7 @@ obtenerTotalProducto(producto: any): number {
       // ✅ ACTUALIZAMOS EL TOTAL VENDIDO EN LA ASIGNACIÓN
       this.prodSeleccionado.vendido = this.ventasDelProducto.reduce((sum: number, v: any) => sum + v.cantidadVendida, 0);
     });
-      this.modalHistorialAbierto = true;
+    this.modalHistorialAbierto = true;
   }
 
 
@@ -1312,144 +1313,215 @@ obtenerTotalProducto(producto: any): number {
 
 
 
-// Función para cerrar el modal
-cerrarModalHistorial() {
-  this.modalHistorialAbierto = false;
-}
-
-alternarTablaInventario() {
-  this.tablaInventarioAbierta = !this.tablaInventarioAbierta;
-}
-
-
-// ✅ Función para abrir el modal de ayuda
-abrirModalAyudaGeneral() {
-  this.modoAyudaGeneral = true;
-  this.mostrarAyuda = true;
-  // Limpiamos selecciones anteriores
-  this.asignacionAyudaSeleccionada = null;
-  this.noFactura = '';
-  this.cantidadVender = null;
-  // Cargamos los productos disponibles
-  this.cargarListaOtrasAsignaciones();
-  // Abrimos el modal de venta que ya tienes
-  this.modalVentaAbierto = true;
-}
-
-cargarListaOtrasAsignaciones() {
-  // ✅ CARGAMOS DIRECTAMENTE TODAS LAS ASIGNACIONES DE LA BASE (SIN FILTRO DE ROL)
-  this.FirebaseRealtimeDatabaseService.listado("AsignacionesImpulso").subscribe(todasAsignaciones => {
-    this.FirebaseRealtimeDatabaseService.listado("VentasImpulso").subscribe(ventas => {
-      
-      if (!Array.isArray(todasAsignaciones)) {
-        this.listaOtrasAsignaciones = [];
-        return;
-      }
-
-      // ✅ Procesamos TODOS los productos de TODOS los usuarios
-      this.listaOtrasAsignaciones = todasAsignaciones
-        .map((a: any) => {
-          const vendido = ventas
-            .filter((v: any) => v.idAsignacion === a.id)
-            .reduce((sum: number, v: any) => sum + v.cantidadVendida, 0);
-          
-          return {
-            ...a,
-            vendido: vendido,
-            disponible: Number(a.cantidadAsignada || 0) - vendido,
-            asignadoA: (a.asignadoA || '').trim()
-          };
-        })
-        .filter(a => a.disponible > 0); 
-    });
-  });
-}
-
-aplicarFiltros() {
-  console.log('--- [INICIO aplicarFiltros] ---');
-  console.log('filtroPrioridad actual:', this.filtroPrioridad);
-  console.log('Total asignaciones sin filtrar:', this.asignaciones.length);
-
-  let res = [...this.asignaciones];
-
-  // Filtro por usuario
-  if (this.esEncargado() && this.filtroUsuario && this.filtroUsuario.trim() !== '') {
-    res = res.filter(a => (a.asignadoA || '').trim() === this.filtroUsuario.trim());
-    console.log('Después de filtro usuario:', res.length);
+  // Función para cerrar el modal
+  cerrarModalHistorial() {
+    this.modalHistorialAbierto = false;
   }
 
-  // Filtro por texto
-  const texto = (this.filtroMedicamento || '').trim().toLowerCase();
-  if (texto !== '') {
-    res = res.filter(a =>
-      (a.codigo || '').toLowerCase().includes(texto) ||
-      (a.nombre || '').toLowerCase().includes(texto)
-    );
-    console.log('Después de filtro texto:', res.length);
+  alternarTablaInventario() {
+    this.tablaInventarioAbierta = !this.tablaInventarioAbierta;
   }
 
-  // Filtro por prioridad
-  if (this.filtroPrioridad === 'ROJO') {
-    res = res.filter(a => {
-      const m = this.diferenciaMeses(a.fechaVencimiento);
-      return !isNaN(m) && m <= 1;
-    });
-    console.log('Después de filtro ROJO:', res.length);
-  } else if (this.filtroPrioridad === 'AMARILLO') {
-    res = res.filter(a => {
-      const m = this.diferenciaMeses(a.fechaVencimiento);
-      return !isNaN(m) && m >= 2 && m <= 3;
-    });
-    console.log('Después de filtro AMARILLO:', res.length);
-  } else if (this.filtroPrioridad === 'VERDE') {
-    res = res.filter(a => {
-      const m = this.diferenciaMeses(a.fechaVencimiento);
-      return !isNaN(m) && m > 3;
-    });
-    console.log('Después de filtro VERDE:', res.length);
+
+  // ✅ Función para abrir el modal de ayuda
+  abrirModalAyudaGeneral() {
+    this.modoAyudaGeneral = true;
+    this.mostrarAyuda = true;
+    // Limpiamos selecciones anteriores
+    this.asignacionAyudaSeleccionada = null;
+    this.noFactura = '';
+    this.cantidadVender = null;
+    // Cargamos los productos disponibles
+    this.cargarListaOtrasAsignaciones();
+    // Abrimos el modal de venta que ya tienes
+    this.modalVentaAbierto = true;
   }
 
-  this.asignacionesFiltradas = res;
-  console.log('✅ Resultado final tarjetas:', this.asignacionesFiltradas.length);
-}
+  cargarListaOtrasAsignaciones() {
+    // ✅ CARGAMOS DIRECTAMENTE TODAS LAS ASIGNACIONES DE LA BASE (SIN FILTRO DE ROL)
+    this.FirebaseRealtimeDatabaseService.listado("AsignacionesImpulso").subscribe(todasAsignaciones => {
+      this.FirebaseRealtimeDatabaseService.listado("VentasImpulso").subscribe(ventas => {
 
-abrirResumenTotal() {
-  this.MostrarResumenTotal = true;
-  this.filtroResumenUsuario = '';
-  this.calcularResumen();
-}
+        if (!Array.isArray(todasAsignaciones)) {
+          this.listaOtrasAsignaciones = [];
+          return;
+        }
 
-calcularResumen() {
-  let lista = [...this.asignaciones];
+        // ✅ Procesamos TODOS los productos de TODOS los usuarios
+        this.listaOtrasAsignaciones = todasAsignaciones
+          .map((a: any) => {
+            const vendido = ventas
+              .filter((v: any) => v.idAsignacion === a.id)
+              .reduce((sum: number, v: any) => sum + v.cantidadVendida, 0);
 
-  // Filtrar por usuario si se elige
-  if (this.filtroResumenUsuario) {
-    lista = lista.filter(a => (a.asignadoA || '').trim() === this.filtroResumenUsuario.trim());
+            return {
+              ...a,
+              vendido: vendido,
+              disponible: Number(a.cantidadAsignada || 0) - vendido,
+              asignadoA: (a.asignadoA || '').trim()
+            };
+          })
+          .filter(a => a.disponible > 0);
+      });
+    });
   }
 
-  // Agrupar por producto
-  const agrupado: any = {};
-  lista.forEach(a => {
-    const key = a.nombre;
-    if (!agrupado[key]) {
-      agrupado[key] = { nombre: a.nombre, total: 0, vendido: 0, disponible: 0 };
+
+  aplicarFiltros() {
+    console.log('--- [INICIO aplicarFiltros] ---');
+    console.log('filtroPrioridad actual:', this.filtroPrioridad);
+    console.log('Mes seleccionado:', this.filtroMes, 'Año:', this.filtroAnio);
+    console.log('Total asignaciones sin filtrar:', this.asignaciones.length);
+
+    let res = [...this.asignaciones];
+
+    if (this.esEncargado() && this.filtroUsuario && this.filtroUsuario.trim() !== '') {
+      res = res.filter(a => (a.asignadoA || '').trim() === this.filtroUsuario.trim());
+      console.log('📍 Después filtro usuario:', res.length);
     }
-    agrupado[key].total += Number(a.cantidadAsignada || 0);
-    agrupado[key].vendido += Number(a.vendido || 0);
-    agrupado[key].disponible += (Number(a.cantidadAsignada || 0) - Number(a.vendido || 0));
-  });
 
-  const detalle = Object.values(agrupado).map((p: any) => ({
-    ...p,
-    porcentaje: p.total > 0 ? Math.round((p.vendido / p.total) * 100) : 0
-  }));
+    const texto = (this.filtroMedicamento || '').trim().toLowerCase();
+    if (texto !== '') {
+      res = res.filter(a =>
+        (a.codigo || '').toLowerCase().includes(texto) ||
+        (a.nombre || '').toLowerCase().includes(texto)
+      );
+      console.log('📍 Después filtro texto:', res.length);
+    }
 
-  this.resumen = {
-    totalProductos: detalle.length,
-    cantidadTotal: detalle.reduce((s: number, p: any) => s + p.total, 0),
-    totalVendido: detalle.reduce((s: number, p: any) => s + p.vendido, 0),
-    disponibleTotal: detalle.reduce((s: number, p: any) => s + p.disponible, 0),
-    detalle: detalle
-  };
-}
+    const hayMesSeleccionado = this.filtroMes !== null;
+    console.log('🔍 Hay mes seleccionado?', hayMesSeleccionado);
+
+    if (hayMesSeleccionado && this.filtroAnio) {
+      const mesBuscar = String(this.filtroMes).padStart(2, '0');
+      const anioBuscar = String(this.filtroAnio).slice(-2);
+      console.log('🔍 Buscamos → Mes:', mesBuscar, 'Año:', anioBuscar);
+
+      res = res.filter(a => {
+        const { mes, anio } = this.extraerMesYAnio(a.fechaVencimiento);
+        return mes === mesBuscar && anio === anioBuscar;
+      });
+      console.log('✅ TARJETAS ENCONTRADAS:', res.length);
+    }
+
+    if (!hayMesSeleccionado) {
+      console.log('✅ Sin filtro de mes → APLICANDO FILTRO DE PRIORIDAD');
+      if (this.filtroPrioridad === 'ROJO') {
+        res = res.filter(a => {
+          const m = this.diferenciaMeses(a.fechaVencimiento);
+          return !isNaN(m) && m <= 1;
+        });
+      } else if (this.filtroPrioridad === 'AMARILLO') {
+        res = res.filter(a => {
+          const m = this.diferenciaMeses(a.fechaVencimiento);
+          return !isNaN(m) && m >= 2 && m <= 3;
+        });
+      } else if (this.filtroPrioridad === 'VERDE') {
+        res = res.filter(a => {
+          const m = this.diferenciaMeses(a.fechaVencimiento);
+          return !isNaN(m) && m > 3;
+        });
+      }
+      console.log('📍 Después filtro prioridad:', res.length);
+    } else {
+      console.log('⚠️ Filtro de prioridad DESACTIVADO (filtrando por mes concreto)');
+    }
+
+    this.asignacionesFiltradas = res;
+    console.log('✅ ✅ ✅ RESULTADO FINAL:', this.asignacionesFiltradas.length);
+  }
+
+
+  abrirResumenTotal() {
+    this.MostrarResumenTotal = true;
+    this.filtroResumenUsuario = '';
+    this.calcularResumen();
+  }
+
+  calcularResumen() {
+    let lista = [...this.asignaciones];
+
+    if (this.filtroResumenUsuario) {
+      lista = lista.filter(a => (a.asignadoA || '').trim() === this.filtroResumenUsuario.trim());
+    }
+
+    const agrupado: any = {};
+    lista.forEach(a => {
+      const key = a.nombre;
+      if (!agrupado[key]) {
+        agrupado[key] = { nombre: a.nombre, total: 0, vendido: 0, disponible: 0 };
+      }
+      agrupado[key].total += Number(a.cantidadAsignada || 0);
+      agrupado[key].vendido += Number(a.vendido || 0);
+      agrupado[key].disponible += (Number(a.cantidadAsignada || 0) - Number(a.vendido || 0));
+    });
+
+    const detalle = Object.values(agrupado).map((p: any) => ({
+      ...p,
+      porcentaje: p.total > 0 ? Math.round((p.vendido / p.total) * 100) : 0
+    }));
+
+    this.resumen = {
+      totalProductos: detalle.length,
+      cantidadTotal: detalle.reduce((s: number, p: any) => s + p.total, 0),
+      totalVendido: detalle.reduce((s: number, p: any) => s + p.vendido, 0),
+      disponibleTotal: detalle.reduce((s: number, p: any) => s + p.disponible, 0),
+      detalle: detalle
+    };
+  }
+
+
+
+  parsearFecha(fechaTexto: string): Date | null {
+    if (!fechaTexto || fechaTexto.trim() === '') return null;
+    const partes = fechaTexto.trim().split('/');
+    if (partes.length !== 3) return null;
+    const dia = parseInt(partes[0], 10);
+    const mes = parseInt(partes[1], 10) - 1;
+    const anio = 2000 + parseInt(partes[2], 10); // "26" → 2026
+    if (isNaN(dia) || isNaN(mes) || isNaN(anio)) return null;
+    return new Date(anio, mes, dia);
+  }
+
+  formatearFechaEntrada(evento: any) {
+    let valor = evento.target.value.replace(/\D/g, '');
+    if (valor.length >= 2) valor = valor.slice(0, 2) + '/' + valor.slice(2);
+    if (valor.length >= 5) valor = valor.slice(0, 5) + '/' + valor.slice(5, 7);
+    evento.target.value = valor;
+  }
+
+  obtenerFechaComoTexto(fecha: any): string {
+    if (!fecha) return '';
+    const f = new Date(fecha);
+    const dia = String(f.getDate()).padStart(2, '0');
+    const mes = String(f.getMonth() + 1).padStart(2, '0');
+    const anio = String(f.getFullYear()).slice(-2);
+    return `${dia}/${mes}/${anio}`;
+  }
+
+  limpiarFiltroFechas() {
+    this.filtroMes = null;
+    this.filtroAnio = 2026;
+    this.aplicarFiltros();
+  }
+
+  extraerMesYAnio(fecha: any): { mes: string, anio: string } {
+    if (!fecha) return { mes: '', anio: '' };
+
+    const texto = String(fecha);
+
+    if (texto.length >= 7 && texto[4] === '-') {
+      const anio = texto.substring(2, 4);
+      const mes = texto.substring(5, 7);
+      return { mes, anio };
+    }
+
+    if (texto.includes('/')) {
+      const partes = texto.split('/');
+      return { mes: partes[1] || '', anio: partes[2] || '' };
+    }
+
+    return { mes: '', anio: '' };
+  }
+
 }

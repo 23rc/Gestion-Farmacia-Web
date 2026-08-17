@@ -1550,8 +1550,10 @@
 
                     <ng-container *ngIf="esEncargado()">
                         <div class="d-flex align-items-center justify-content-between pb-2 mt-5 mb-4 border-bottom">
-                            <h6 class="fw-bold fs-6 fs-md-5 m-0" style="color: #1e3a5f; border-color: #3d5a80;">📤 Asignar Productos</h6>
-                            <button class="btn btn-sm rounded-pill text-white shadow d-flex align-items-center gap-2 px-3 py-1"
+                            <h6 class="fw-bold fs-6 fs-md-5 m-0" style="color: #1e3a5f; border-color: #3d5a80;">📤
+                                Asignar Productos</h6>
+                            <button
+                                class="btn btn-sm rounded-pill text-white shadow d-flex align-items-center gap-2 px-3 py-1"
                                 style="background: linear-gradient(135deg, #198754, #157347);"
                                 (click)="abrirResumenTotal()">
                                 <i class="bi bi-bar-chart-line"></i>
@@ -1628,13 +1630,64 @@
                                     <select class="form-select rounded-2" [(ngModel)]="filtroUsuario"
                                         (change)="aplicarFiltros()">
                                         <option value="" class="text-muted">-- Todos --</option>
-                                        <option *ngFor="let u of ListaUsuarios" [ngValue]="u.nombre">{{u.nombre}}</option>
+                                        <option *ngFor="let u of ListaUsuarios" [ngValue]="u.nombre">{{u.nombre}}
+                                        </option>
                                     </select>
                                 </div>
                             </div>
 
                             <!-- 🆕 BOTÓN DE AYUDA - DISEÑO MEJORADO -->
                             <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between mt-4 mb-3">
+
+                                <!-- 📅 FILTRO POR MES Y AÑO DE VENCIMIENTO -->
+                                <div class="w-100 mb-2">
+                                    <div class="row g-3 align-items-center bg-light p-3 rounded-3 border mb-0">
+                                        <div class="col-md-5 col-sm-6">
+                                            <label class="form-label small fw-semibold mb-1">📆 Mes de
+                                                Vencimiento</label>
+                                            <select class="form-select rounded-2" [(ngModel)]="filtroMes"
+                                                (change)="aplicarFiltros()">
+                                       <option [ngValue]="null">-- Todos los meses --</option>
+                                                <option [value]="1">Enero</option>
+                                                <option [value]="2">Febrero</option>
+                                                <option [value]="3">Marzo</option>
+                                                <option [value]="4">Abril</option>
+                                                <option [value]="5">Mayo</option>
+                                                <option [value]="6">Junio</option>
+                                                <option [value]="7">Julio</option>
+                                                <option [value]="8">Agosto</option>
+                                                <option [value]="9">Septiembre</option>
+                                                <option [value]="10">Octubre</option>
+                                                <option [value]="11">Noviembre</option>
+                                                <option [value]="12">Diciembre</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6">
+                                            <label class="form-label small fw-semibold mb-1">📆 Año</label>
+                                            <select class="form-select rounded-2" [(ngModel)]="filtroAnio"
+                                                (change)="aplicarFiltros()">
+                                                <option [value]="2025">2025</option>
+                                                <option [value]="2026" selected>2026</option>
+                                                <option [value]="2027">2027</option>
+                                                <option [value]="2028">2028</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 col-sm-12 d-flex gap-2">
+                                            <button class="btn btn-sm text-white flex-grow-0"
+                                                style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);"
+                                                (click)="aplicarFiltros()">
+                                                🔍 Filtrar
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-secondary flex-grow-0"
+                                                (click)="limpiarFiltroFechas()">
+                                                🔄 Limpiar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- 🔘 BOTONES DE PRIORIDAD → AHORA VAN DESPUÉS DE LAS FECHAS -->
                                 <div class="d-flex gap-2">
                                     <button class="btn btn-sm rounded-pill px-3 py-1 fw-medium small"
                                         [class.btn-danger]="filtroPrioridad === 'ROJO'"
@@ -1647,7 +1700,7 @@
                                         [class.btn-warning]="filtroPrioridad === 'AMARILLO'"
                                         [class.btn-outline-warning]="filtroPrioridad !== 'AMARILLO'"
                                         (click)="filtroPrioridad = 'AMARILLO'; aplicarFiltros()">
-                                        🟡 Pentiente
+                                        🟡 Pendiente
                                     </button>
 
                                     <button class="btn btn-sm rounded-pill px-3 py-1 fw-medium small"
@@ -1662,7 +1715,6 @@
                                         (click)="filtroPrioridad = 'TODOS'; aplicarFiltros()">
                                         Todos
                                     </button>
-
                                 </div>
 
                                 <button
@@ -1673,6 +1725,7 @@
                                     🤝 Ayudar
                                 </button>
                             </div>
+
 
                             <div *ngIf="asignacionesFiltradas.length === 0"
                                 class="text-center text-secondary py-5 small">Sin coincidencias</div>
@@ -1689,7 +1742,8 @@
                                         <div class="p-2 p-md-3"
                                             style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);">
                                             <!-- ✅ TOOLTIP NATIVO: al pasar el cursor ves el nombre completo -->
-                                            <h6 class="mb-0 text-white fw-bold text-truncate small" [title]="a.nombre">{{a.nombre}}</h6>
+                                            <h6 class="mb-0 text-white fw-bold text-truncate small" [title]="a.nombre">
+                                                {{a.nombre}}</h6>
                                             <span class="badge bg-white text-primary mt-1"
                                                 style="font-size:0.75rem;">Cód:
                                                 {{a.codigo}}</span>
@@ -1725,29 +1779,32 @@
                                                 style="font-size:0.75rem;">👤 Asignado a:
                                                 <strong>{{a.asignadoA}}</strong>
                                             </div>
-<div class="d-flex align-items-center justify-content-between mt-auto w-100">
-  <!-- Texto con más tamaño, negrita y colores más fuertes -->
-  <span class="fw-bold" style="font-size:0.9rem;"
-        [class.text-danger]="(a.cantidadAsignada - (a.vendido || 0)) > 0"
-        [class.text-success]="(a.cantidadAsignada - (a.vendido || 0)) <= 0">
-    {{ (a.cantidadAsignada - (a.vendido || 0)) > 0 ? 'Pendiente' : 'Terminado' }}
-  </span>
+                                            <div
+                                                class="d-flex align-items-center justify-content-between mt-auto w-100">
+                                                <!-- Texto con más tamaño, negrita y colores más fuertes -->
+                                                <span class="fw-bold" style="font-size:0.9rem;"
+                                                    [class.text-danger]="(a.cantidadAsignada - (a.vendido || 0)) > 0"
+                                                    [class.text-success]="(a.cantidadAsignada - (a.vendido || 0)) <= 0">
+                                                    {{ (a.cantidadAsignada - (a.vendido || 0)) > 0 ? 'Pendiente' :
+                                                    'Terminado' }}
+                                                </span>
 
-  <!-- Iconos IGUALES a los que tenías, sin cambios -->
-  <div class="d-flex gap-1">
-    <button class="btn btn-sm rounded-pill px-2" style="font-size:0.75rem;"
-        [class.btn-outline-danger]="(a.cantidadAsignada - (a.vendido || 0)) > 0"
-        [class.btn-outline-success]="(a.cantidadAsignada - (a.vendido || 0)) <= 0"
-        (click)="cargarVentasDelProducto(a)">
-      <i class="bi bi-eye"></i>
-    </button>
-    <button *ngIf="esEncargado()"
-        class="btn btn-sm btn-danger rounded-pill px-2"
-        style="font-size:0.75rem;" (click)="eliminarAsignacion(a)">
-      <i class="bi bi-trash"></i>
-    </button>
-  </div>
-</div>
+                                                <!-- Iconos IGUALES a los que tenías, sin cambios -->
+                                                <div class="d-flex gap-1">
+                                                    <button class="btn btn-sm rounded-pill px-2"
+                                                        style="font-size:0.75rem;"
+                                                        [class.btn-outline-danger]="(a.cantidadAsignada - (a.vendido || 0)) > 0"
+                                                        [class.btn-outline-success]="(a.cantidadAsignada - (a.vendido || 0)) <= 0"
+                                                        (click)="cargarVentasDelProducto(a)">
+                                                        <i class="bi bi-eye"></i>
+                                                    </button>
+                                                    <button *ngIf="esEncargado()"
+                                                        class="btn btn-sm btn-danger rounded-pill px-2"
+                                                        style="font-size:0.75rem;" (click)="eliminarAsignacion(a)">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
 
 
                                         </div>
@@ -2075,21 +2132,26 @@
     <!-- ✅ MODAL RESUMEN - SIN ERRORES DE SINTAXIS -->
     <div *ngIf="MostrarResumenTotal" class="modal d-block position-fixed top-0 start-0 w-100 h-100"
         style="background: rgba(20, 30, 50, 0.5); z-index:1060; display: flex !important; align-items: center; justify-content: center; padding: 0.5rem;">
-        
+
         <div class="modal-dialog m-0" style="max-width: 1100px; width: 95%; max-height: 80vh;">
-            <div class="modal-content overflow-hidden d-flex flex-column" style="border-radius: 16px; border: none; box-shadow: 0 12px 40px rgba(30, 58, 95, 0.25);">
+            <div class="modal-content overflow-hidden d-flex flex-column"
+                style="border-radius: 16px; border: none; box-shadow: 0 12px 40px rgba(30, 58, 95, 0.25);">
                 <!-- ENCABEZADO -->
-                <div class="modal-header text-white p-3 flex-shrink-0" style="background: linear-gradient(135deg, #1e3a5f, #3d5a80); border-bottom: 1px solid rgba(255,255,255,0.15);">
+                <div class="modal-header text-white p-3 flex-shrink-0"
+                    style="background: linear-gradient(135deg, #1e3a5f, #3d5a80); border-bottom: 1px solid rgba(255,255,255,0.15);">
                     <h5 class="modal-title fs-6 fw-semibold mb-0">📈 Resumen General de Productos 📦</h5>
-                    <button type="button" class="btn-close btn-close-white" (click)="MostrarResumenTotal = false"></button>
+                    <button type="button" class="btn-close btn-close-white"
+                        (click)="MostrarResumenTotal = false"></button>
                 </div>
 
                 <!-- CUERPO CORREGIDO -->
                 <div class="modal-body p-3" style="background-color: #f0f4f9; overflow-y: auto; flex-grow: 1;">
                     <!-- FILTRO -->
                     <div class="mb-3">
-                        <label class="form-label small fw-semibold mb-1" style="color: #1e3a5f;">👤 Ver resumen de:</label>
-                        <select class="form-select rounded-3 form-select-sm" [(ngModel)]="filtroResumenUsuario" (change)="calcularResumen()" style="max-width: 300px;">
+                        <label class="form-label small fw-semibold mb-1" style="color: #1e3a5f;">👤 Ver resumen
+                            de:</label>
+                        <select class="form-select rounded-3 form-select-sm" [(ngModel)]="filtroResumenUsuario"
+                            (change)="calcularResumen()" style="max-width: 300px;">
                             <option value="">📊 Todos los usuarios</option>
                             <option *ngFor="let u of ListaUsuarios" [ngValue]="u.nombre">👉 {{u.nombre}}</option>
                         </select>
@@ -2098,25 +2160,29 @@
                     <!-- TARJETAS -->
                     <div class="row g-2 mb-3">
                         <div class="col-6 col-md-3">
-                            <div class="rounded-3 text-center p-2 shadow-sm" style="background: #ffffff; border-left: 4px solid #1e3a5f;">
+                            <div class="rounded-3 text-center p-2 shadow-sm"
+                                style="background: #ffffff; border-left: 4px solid #1e3a5f;">
                                 <div class="text-muted small mb-1">📦 Total Productos</div>
                                 <div class="fs-5 fw-bold" style="color: #1e3a5f;">{{resumen.totalProductos}}</div>
                             </div>
                         </div>
                         <div class="col-6 col-md-3">
-                            <div class="rounded-3 text-center p-2 shadow-sm" style="background: #fffbf0; border-left: 4px solid #f59e0b;">
+                            <div class="rounded-3 text-center p-2 shadow-sm"
+                                style="background: #fffbf0; border-left: 4px solid #f59e0b;">
                                 <div class="text-muted small mb-1">📊 Cantidad Total</div>
                                 <div class="fs-5 fw-bold" style="color: #d97706;">{{resumen.cantidadTotal}}</div>
                             </div>
                         </div>
                         <div class="col-6 col-md-3">
-                            <div class="rounded-3 text-center p-2 shadow-sm" style="background: #f0fdf4; border-left: 4px solid #10b981;">
+                            <div class="rounded-3 text-center p-2 shadow-sm"
+                                style="background: #f0fdf4; border-left: 4px solid #10b981;">
                                 <div class="text-muted small mb-1">✅ Vendido</div>
                                 <div class="fs-5 fw-bold" style="color: #059669;">{{resumen.totalVendido}}</div>
                             </div>
                         </div>
                         <div class="col-6 col-md-3">
-                            <div class="rounded-3 text-center p-2 shadow-sm" style="background: #fef2f2; border-left: 4px solid #ef4444;">
+                            <div class="rounded-3 text-center p-2 shadow-sm"
+                                style="background: #fef2f2; border-left: 4px solid #ef4444;">
                                 <div class="text-muted small mb-1">⚠️ Disponible</div>
                                 <div class="fs-5 fw-bold" style="color: #dc2626;">{{resumen.disponibleTotal}}</div>
                             </div>
@@ -2125,7 +2191,8 @@
 
                     <!-- TABLA -->
                     <div class="rounded-3 shadow-sm p-2" style="background-color: #ffffff; border: 1px solid #d1d5db;">
-                        <h6 class="fw-semibold mb-2 pb-1 small" style="color: #1e3a5f; border-bottom: 1px solid #e5e7eb;">📋 Detalle por producto</h6>
+                        <h6 class="fw-semibold mb-2 pb-1 small"
+                            style="color: #1e3a5f; border-bottom: 1px solid #e5e7eb;">📋 Detalle por producto</h6>
                         <div class="table-responsive" style="max-height: 260px; overflow-y: auto;">
                             <table class="table table-sm align-middle mb-0">
                                 <thead>
@@ -2140,16 +2207,19 @@
                                 <tbody>
                                     <tr *ngFor="let r of resumen.detalle" style="border-bottom: 1px solid #f9fafb;">
                                         <td class="text-start small fw-medium" style="color: #1f2937;">{{r.nombre}}</td>
-                                        <td class="text-center small fw-semibold" style="color: #475569;">{{r.total}}</td>
-                                        <td class="text-center small fw-semibold" style="color: #059669;">{{r.vendido}}</td>
-                                        <td class="text-center small fw-semibold" 
+                                        <td class="text-center small fw-semibold" style="color: #475569;">{{r.total}}
+                                        </td>
+                                        <td class="text-center small fw-semibold" style="color: #059669;">{{r.vendido}}
+                                        </td>
+                                        <td class="text-center small fw-semibold"
                                             [style.color]="r.disponible === 0 ? '#dc2626' : r.disponible < 5 ? '#f59e0b' : '#10b981'">
                                             {{r.disponible}}
                                         </td>
                                         <td class="text-center small">
                                             <div class="d-flex align-items-center gap-2">
-                                                <div class="progress flex-grow-1 rounded-pill overflow-hidden" style="height: 6px; background: #e5e7eb;">
-                                                    <div class="progress-bar" role="progressbar" 
+                                                <div class="progress flex-grow-1 rounded-pill overflow-hidden"
+                                                    style="height: 6px; background: #e5e7eb;">
+                                                    <div class="progress-bar" role="progressbar"
                                                         [style.width]="r.porcentaje + '%'"
                                                         [style.backgroundColor]="r.porcentaje >= 80 ? '#10b981' : r.porcentaje >= 50 ? '#f59e0b' : '#ef4444'">
                                                     </div>
@@ -2168,7 +2238,9 @@
                 </div>
 
                 <div class="modal-footer p-2 border-0 flex-shrink-0" style="background-color: #f8fafc;">
-                    <button class="btn btn-sm rounded-pill px-4 text-white shadow-sm" style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);" (click)="MostrarResumenTotal = false">
+                    <button class="btn btn-sm rounded-pill px-4 text-white shadow-sm"
+                        style="background: linear-gradient(135deg, #1e3a5f, #3d5a80);"
+                        (click)="MostrarResumenTotal = false">
                         ✖️ Cerrar
                     </button>
                 </div>
