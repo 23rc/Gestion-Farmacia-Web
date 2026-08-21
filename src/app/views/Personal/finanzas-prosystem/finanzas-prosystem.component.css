@@ -1,0 +1,9 @@
+/* El modal de LISTADO va por DEBAJO */
+.modal-lista-gastos {
+  z-index: 1050;
+}
+
+/* El modal de FORMULARIO va por ENCIMA */
+.modal-gasto {
+  z-index: 1060; /* Número mayor = se ve arriba */
+}

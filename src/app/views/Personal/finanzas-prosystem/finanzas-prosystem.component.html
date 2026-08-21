@@ -1,0 +1,764 @@
+<div class="container-fluid py-4 px-4" style="background-color: #f8fafc; min-height: 100vh;">
+
+    <!-- ENCABEZADO -->
+    <div class="text-center mb-4 py-3 rounded-4"
+        style="background: linear-gradient(135deg, #1e3a8a, #3b82f6); box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+        <h1 class="fw-bold mb-1" style="color: #ffffff; font-size: 1.6rem;">💰 Finanzas ProSystem.S.A</h1>
+    </div>
+
+    <!-- BOTÓN CREAR CLIENTE -->
+    <div class="mb-4">
+        <button class="btn px-4 py-2 text-white shadow-sm"
+            style="background: linear-gradient(135deg, #10b981, #059669); border-radius: 10px; border: none;"
+            (click)="abrirModal('cliente')">
+            ➕ Crear Cliente
+        </button>
+        <button class="btn px-4 py-2 text-white shadow-sm"
+            style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); border-radius: 10px; border: none;"
+            (click)="abrirReporteGanancias()">
+            📊 Ganancias por Socio
+        </button>
+        <button class="btn px-4 py-2 text-white shadow-sm"
+            style="background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 10px; border: none;"
+            (click)="abrirListaGastos()">
+            📋 Ver Gastos Registrados
+        </button>
+
+    </div>
+
+    <!-- MODAL CLIENTE -->
+    <div *ngIf="modales['cliente']" class="modal d-block" tabindex="-1"
+        style="background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content" style="border: none; border-radius: 16px;">
+                <div class="py-3 px-4"
+                    style="background: linear-gradient(135deg, #1e40af, #3b82f6); position: relative;">
+                    <h5 class="mb-0 text-white fw-semibold">
+                        {{ cliente.id ? '✏️ Editar Cliente' : '➕ Nuevo Cliente' }}
+                    </h5>
+
+                    <!-- ✅ X BIEN A LA DERECHA, MÁS GRANDE Y VISIBLE -->
+                    <button type="button" class="btn-close"
+                        style="position: absolute; top: 12px; right: 16px; width: 28px; height: 28px; filter: brightness(0) invert(1); opacity: 1; font-size: 1.2rem;"
+                        (click)="cerrarModal('cliente')"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Nombre del Negocio</label>
+                            <input type="text" [(ngModel)]="cliente.nombre" class="form-control"
+                                style="border-radius: 10px; padding: 0.6rem;">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Sistema</label>
+                            <input type="text" [(ngModel)]="cliente.sistema" class="form-control"
+                                style="border-radius: 10px; padding: 0.6rem;">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Pago Instalación (Q)</label>
+                            <input type="number" [(ngModel)]="cliente.montoInstalacion" class="form-control"
+                                style="border-radius: 10px; padding: 0.6rem;">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Renta Mensual (Q)</label>
+                            <input type="number" [(ngModel)]="cliente.montoRentaMensual" class="form-control"
+                                style="border-radius: 10px; padding: 0.6rem;">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Fecha Inicio</label>
+                            <input type="date" [(ngModel)]="cliente.fechaInicio" class="form-control"
+                                style="border-radius: 10px; padding: 0.6rem;">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Día de Pago</label>
+                            <input type="number" [(ngModel)]="cliente.diaPagoMensual" class="form-control"
+                                style="border-radius: 10px; padding: 0.6rem;" min="1" max="31">
+                        </div>
+                        <!-- ✅ SOCIOS ASIGNADOS -->
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">👥 Socios Asignados</label>
+                            <div class="d-flex flex-wrap gap-3 mt-2">
+                                <label class="d-flex align-items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" class="form-check-input"
+                                        [checked]="estaSeleccionado('Roberto Carlos Yoxón Cuj')"
+                                        (change)="toggleSocio('Roberto Carlos Yoxón Cuj')">
+                                    Roberto Carlos Yoxón Cuj
+                                </label>
+                                <label class="d-flex align-items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" class="form-check-input"
+                                        [checked]="estaSeleccionado('Walter Alfredeo Canú')"
+                                        (change)="toggleSocio('Walter Alfredeo Canú')">
+                                    Walter Alfredeo Canú
+                                </label>
+                                <label class="d-flex align-items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" class="form-check-input"
+                                        [checked]="estaSeleccionado('Victor Samines')"
+                                        (change)="toggleSocio('Victor Samines')">
+                                    Victor Samines
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn px-4" style="border-radius: 10px; background: #e2e8f0;"
+                        (click)="cerrarModal('cliente')">
+                        Cancelar
+                    </button>
+                    <button type="button" class="btn px-4 text-white"
+                        style="border-radius: 10px; background: linear-gradient(135deg, #3b82f6, #2563eb);"
+                        (click)="guardarCliente()">
+                        💾 Guardar Cliente
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LISTADO DE CLIENTES EN TARJETAS -->
+    <div class="row g-3 mt-1">
+        <div class="col-md-6 col-lg-4" *ngFor="let c of clientes">
+            <div class="card shadow-sm h-100" style="border: 1px solid #e2e8f0; border-radius: 16px;">
+                <div class="card-body p-3 d-flex flex-column">
+
+                    <!-- 📌 SECCIÓN 1: DATOS DEL CLIENTE -->
+                    <div class="pb-2 mb-2 border-bottom border-opacity-50" style="border-color: #cbd5e1;">
+                        <h5 class="fw-bold text-dark mb-1">{{ c.nombre }}</h5>
+                        <p class="text-muted small mb-2">{{ c.sistema }}</p>
+
+                        <div class="row g-1 small">
+                            <div class="col-6">
+                                <span class="text-muted">💳 Instalación:</span>
+                                <span class="fw-medium ms-1">Q{{ c.montoInstalacion }}</span>
+                            </div>
+                            <div class="col-6">
+                                <span class="text-muted">💰 Renta:</span>
+                                <span class="fw-medium ms-1">Q{{ c.montoRentaMensual }}</span>
+                            </div>
+                            <div class="col-6">
+                                <span class="text-muted">📅 Día pago:</span>
+                                <span class="fw-medium ms-1">{{ c.diaPagoMensual }}</span>
+                            </div>
+                            <div class="col-6">
+                                <span class="text-muted">🚀 Inicio:</span>
+                                <span class="fw-medium ms-1">{{ c.fechaInicio }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ⚠️ SECCIÓN 2: RESUMEN DE DEUDA -->
+                    @if (calcularDeuda(c); as deuda) {
+                    <div class="mb-2 p-2 rounded-3" style="background: #fffbeb; border: 1px solid #fde68a;">
+                        <h6 class="fw-semibold small text-warning mb-2">⚠️ Resumen de Deuda</h6>
+                        <div class="row g-1 small">
+                            <div class="col-6">
+                                <span class="text-muted">Meses atrasados:</span>
+                                <span class="fw-bold ms-1">{{ deuda.mesesAtrasados }}</span>
+                            </div>
+                            <div class="col-6">
+                                <span class="text-muted">Pendiente Inst.:</span>
+                                <span class="fw-bold text-danger ms-1">Q{{ deuda.pendienteInstalacion }}</span>
+                            </div>
+                            <div class="col-12">
+                                <span class="text-muted">Pendiente Renta ({{ deuda.mesesAtrasados }} meses):</span>
+                                <span class="fw-bold text-danger ms-1">Q{{ deuda.pendienteRenta }}</span>
+                            </div>
+                            @if (deuda.nombresMesesPendientes.length > 0) {
+                            <div class="col-12 mt-1">
+                                <span class="text-muted">Meses:</span>
+                                <span class="fst-italic text-dark ms-1">{{ deuda.nombresMesesPendientes.join(', ')
+                                    }}</span>
+                            </div>
+                            }
+                            <div class="col-12 pt-1 mt-1 border-top" style="border-color: #fcd34d;">
+                                <span class="fw-semibold">Total Pendiente:</span>
+                                <span class="fw-bold text-danger ms-1">Q{{ deuda.total }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    }
+
+                    <!-- 👥 SECCIÓN 3: SOCIOS Y REPARTO -->
+                    <div class="mb-2 p-2 rounded-3" style="background: #eff6ff; border: 1px solid #bfdbfe;">
+                        <h6 class="fw-semibold small text-primary mb-2">👥 Socios y Reparto</h6>
+                        <div class="mb-2">
+                            @for (socio of c.sociosAsignados; track socio) {
+                            <span class="badge bg-primary bg-opacity-10 text-primary me-1 mb-1"
+                                style="font-size: 0.8rem;">
+                                {{ socio }}
+                            </span>
+                            }
+                        </div>
+
+                        @if (obtenerDesglosePorCliente(c); as desglose) {
+                        @if (desglose.length > 0) {
+                        <div class="pt-2 border-top" style="border-color: #dbeafe;">
+                            @for (d of desglose; track d.nombreSocio) {
+                            <div class="py-1 small d-flex flex-wrap justify-content-between align-items-center">
+                                <span class="fw-medium text-dark me-1" style="font-size: 0.85rem;">{{ d.nombreSocio
+                                    }}:</span>
+                                <div class="d-flex gap-2 gap-sm-3" style="font-size: 0.8rem;">
+                                    <span class="text-emerald-700">✅ Q{{ d.ingresado.toFixed(2) }}</span>
+                                    <span class="text-amber-700">⏳ Q{{ d.pendiente.toFixed(2) }}</span>
+                                    <span class="text-indigo-700 fw-semibold">💎 Q{{ d.total.toFixed(2) }}</span>
+                                </div>
+                            </div>
+                            }
+                        </div>
+                        }
+                        }
+                    </div>
+
+                    <!-- ✅ BOTONES -->
+                    <div class="mt-auto pt-2 border-top" style="border-color: #e2e8f0;">
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button class="btn btn-sm text-white flex-grow-1"
+                                style="background: #3b82f6; border-radius: 8px;" (click)="abrirModal('cliente', c)">
+                                ✏️ Editar
+                            </button>
+                            <button class="btn btn-sm text-white flex-grow-1"
+                                style="background: #ef4444; border-radius: 8px;" (click)="eliminarCliente(c)">
+                                🗑️ Eliminar
+                            </button>
+                            <button class="btn btn-sm text-white" style="background: #10b981; border-radius: 8px;"
+                                (click)="abrirModalPagar(c)">
+                                💰 Pagar
+                            </button>
+                            <button class="btn btn-sm text-white" style="background: #f59e0b; border-radius: 8px;"
+                                (click)="abrirVerPagos(c)">
+                                📋 Ver
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- === NUEVO: MODAL REGISTRAR PAGO === -->
+    <div *ngIf="modales['pago']" class="modal d-block" tabindex="-1"
+        style="background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);">
+        <div class="modal-dialog modal-md modal-dialog-centered">
+            <div class="modal-content" style="border: none; border-radius: 16px;">
+                <div class="py-3 px-4"
+                    style="background: linear-gradient(135deg, #10b981, #059669); position: relative;">
+                    <h5 class="mb-0 text-white fw-semibold">💰 Registrar Pago</h5>
+                    <button type="button" class="btn-close"
+                        style="position: absolute; top: 12px; right: 16px; width: 28px; height: 28px; filter: brightness(0) invert(1); opacity: 1; font-size: 1.2rem;"
+                        (click)="cerrarModalPago()"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="mb-3 fw-semibold">Cliente: {{ clienteSeleccionadoNombre }}</p>
+                    <div class="row g-3">
+
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Tipo de Pago</label>
+                            <select [(ngModel)]="pago.tipoPago" class="form-select"
+                                style="border-radius: 10px; padding: 0.6rem;" (change)="alCambiarTipoPago()">
+                                <option value="">Selecciona...</option>
+                                <option *ngFor="let tipo of tiposPago" [value]="tipo">{{ tipo }}</option>
+                            </select>
+                        </div>
+
+                        <!-- ✅ SI ES INSTALACIÓN: Mostrar pendiente y llenar monto -->
+                        @if (pago.tipoPago === 'Instalación') {
+                        <div class="col-md-12">
+                            <div class="alert alert-info py-2 mb-2">
+                                💳 Pendiente de Instalación: <strong>Q{{ getPendienteInstalacion() }}</strong>
+                            </div>
+                        </div>
+                        }
+
+                        <!-- ✅ SI ES RENTA: Mostrar meses pendientes arriba -->
+                        @if (pago.tipoPago === 'Renta') {
+                        <div class="col-md-12">
+                            <div class="alert alert-warning py-2 mb-2">
+                                📅 Meses pendientes: <strong>{{ getMesesPendientesTexto() }}</strong>
+                            </div>
+                        </div>
+                        }
+
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Monto (Q)</label>
+                            <!-- ✅ Renta = bloqueado | Instalación = editable con valor por defecto -->
+                            <input type="number" [(ngModel)]="pago.monto" class="form-control"
+                                style="border-radius: 10px; padding: 0.6rem;" [readonly]="pago.tipoPago === 'Renta'">
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Fecha de Pago</label>
+                            <input type="date" [(ngModel)]="pago.fechaPago" class="form-control"
+                                style="border-radius: 10px; padding: 0.6rem;" [readonly]="true">
+                        </div>
+
+                        <!-- ✅ SI ES RENTA: Mostrar Mes y Año -->
+                        @if (pago.tipoPago === 'Renta') {
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Mes Correspondiente</label>
+                            <select [(ngModel)]="pago.mesCorrespondiente" class="form-select"
+                                style="border-radius: 10px; padding: 0.6rem;">
+                                <option value="">Selecciona...</option>
+                                <option *ngFor="let mes of meses" [value]="mes">{{ mes }}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Año Correspondiente</label>
+                            <select [(ngModel)]="pago.anioCorrespondiente" class="form-select"
+                                style="border-radius: 10px; padding: 0.6rem;">
+                                <option value="">Selecciona...</option>
+                                <option *ngFor="let anio of anios" [value]="anio">{{ anio }}</option>
+                            </select>
+                        </div>
+                        }
+
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn px-4" style="border-radius: 10px; background: #e2e8f0;"
+                        (click)="cerrarModalPago()">Cancelar</button>
+                    <button type="button" class="btn px-4 text-white"
+                        style="border-radius: 10px; background: linear-gradient(135deg, #10b981, #059669);"
+                        (click)="guardarPago()">💾 Guardar Pago</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- === NUEVO: MODAL HISTORIAL DE PAGOS === -->
+    <div *ngIf="modales['verPagos']" class="modal d-block" tabindex="-1"
+        style="background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content" style="border: none; border-radius: 16px;">
+                <div class="py-3 px-4"
+                    style="background: linear-gradient(135deg, #f59e0b, #d97706); position: relative;">
+                    <h5 class="mb-0 text-white fw-semibold">📋 Historial de Pagos</h5>
+                    <button type="button" class="btn-close"
+                        style="position: absolute; top: 12px; right: 16px; width: 28px; height: 28px; filter: brightness(0) invert(1); opacity: 1; font-size: 1.2rem;"
+                        (click)="cerrarModalVerPagos()"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="mb-3 fw-semibold">Cliente: {{ clienteSeleccionadoNombre }}</p>
+                    <div *ngIf="pagos.length === 0" class="text-center text-muted py-4">Sin pagos registrados aún</div>
+                    <div class="table-responsive" *ngIf="pagos.length > 0">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr class="bg-light">
+                                    <th>Tipo</th>
+                                    <th>Fecha</th>
+                                    <th>Mes / Año</th>
+                                    <th>Monto</th>
+                                    <th style="width: 140px;">Acciones</th> <!-- ✅ NUEVO -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let p of pagos">
+                                    <td>{{ p.tipoPago }}</td>
+                                    <td>{{ p.fechaPago }}</td>
+                                    <td>{{ p.mesCorrespondiente }} {{ p.anioCorrespondiente }}</td>
+                                    <td>Q{{ p.monto }}</td>
+                                    <td> <!-- ✅ NUEVO: Botones Editar / Eliminar -->
+                                        <div class="d-flex gap-1">
+                                            <button class="btn btn-sm text-white"
+                                                style="background: #3b82f6; padding: 2px 8px; font-size: 12px;"
+                                                (click)="cerrarModalVerPagos(); abrirModalPagar({id: p.idCliente, nombre: p.nombreCliente, sistema: '', montoInstalacion: 0, montoRentaMensual: 0, fechaInicio: '', diaPagoMensual: 0, sociosAsignados: []}, p)">
+                                                ✏️
+                                            </button>
+                                            <button class="btn btn-sm text-white"
+                                                style="background: #ef4444; padding: 2px 8px; font-size: 12px;"
+                                                (click)="eliminarPago(p)">
+                                                🗑️
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ MODAL: REPORTE DE GANANCIAS POR SOCIO -->
+    @if (modales['ganancias']) {
+    <div class="modal fade show d-block" tabindex="-1"
+         style="background: rgba(15, 23, 42, 0.35); backdrop-filter: blur(8px);">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0"
+                 style="border-radius: 14px; max-height: 92vh; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);">
+
+                <!-- ENCABEZADO -->
+                <div class="px-4 py-3" style="background: #1e293b; border-bottom: 3px solid #3b82f6;">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-3">
+                            <div style="width: 38px; height: 38px; border-radius: 8px; background: rgba(59,130,246,0.15); display: flex; align-items: center; justify-content: center;">
+                                <span style="font-size: 18px;">📊</span>
+                            </div>
+                            <div>
+                                <h5 class="text-white fw-semibold mb-0" style="font-size: 1.05rem;">Reporte de Distribución</h5>
+                                <p class="text-slate-400 small mb-0">Ingresos − Gastos = Subtotal Real • + Por Cobrar = Total General</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white shadow-none"
+                                (click)="cerrarModalGanancias()"></button>
+                    </div>
+                </div>
+
+                <!-- CUERPO -->
+                <div class="p-3" style="background: #f1f5f9; overflow-y: auto; max-height: 80vh;">
+                    <style>
+                        .tabla-empresarial {
+                            font-size: 0.75rem;
+                            border-radius: 10px;
+                            overflow: hidden;
+                            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+                            white-space: nowrap;
+                        }
+                        .tabla-empresarial th { border: none; font-weight: 600; padding: 8px 4px; }
+                        .tabla-empresarial td { border: none; border-bottom: 1px solid #e2e8f0; padding: 10px 4px; }
+                        .tabla-empresarial tbody tr { transition: all 0.18s ease; background: #fff; }
+                        .tabla-empresarial tbody tr:hover { background: #eff6ff; }
+                        .tabla-empresarial .monto { font-family: 'Segoe UI', monospace; font-variant-numeric: tabular-nums; text-align: right; }
+                    </style>
+
+                    <table class="table mb-0 tabla-empresarial align-middle">
+                        <thead>
+                            <tr style="background: #f8fafc; border-bottom: 2px solid #cbd5e1;">
+                                <th rowspan="2" class="px-2 text-left text-secondary fw-semibold" style="width:14%;">Socio</th>
+                                <th colspan="4" class="text-center" style="color:#047857;">✅ INGRESOS RECIBIDOS</th>
+                                <th colspan="3" class="text-center" style="color:#b45309;">⏳ POR COBRAR</th>
+                                <th rowspan="2" class="text-center px-2 rounded-end-3"
+                                    style="background:#dbeafe; color:#1e40af; width:12%;">💎 TOTAL</th>
+                            </tr>
+                            <tr style="background:#f1f5f9; color:#64748b; font-size:0.68rem;">
+                                <th class="text-center">Inst</th>
+                                <th class="text-center">Renta</th>
+                                <th class="text-center" style="color:#dc2626;">− Gastos</th>
+                                <th class="text-center fw-bold" style="color:#047857;">Subtotal</th>
+                                <th class="text-center border-start">Inst</th>
+                                <th class="text-center">Renta</th>
+                                <th class="text-center fw-semibold" style="color:#b45309;">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (item of reporteConGastos; track item.nombreSocio) {
+                            <tr>
+                                <td class="px-2 fw-medium text-dark">{{ item.nombreSocio }}</td>
+                                <td class="monto text-muted">Q{{ item.totalPagadoInstalacion.toFixed(2) }}</td>
+                                <td class="monto text-muted">Q{{ item.totalPagadoRenta.toFixed(2) }}</td>
+                                <td class="monto fw-semibold" style="color:#dc2626;">−Q{{ item.totalGastos.toFixed(2) }}</td>
+                                <td class="monto fw-bold" style="color:#047857;">Q{{ item.subtotalIngresos.toFixed(2) }}</td>
+                                <td class="monto text-muted border-start">Q{{ item.porCobrarInstalacion.toFixed(2) }}</td>
+                                <td class="monto text-muted">Q{{ item.porCobrarRenta.toFixed(2) }}</td>
+                                <td class="monto fw-semibold" style="color:#b45309;">Q{{ item.porCobrarGeneral.toFixed(2) }}</td>
+                                <td class="monto fw-bold" style="color:#1e40af; font-size:0.9rem;">
+                                    Q{{ item.saldoNeto.toFixed(2) }}
+                                </td>
+                            </tr>
+                            }
+                            <!-- 📊 FILA DE TOTALES -->
+                            <tr style="background:#dbeafe; border-top:2px solid #3b82f6;">
+                                <td class="px-2 fw-bold text-dark text-uppercase" style="font-size:0.75rem;">📊 TOTALES</td>
+                                <td class="monto text-muted">—</td>
+                                <td class="monto text-muted">—</td>
+                                <td class="monto fw-bold" style="color:#dc2626;">−Q{{ totalGeneralGastos.toFixed(2) }}</td>
+                                <td class="monto fw-bold" style="color:#047857;">Q{{ subtotalIngresosGeneral.toFixed(2) }}</td>
+                                <td class="monto text-muted border-start">—</td>
+                                <td class="monto text-muted">—</td>
+                                <td class="monto fw-bold" style="color:#b45309;">Q{{ totalesGenerales.porCobrarGeneral.toFixed(2) }}</td>
+                                <td class="monto fw-bold" style="background:#1e40af; color:#fff; border-radius:6px; padding:6px 4px; font-size:0.95rem;">
+                                    Q{{ totalGeneralNeto.toFixed(2) }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+
+    @if (modales['gasto']) {
+    <div class="modal fade show d-block" tabindex="-1"
+        style="background: rgba(15, 23, 42, 0.35); backdrop-filter: blur(8px); z-index: 1060;">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0"
+                style="border-radius: 14px; max-height: 92vh; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);">
+
+                <!-- ENCABEZADO -->
+                <div class="px-5 py-4" style="background: #991b1b; border-bottom: 3px solid #dc2626;">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-3">
+                            <div
+                                style="width: 42px; height: 42px; border-radius: 8px; background: rgba(248,113,113,0.2); display: flex; align-items: center; justify-content: center;">
+                                <span style="font-size: 20px;">📤</span>
+                            </div>
+                            <div>
+                                <h5 class="text-white fw-semibold mb-0" style="font-size: 1.15rem;">Registro de Gastos /
+                                    Salidas</h5>
+                                <p class="text-red-200 small mb-0">Descuento proporcional entre socios asignados</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white shadow-none"
+                            (click)="cerrarModalGasto()"></button>
+                    </div>
+                </div>
+
+                <!-- CUERPO -->
+                <div class="p-4" style="background: #f1f5f9; overflow-y: auto;">
+                    <div class="row g-3">
+
+                        <!-- TIPO DE CONCEPTO -->
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold text-dark">Tipo de Gasto / Concepto</label>
+                            <select class="form-select border-0 shadow-sm"
+                                style="border-radius: 8px; padding: 10px 14px;" [(ngModel)]="gasto.tipoConcepto"
+                                (change)="alCambiarConcepto()">
+                                <option value="">— Selecciona el tipo de gasto —</option>
+                                @for (tipo of tiposConceptoGasto; track tipo) {
+                                <option [value]="tipo">{{ tipo }}</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- FECHA -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold text-dark">Fecha del Gasto</label>
+                            <input type="date" class="form-control border-0 shadow-sm"
+                                style="border-radius: 8px; padding: 10px 14px;" [(ngModel)]="gasto.fechaGasto" />
+                        </div>
+
+                        <!-- MONTO TOTAL -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold text-dark">Monto Total (Q)</label>
+                            <input type="number" step="0.01" min="0" class="form-control border-0 shadow-sm"
+                                style="border-radius: 8px; padding: 10px 14px; font-weight: 600; color: #991b1b;"
+                                placeholder="0.00" [(ngModel)]="gasto.montoTotal" (input)="calcularMontoPorSocio()" />
+                        </div>
+
+                        <!-- DESCRIPCIÓN / DETALLE -->
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold text-dark">Descripción / Detalle</label>
+                            <input type="text" class="form-control border-0 shadow-sm"
+                                style="border-radius: 8px; padding: 10px 14px;"
+                                placeholder="Ej: Renta de Naviera Sulugui y Sastrería la Bendición, Servicio mes de Agosto..."
+                                [(ngModel)]="gasto.descripcion" />
+                        </div>
+
+                        <!-- 🏢 LISTA DE EMPRESAS - SOLO SI ES RENTA MENSUAL -->
+                        @if (gasto.tipoConcepto === 'Renta Mensual') {
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold text-dark">🏢 Empresas / Clientes a las que
+                                aplica</label>
+                            <div class="border rounded-3 p-3 bg-white shadow-sm">
+                                @for (cli of clientes; track cli.id) {
+                                <label class="d-flex align-items-center gap-3 py-2 px-2 rounded-2 mb-1 cursor-pointer"
+                                    [style.background]="estaEmpresaSeleccionada(cli.id) ? '#dbeafe' : 'transparent'"
+                                    (click)="toggleEmpresaGasto(cli)">
+                                    <!-- ✅ SOLO AQUÍ va el stopPropagation() -->
+                                    <input type="checkbox" [checked]="estaEmpresaSeleccionada(cli.id)" class="m-0"
+                                        (click)="$event.stopPropagation()" />
+                                    <span class="fw-medium">{{ cli.nombre }}</span>
+                                    <span class="text-muted small ms-auto">{{ cli.sistema }}</span>
+                                </label>
+                                }
+                            </div>
+                            @if (gasto.empresasSeleccionadas.length > 0) {
+                            <div class="mt-2 p-2 rounded-2" style="background: #dbeafe;">
+                                <strong>Seleccionadas:</strong> {{ gasto.nombresEmpresas }}
+                            </div>
+                            }
+                        </div>
+                        }
+
+                        <!-- TIPO DE REPARTO -->
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold text-dark">¿A quién se le descuenta este gasto?</label>
+                            <div class="d-flex gap-3">
+                                <label class="d-flex align-items-center">
+                                    <input type="radio" name="tipoReparto" value="todos" [(ngModel)]="gasto.tipoReparto"
+                                        (change)="alCambiarTipoReparto()" class="me-2" />
+                                    🟢 A TODOS los socios por igual
+                                </label>
+                                <label class="d-flex align-items-center">
+                                    <input type="radio" name="tipoReparto" value="seleccion"
+                                        [(ngModel)]="gasto.tipoReparto" (change)="alCambiarTipoReparto()"
+                                        class="me-2" />
+                                    🔴 SOLO a los socios que seleccione
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- SOCIOS ASIGNADOS AL GASTO -->
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold text-dark">Socios que pagan este gasto</label>
+                            <div class="border rounded-3 p-3 bg-white shadow-sm">
+                                @for (socio of sociosDisponibles; track socio) {
+                                <div class="d-flex align-items-center gap-3 py-2 px-2 rounded-2 mb-1"
+                                    [style.opacity]="gasto.tipoReparto === 'todos' ? '0.7' : '1'"
+                                    [style.background]="estaSeleccionadoGasto(socio) ? '#fef2f2' : 'transparent'"
+                                    (click)="gasto.tipoReparto === 'seleccion' && toggleSocioGasto(socio)">
+                                    <input type="checkbox" [checked]="estaSeleccionadoGasto(socio)"
+                                        [disabled]="gasto.tipoReparto === 'todos'" class="m-0" />
+                                    <span class="fw-medium">{{ socio }}</span>
+                                    @if (gasto.montoPorSocio > 0 && estaSeleccionadoGasto(socio)) {
+                                    <span class="ms-auto fw-bold text-danger">Q{{ gasto.montoPorSocio.toFixed(2)
+                                        }}</span>
+                                    }
+                                </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- RESUMEN DEL REPARTO -->
+                        @if (gasto.sociosAsignados.length > 0 && gasto.montoTotal > 0) {
+                        <div class="col-md-12">
+                            <div class="p-3 rounded-3" style="background: #fef2f2; border-left: 4px solid #dc2626;">
+                                <p class="mb-1 fw-semibold text-danger">💡 Resumen del reparto</p>
+                                <p class="mb-0 small text-dark">
+                                    Monto total: <strong>Q{{ gasto.montoTotal.toFixed(2) }}</strong> dividido entre
+                                    <strong>{{ gasto.sociosAsignados.length }} socio(s)</strong> →
+                                    <strong>Q{{ gasto.montoPorSocio.toFixed(2) }}</strong> a cada uno.
+                                </p>
+                            </div>
+                        </div>
+                        }
+                    </div>
+
+                    <!-- BOTONES -->
+                    <div class="d-flex justify-content-end gap-3 mt-4 pt-3" style="border-top: 1px solid #e2e8f0;">
+                        <button type="button" class="btn px-4"
+                            style="background: #e2e8f0; color: #374151; border-radius: 8px;"
+                            (click)="cerrarModalGasto()">Cancelar</button>
+                        <button type="button" class="btn px-5"
+                            style="background: #991b1b; color: white; border-radius: 8px;" (click)="guardarGasto()">💾
+                            Guardar Gasto</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+
+     <!-- 📋 LISTADO DE GASTOS REGISTRADOS -->
+    @if (modales['listaGastos']) {
+    <div class="modal fade show d-block" tabindex="-1"
+         style="background-color: rgba(15, 23, 42, 0.35); backdrop-filter: blur(8px); z-index: 1050;">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0"
+                 style="border-radius: 14px; max-height: 92vh; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);">
+
+                <!-- ENCABEZADO -->
+                <div class="px-5 py-4" style="background-color: #b45309; border-bottom: 3px solid #f59e0b;">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-3">
+                            <div
+                                style="width: 42px; height: 42px; border-radius: 8px; background-color: rgba(253,224,71,0.2); display: flex; align-items: center; justify-content: center;">
+                                <span style="font-size: 20px;">📋</span>
+                            </div>
+                            <div>
+                                <h5 class="text-white fw-semibold mb-0" style="font-size: 1.15rem;">Gastos Registrados
+                                </h5>
+                                <p class="text-amber-200 small mb-0">Historial de todos los gastos ingresados</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white shadow-none"
+                                (click)="cerrarListaGastos()"></button>
+                    </div>
+                </div>
+
+                <!-- CUERPO DEL LISTADO -->
+                <div class="p-4" style="background-color: #fefce8; overflow-y: auto; max-height: 75vh;">
+
+                    <!-- RESUMEN TOTAL -->
+                    <div class="mb-4 p-3 rounded-3" style="background-color: #fef3c7; border-left: 4px solid #f59e0b;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-semibold">💰 Total de Gastos:</span>
+                            <span class="fw-bold fs-5" style="color: #b45309;">
+                                Q{{ obtenerTotalGastos().toFixed(2) }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- ✅ BOTÓN SIEMPRE VISIBLE -->
+                    <div class="mb-4 d-flex justify-content-end">
+                        <button class="btn px-4 py-2 text-white shadow-sm"
+                                style="background: linear-gradient(135deg, #ef4444, #b91c1c); border-radius: 10px; border: none;"
+                                (click)="abrirModalGasto()">
+                            ➕ 📤 Registrar Nuevo Gasto
+                        </button>
+                    </div>
+
+                    <!-- ESTADO VACÍO O TABLA -->
+                    @if (todosLosGastos.length === 0) {
+                    <div class="text-center py-5">
+                        <span style="font-size: 48px;">📭</span>
+                        <p class="mt-3 text-muted">No hay gastos registrados aún</p>
+                        <p class="small text-muted">Guarda tu primer gasto y aparecerá aquí</p>
+                    </div>
+                    } @else {
+
+                    <!-- TABLA DE GASTOS -->
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle bg-white rounded-3 shadow-sm">
+                            <thead style="background-color: #fef3c7;">
+                                <tr>
+                                    <th class="px-3 py-2">📅 Fecha</th>
+                                    <th class="px-3 py-2">📌 Concepto</th>
+                                    <th class="px-3 py-2">🏢 Empresas</th>
+                                    <th class="px-3 py-2 text-end">💰 Monto Total</th>
+                                    <th class="px-3 py-2">👤 Reparto</th>
+                                    <th class="px-3 py-2 text-center">⚙️ Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (gasto of todosLosGastos; track gasto.id) {
+                                <tr>
+                                    <td class="px-3 small">{{ gasto.fechaGasto }}</td>
+                                    <td class="px-3">
+                                        <strong>{{ gasto.tipoConcepto }}</strong>
+                                        @if (gasto.descripcion) {
+                                        <br><span class="text-muted small">{{ gasto.descripcion }}</span>
+                                        }
+                                    </td>
+                                    <td class="px-3 small">
+                                        @if (gasto.tipoConcepto === 'Renta Mensual' && gasto.nombresEmpresas) {
+                                        <span style="color: #1d4ed8;">🏢 {{ gasto.nombresEmpresas }}</span>
+                                        } @else {
+                                        <span class="text-muted">— Sin empresas —</span>
+                                        }
+                                    </td>
+                                    <td class="px-3 text-end fw-bold" style="color: #991b1b;">
+                                        Q{{ gasto.montoTotal.toFixed(2) }}
+                                    </td>
+                                    <td class="px-3 small">
+                                        {{ gasto.sociosAsignados.length }} socio(s)
+                                        <br>
+                                        <span class="text-muted">Q{{ gasto.montoPorSocio.toFixed(2) }} c/u</span>
+                                    </td>
+                                    <td class="px-3 text-center">
+                                        <button class="btn btn-sm px-2 py-1 me-1"
+                                                style="background-color: #dbeafe; color: #1e40af; border-radius: 6px;"
+                                                (click)="editarGasto(gasto)">
+                                            ✏️ Editar
+                                        </button>
+                                        <button class="btn btn-sm px-2 py-1"
+                                                style="background-color: #fee2e2; color: #b91c1c; border-radius: 6px;"
+                                                (click)="eliminarGasto(gasto)">
+                                            🗑️ Eliminar
+                                        </button>
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+
+</div>

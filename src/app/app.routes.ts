@@ -17,6 +17,9 @@ import { ListaClientePlanMedicoComponent } from '../app/views/gestionFarmacia/ad
 import { CrearClientePlanMedicoComponent } from '../app/views/gestionFarmacia/admin/clientesPlanesMedicos/crear-cliente-plan-medico/crear-cliente-plan-medico.component';
 import { EditarClientePlanMedicoComponent } from '../app/views/gestionFarmacia/admin/clientesPlanesMedicos/editar-cliente-plan-medico/editar-cliente-plan-medico.component';
 
+import { LoginprosystemComponent } from '../app/views/Personal/loginprosystem/loginprosystem.component';
+import { FinanzasProsystemComponent } from '../app/views/Personal/finanzas-prosystem/finanzas-prosystem.component';
+
 import { ControlcontableComponent } from '../app/views/gestionFarmacia/admin/controlcontable/controlcontable.component';
 import { ControlcontablepcComponent } from '../app/views/gestionFarmacia/public/controlcontablepc/controlcontablepc.component';
 
@@ -29,6 +32,7 @@ import { InventarioDiarioComponent } from './views/gestionFarmacia/public/invent
 export const routes: Routes = [
     { path: '', redirectTo: '/menu', pathMatch: 'full' },
     { path: 'login', component: LoginComponent },
+    { path: 'loginprosystem', component: LoginprosystemComponent },
     //ADMIN
     { path: 'lista-producto-mal-estado', component: ListaProductoMalEstadoComponent, canActivate: [AuthGuard] },
     { path: 'crear-producto-mal-estado', component: CrearProductoMalEstadoComponent, canActivate: [AuthGuard] },
@@ -44,6 +48,8 @@ export const routes: Routes = [
     { path: 'crear-cliente-plan-medico', component: CrearClientePlanMedicoComponent, canActivate: [AuthGuard] },
     { path: 'editar-cliente-plan-medico/:id', component: EditarClientePlanMedicoComponent, canActivate: [AuthGuard] },
     { path: 'controlcontable', component: ControlcontableComponent, canActivate: [AuthGuard] },
+
+    { path: 'finanzasprosystem', component: FinanzasProsystemComponent, canActivate: [AuthGuard] },
 
     //PUBLIC
     { path: 'producto-mal-estado-index', component: ProductoMalEstadoIndexComponent },
