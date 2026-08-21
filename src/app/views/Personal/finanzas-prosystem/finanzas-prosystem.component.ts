@@ -7,6 +7,9 @@ import {
   alertError,
   alertEliminarSinRedirigir
 } from '../../../services/utils';
+import { FirebaseAuthService } from '../../../services/firebase-auth.service';
+import { Router } from '@angular/router';
+
 
 interface Cliente {
   id?: string;
@@ -28,6 +31,8 @@ interface Pago {
   fechaPago: string;
   mesCorrespondiente: string;
   anioCorrespondiente: string;
+  metodoPago: 'Efectivo' | 'Transferencia';
+  referenciaAutorizacion: string;
 }
 
 interface ResumenDeuda {
@@ -60,14 +65,16 @@ interface Gasto {
   tipoReparto: 'todos' | 'seleccion';
   sociosAsignados: string[];
   montoPorSocio: number;
+  metodoPago: 'Efectivo' | 'Transferencia';
+  referenciaAutorizacion: string;
 }
 
 
 
 interface ReporteSocioActualizado extends ReporteSocio {
   totalGastos: number;
-  subtotalIngresos: number; 
-  saldoNeto: number; 
+  subtotalIngresos: number;
+  saldoNeto: number;
 }
 
 @Component({
@@ -78,6 +85,8 @@ interface ReporteSocioActualizado extends ReporteSocio {
   styleUrl: './finanzas-prosystem.component.css'
 })
 export class FinanzasProsystemComponent {
+  cargando: boolean = true;
+  nombreUsuario: string = '';
   busquedaEmpresa: string = '';
   sociosDisponibles = [
     'Roberto Carlos Yoxón Cuj',
@@ -86,6 +95,7 @@ export class FinanzasProsystemComponent {
   ];
 
   tiposPago = ['Instalación', 'Renta'];
+  metodosPago = ['Efectivo', 'Transferencia'];
   meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
   anios = ['2025', '2026', '2027', '2028', '2029', '2030'];
 
@@ -99,7 +109,7 @@ export class FinanzasProsystemComponent {
   };
   totalGeneralGastos: number = 0;
   totalGeneralNeto: number = 0;
-    subtotalIngresosGeneral: number = 0;
+  subtotalIngresosGeneral: number = 0;
   reporteSocios: ReporteSocio[] = [];
   clienteActual!: Cliente;
   clientes: Cliente[] = [];
@@ -120,7 +130,9 @@ export class FinanzasProsystemComponent {
     monto: 0,
     fechaPago: new Date().toISOString().split('T')[0],
     mesCorrespondiente: '',
-    anioCorrespondiente: ''
+    anioCorrespondiente: '',
+    metodoPago: 'Efectivo',
+    referenciaAutorizacion: ''
   };
   totalesGenerales = {
     totalPagadoInstalacion: 0,
@@ -154,7 +166,9 @@ export class FinanzasProsystemComponent {
     nombresEmpresas: '',
     tipoReparto: 'todos',
     sociosAsignados: [...this.sociosDisponibles],
-    montoPorSocio: 0
+    montoPorSocio: 0,
+    metodoPago: 'Efectivo',
+    referenciaAutorizacion: ''
   };
   reporteConGastos: ReporteSocioActualizado[] = [];
 
@@ -162,9 +176,40 @@ export class FinanzasProsystemComponent {
   todosLosPagos: Pago[] = [];
 
 
-  constructor(private db: FirebaseRealTimeDatabaseService) {
+  constructor(private db: FirebaseRealTimeDatabaseService, private router: Router, private authService: FirebaseAuthService) {
     this.cargarTodo();
+
+    this.authService.user$.subscribe(usuario => {
+      if (usuario && usuario.email) {
+        this.nombreUsuario = this.obtenerNombrePorCorreo(usuario.email);
+      }
+      this.cargando = false;
+    });
+
   }
+  obtenerNombrePorCorreo(correo: string): string {
+    const mapa: { [correo: string]: string } = {
+      'roberto@gmail.com': 'Roberto Carlos Yoxón Cuj',
+      'walter@gmail.com': 'Walter Alfredeo Canú'
+    };
+    return mapa[correo] || correo;
+  }
+  esUsuario(nombreOCorreo: string): boolean {
+    const usuario = this.authService.user$.value;
+    if (!usuario || !usuario.email) return false;
+    const correoLimpio = usuario.email.trim().toLowerCase();
+
+    // ✅ Comparar DIRECTAMENTE por correo (es lo más confiable)
+    if (nombreOCorreo.includes('roberto')) {
+      return correoLimpio === 'roberto@gmail.com';
+    }
+    if (nombreOCorreo.includes('walter')) {
+      return correoLimpio === 'walter@gmail.com';
+    }
+
+    return false;
+  }
+
 
   cargarTodo() {
     this.db.listado('ClienteProSystem').subscribe(lista => this.clientes = lista);
@@ -273,7 +318,9 @@ export class FinanzasProsystemComponent {
         monto: 0,
         fechaPago: new Date().toISOString().split('T')[0],
         mesCorrespondiente: '',
-        anioCorrespondiente: ''
+        anioCorrespondiente: '',
+        metodoPago: 'Efectivo',
+        referenciaAutorizacion: ''
       };
     }
     this.modales['pago'] = true;
@@ -298,6 +345,11 @@ export class FinanzasProsystemComponent {
   async guardarPago() {
     if (!this.pago.tipoPago) { alertError('Selecciona el tipo de pago'); return; }
     if (!this.pago.monto || this.pago.monto <= 0) { alertError('Ingresa el monto del pago'); return; }
+
+    if (this.pago.metodoPago === 'Transferencia' && !this.pago.referenciaAutorizacion.trim()) {
+      alertError('⚠️ En Transferencia debes colocar el N° de Autorización / Referencia del baucher');
+      return;
+    }
 
     // ✅ VALIDACIÓN 1: Instalación → NO pagar más de lo pendiente
     if (this.pago.tipoPago === 'Instalación') {
@@ -334,10 +386,13 @@ export class FinanzasProsystemComponent {
 
 
 
-
   cerrarModalPago() {
     this.modales['pago'] = false;
-    this.pago = { idCliente: '', nombreCliente: '', tipoPago: '', monto: 0, fechaPago: '', mesCorrespondiente: '', anioCorrespondiente: '' };
+    this.pago = {
+      idCliente: '', nombreCliente: '', tipoPago: '', monto: 0, fechaPago: '',
+      mesCorrespondiente: '', anioCorrespondiente: '',
+      metodoPago: 'Efectivo', referenciaAutorizacion: ''
+    };
     this.clienteSeleccionadoNombre = '';
   }
 
@@ -452,7 +507,7 @@ export class FinanzasProsystemComponent {
     };
   }
 
-   abrirReporteGanancias() {
+  abrirReporteGanancias() {
     this.reporteSocios = this.generarReporteGanancias();
     const gastosPorSocio = this.calcularGastosPorSocio();
 
@@ -475,10 +530,10 @@ export class FinanzasProsystemComponent {
     // ✅ TOTALES GENERALES (corregido: variable que faltaba)
     this.totalGeneralGastos = Object.values(gastosPorSocio).reduce((sum, g) => sum + g, 0);
     const totalIngresosBrutos = this.totalesGenerales.totalPagadoInstalacion + this.totalesGenerales.totalPagadoRenta;
-    
+
     // ✅ Esta variable es la que faltaba:
     this.subtotalIngresosGeneral = totalIngresosBrutos - this.totalGeneralGastos;
-    
+
     this.totalGeneralNeto = this.subtotalIngresosGeneral + this.totalesGenerales.porCobrarGeneral;
 
     this.modales['ganancias'] = true;
@@ -606,10 +661,11 @@ export class FinanzasProsystemComponent {
           ? [...gastoEditar.empresasSeleccionadas]
           : [],
         nombresEmpresas: gastoEditar.nombresEmpresas || '',
-        tipoConceptoAnterior: gastoEditar.tipoConcepto
+        tipoConceptoAnterior: gastoEditar.tipoConcepto,
+        metodoPago: gastoEditar.metodoPago || 'Efectivo',
+        referenciaAutorizacion: gastoEditar.referenciaAutorizacion || ''
       };
     } else {
-      // MODO NUEVO
       this.gasto = {
         tipoConcepto: '',
         tipoConceptoAnterior: '',
@@ -620,11 +676,14 @@ export class FinanzasProsystemComponent {
         nombresEmpresas: '',
         tipoReparto: 'todos',
         sociosAsignados: [...this.sociosDisponibles],
-        montoPorSocio: 0
+        montoPorSocio: 0,
+        metodoPago: 'Efectivo',
+        referenciaAutorizacion: ''
       };
     }
     this.modales['gasto'] = true;
   }
+
 
 
   cerrarModalGasto() {
@@ -644,7 +703,9 @@ export class FinanzasProsystemComponent {
       nombresEmpresas: '',
       tipoReparto: 'todos',
       sociosAsignados: [...this.sociosDisponibles],
-      montoPorSocio: 0
+      montoPorSocio: 0,
+      metodoPago: 'Efectivo',       // ✅
+      referenciaAutorizacion: ''
     };
   }
 
@@ -652,14 +713,10 @@ export class FinanzasProsystemComponent {
     const tipoAnterior = this.gasto.tipoConceptoAnterior;
     const tipoActual = this.gasto.tipoConcepto;
 
-    console.log('🔄 alCambiarConcepto() — Anterior:', tipoAnterior, '→ Actual:', tipoActual);
-    console.log('📦 Antes de limpiar:', [...this.gasto.empresasSeleccionadas]);
-
     // ✅ SOLO limpiar si VENÍAS de Renta Mensual y TE VAS a OTRO concepto
     if (tipoAnterior === 'Renta Mensual' && tipoActual !== 'Renta Mensual') {
       this.gasto.empresasSeleccionadas = [];
       this.gasto.nombresEmpresas = '';
-      console.log('🧹 Saliendo de Renta → empresas limpiadas');
     }
 
     // ✅ CAMBIO CLAVE: Si ENTRAS a Renta Mensual → NO BORRAR NADA
@@ -668,35 +725,33 @@ export class FinanzasProsystemComponent {
       if (!this.gasto.empresasSeleccionadas) {
         this.gasto.empresasSeleccionadas = [];
       }
-      console.log('✅ Entrando a Renta → MANTENER empresas existentes');
     }
 
     this.gasto.tipoConceptoAnterior = tipoActual;
-    console.log('📦 Fin — empresasSeleccionadas:', [...this.gasto.empresasSeleccionadas]);
+
   }
 
 
   toggleEmpresaGasto(cliente: Cliente) {
     if (!cliente.id) return;
 
-    const id = cliente.id;
-    const yaExiste = this.gasto.empresasSeleccionadas.includes(id);
+    // ✅ SOLO UNA EMPRESA: Al hacer clic, se selecciona ESA y solo ESA
+    this.gasto.empresasSeleccionadas = [cliente.id];
+    this.gasto.nombresEmpresas = cliente.nombre;
 
-    console.log('🖱️ Click empresa:', cliente.nombre, '— Ya seleccionada:', yaExiste);
+    // ✅ CARGAR SOCIOS AUTOMÁTICAMENTE Y BLOQUEARLOS
+    if (cliente.sociosAsignados && Array.isArray(cliente.sociosAsignados)) {
+      this.gasto.sociosAsignados = [...cliente.sociosAsignados];
 
-    if (yaExiste) {
-      this.gasto.empresasSeleccionadas = this.gasto.empresasSeleccionadas.filter(e => e !== id);
+      this.gasto.tipoReparto = 'todos'; // Forzar reparto entre los socios de la empresa
     } else {
-      this.gasto.empresasSeleccionadas = [...this.gasto.empresasSeleccionadas, id];
+      this.gasto.sociosAsignados = [];
     }
 
-    // ✅ QUITAMOS la línea que daba error, SOLO dejamos esta:
+    this.calcularMontoPorSocio();
     this.gasto = { ...this.gasto };
-
-    this.actualizarNombresEmpresas();
-
-    console.log('✅ Empresas ahora:', [...this.gasto.empresasSeleccionadas]);
   }
+
 
 
 
@@ -714,6 +769,14 @@ export class FinanzasProsystemComponent {
 
 
   alCambiarTipoReparto() {
+    // ✅ Si es Renta Mensual y ya hay empresa seleccionada → NO DEJAR CAMBIAR
+    if (this.gasto.tipoConcepto === 'Renta Mensual' && this.gasto.empresasSeleccionadas.length === 1) {
+      // Forzar siempre "todos" porque los socios vienen de la empresa
+      this.gasto.tipoReparto = 'todos';
+      return;
+    }
+
+    // Comportamiento normal para otros gastos
     if (this.gasto.tipoReparto === 'todos') {
       this.gasto.sociosAsignados = [...this.sociosDisponibles];
     } else {
@@ -757,11 +820,10 @@ export class FinanzasProsystemComponent {
       alertError('Ingresa el monto del gasto');
       return;
     }
-
-    // 🔍 DEPURACIÓN COMPLETA
-    console.log('💾 guardarGasto() — tipoConcepto:', this.gasto.tipoConcepto);
-    console.log('📦 empresasSeleccionadas:', this.gasto.empresasSeleccionadas);
-    console.log('📏 longitud:', this.gasto.empresasSeleccionadas.length);
+    if (this.gasto.metodoPago === 'Transferencia' && !this.gasto.referenciaAutorizacion.trim()) {
+      alertError('⚠️ En Transferencia debes colocar el N° de Autorización / Referencia del baucher');
+      return;
+    }
 
     const cantidadEmpresas = this.gasto.empresasSeleccionadas.length;
 
@@ -833,5 +895,17 @@ export class FinanzasProsystemComponent {
     }
     return this.todosLosGastos.reduce((sum, g) => sum + g.montoTotal, 0);
   }
+
+  async cerrarSesion() {
+    try {
+      await this.authService.logout();
+      alertExitoSinRedirigir('¡Sesión cerrada!', 'Has salido correctamente del sistema ✅');
+      this.router.navigate(['/loginprosystem']);
+    } catch (error) {
+      alertError('No se pudo cerrar la sesión. Inténtalo nuevamente.');
+      console.error('Error al cerrar sesión:', error);
+    }
+  }
+
 
 }
