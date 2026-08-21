@@ -227,11 +227,12 @@
                     <!-- ✅ BOTONES -->
                     <div class="mt-auto pt-2 border-top" style="border-color: #e2e8f0;">
                         <div class="d-flex gap-2 flex-wrap">
-                            <button *ngIf="esUsuario('Walter Alfredeo Canú')" class="btn btn-sm text-white flex-grow-1"
+                            <button *ngIf="!esWalter" class="btn btn-sm text-white flex-grow-1"
                                 style="background: #3b82f6; border-radius: 8px;" (click)="abrirModal('cliente', c)">
                                 ✏️ Editar
                             </button>
-                            <button *ngIf="esUsuario('Walter Alfredeo Canú')" class="btn btn-sm text-white flex-grow-1"
+
+                            <button *ngIf="!esWalter" class="btn btn-sm text-white flex-grow-1"
                                 style="background: #ef4444; border-radius: 8px;" (click)="eliminarCliente(c)">
                                 🗑️ Eliminar
                             </button>

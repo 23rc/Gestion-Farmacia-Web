@@ -194,21 +194,11 @@ export class FinanzasProsystemComponent {
     };
     return mapa[correo] || correo;
   }
-  esUsuario(nombreOCorreo: string): boolean {
-    const usuario = this.authService.user$.value;
-    if (!usuario || !usuario.email) return false;
-    const correoLimpio = usuario.email.trim().toLowerCase();
-
-    // ✅ Comparar DIRECTAMENTE por correo (es lo más confiable)
-    if (nombreOCorreo.includes('roberto')) {
-      return correoLimpio === 'roberto@gmail.com';
-    }
-    if (nombreOCorreo.includes('walter')) {
-      return correoLimpio === 'walter@gmail.com';
-    }
-
-    return false;
-  }
+get esWalter(): boolean {
+  const usuario = this.authService.user$.value;
+  if (!usuario || !usuario.email) return false;
+  return usuario.email.trim().toLowerCase() === 'walter@gmail.com';
+}
 
 
   cargarTodo() {
