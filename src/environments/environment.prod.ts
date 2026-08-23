@@ -58,14 +58,14 @@ export const environment = {
             nombre: "DORCAS ELIZABETH YOXON TERETA",
             usuario: "10014453",
             rol: "DEPENDIENTE",
-            revisa_a: 'GERSON EMMANUEL BARRENO GARCIA',
+            revisa_a: 'ROSEMARY EDITH MORALES SACUJ',
             password: "4321"
         },
         {
             nombre: "GERSON EMMANUEL BARRENO GARCIA",
             usuario: "10019034",
             rol: "DEPENDIENTE",
-            revisa_a: 'ROSEMARY EDITH MORALES SACUJ',
+            revisa_a: 'JOSIAS EMANUEL MUJ COROXON',
             password: "5855"
         },
         {
@@ -74,6 +74,13 @@ export const environment = {
             rol: "DEPENDIENTE",
             revisa_a: 'DORCAS ELIZABETH YOXON TERETA',
             password: "8698"
+        },
+        {
+            nombre: "JOSIAS EMANUEL MUJ COROXON",
+            usuario: "10020825",
+            rol: "DEPENDIENTE",
+            revisa_a: 'GERSON EMMANUEL BARRENO GARCIA',
+            password: "2345"
         }
     ]
 };
