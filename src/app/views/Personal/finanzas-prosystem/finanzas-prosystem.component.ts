@@ -69,10 +69,17 @@ interface Gasto {
   referenciaAutorizacion: string;
 }
 
+interface Caja {
+  id?: string;
+  saldoInicial: number;
+  fechaSaldo: string;
+  descripcion: string;
+}
 
 
 interface ReporteSocioActualizado extends ReporteSocio {
   totalGastos: number;
+  saldoInicial: number;
   subtotalIngresos: number;
   saldoNeto: number;
 }
@@ -105,8 +112,10 @@ export class FinanzasProsystemComponent {
     verPagos: false,
     ganancias: false,
     gasto: false,
-    listaGastos: false
+    listaGastos: false,
+    caja: false
   };
+  saldoInicialCaja: number = 0;
   totalGeneralGastos: number = 0;
   totalGeneralNeto: number = 0;
   subtotalIngresosGeneral: number = 0;
@@ -121,6 +130,11 @@ export class FinanzasProsystemComponent {
     fechaInicio: new Date().toISOString().split('T')[0],
     diaPagoMensual: new Date().getDate(),
     sociosAsignados: []
+  };
+  caja: Caja = {
+    saldoInicial: 0,
+    fechaSaldo: new Date().toISOString().split('T')[0],
+    descripcion: 'Saldo inicial del período'
   };
   pagos: Pago[] = [];
   pago: Pago = {
@@ -194,18 +208,28 @@ export class FinanzasProsystemComponent {
     };
     return mapa[correo] || correo;
   }
-get esWalter(): boolean {
-  const usuario = this.authService.user$.value;
-  if (!usuario || !usuario.email) return false;
-  return usuario.email.trim().toLowerCase() === 'walter@gmail.com';
-}
+  get esWalter(): boolean {
+    const usuario = this.authService.user$.value;
+    if (!usuario || !usuario.email) return false;
+    return usuario.email.trim().toLowerCase() === 'walter@gmail.com';
+  }
 
 
   cargarTodo() {
     this.db.listado('ClienteProSystem').subscribe(lista => this.clientes = lista);
     this.db.listado('PagosProSystem').subscribe(pagos => this.todosLosPagos = pagos);
     this.db.listado('GastosProSystem').subscribe(gastos => this.todosLosGastos = gastos);
+
+    // ✅ Cargar saldo inicial de Caja
+    this.db.listado('CajaProSystem').subscribe((listaCaja: Caja[]) => {
+      if (listaCaja.length > 0) {
+        this.caja = listaCaja[0];
+        this.saldoInicialCaja = this.caja.saldoInicial;
+      }
+    });
   }
+
+
 
   nuevoClienteVacio(): Cliente {
     return {
@@ -500,34 +524,35 @@ get esWalter(): boolean {
   abrirReporteGanancias() {
     this.reporteSocios = this.generarReporteGanancias();
     const gastosPorSocio = this.calcularGastosPorSocio();
+    const cantidadSocios = this.sociosDisponibles.length;
 
-    // ✅ FÓRMULA: Subtotal Ingresos = (Inst + Renta) − Gastos
-    // Total Final = Subtotal Ingresos + Subtotal Por Cobrar
+    const saldoPorSocio = cantidadSocios > 0 ? this.saldoInicialCaja / cantidadSocios : 0;
+
     this.reporteConGastos = this.reporteSocios.map(socio => {
       const gastos = gastosPorSocio[socio.nombreSocio] || 0;
       const ingresosBrutos = socio.totalPagadoInstalacion + socio.totalPagadoRenta;
-      const subtotalIngresos = ingresosBrutos - gastos; // ✅ Ya restado aquí
-      const totalGeneral = subtotalIngresos + socio.porCobrarGeneral; // ✅ Suma de ambos subtotales
+      const subtotalSinSaldo = ingresosBrutos - gastos;
+      const subtotalConSaldo = saldoPorSocio + subtotalSinSaldo;
+      const totalGeneral = subtotalConSaldo + socio.porCobrarGeneral;
 
       return {
         ...socio,
         totalGastos: gastos,
-        subtotalIngresos: subtotalIngresos,
+        saldoInicial: saldoPorSocio,
+        subtotalIngresos: subtotalConSaldo,
         saldoNeto: totalGeneral
       };
     });
 
-    // ✅ TOTALES GENERALES (corregido: variable que faltaba)
     this.totalGeneralGastos = Object.values(gastosPorSocio).reduce((sum, g) => sum + g, 0);
     const totalIngresosBrutos = this.totalesGenerales.totalPagadoInstalacion + this.totalesGenerales.totalPagadoRenta;
-
-    // ✅ Esta variable es la que faltaba:
-    this.subtotalIngresosGeneral = totalIngresosBrutos - this.totalGeneralGastos;
-
+    const subtotalGeneralSinSaldo = totalIngresosBrutos - this.totalGeneralGastos;
+    this.subtotalIngresosGeneral = this.saldoInicialCaja + subtotalGeneralSinSaldo; // ✅ Saldo inicial + todo
     this.totalGeneralNeto = this.subtotalIngresosGeneral + this.totalesGenerales.porCobrarGeneral;
 
     this.modales['ganancias'] = true;
   }
+
 
 
 
@@ -897,5 +922,49 @@ get esWalter(): boolean {
     }
   }
 
+
+
+
+
+  get saldoActualTotal(): number {
+    const totalIngresos = this.todosLosPagos.reduce((sum, p) => sum + p.monto, 0);
+    const totalGastos = this.todosLosGastos.reduce((sum, g) => sum + g.montoTotal, 0);
+    return this.saldoInicialCaja + totalIngresos - totalGastos;
+  }
+
+
+  abrirModalCaja() {
+  this.modales['caja'] = true;
+}
+
+cerrarModalCaja() {
+  this.modales['caja'] = false;
+}
+
+async guardarSaldoInicial() {
+  // 🛡️ Validaciones
+  if (!this.caja.saldoInicial || this.caja.saldoInicial < 0) {
+    alertError('Ingresa un saldo inicial válido');
+    return;
+  }
+
+  // 🔍 Busca si ya existe un saldo guardado
+  this.db.listado('CajaProSystem').subscribe(async (listaCaja: Caja[]) => {
+    if (listaCaja.length > 0) {
+      // ✅ YA EXISTE → LO EDITAMOS
+      this.caja.id = listaCaja[0].id; // Tomamos el ID del que ya está guardado
+      await this.db.editar('CajaProSystem', this.caja);
+      alertExitoSinRedirigir('¡Actualizado!', 'Saldo inicial modificado ✅');
+    } else {
+      // 🆕 NO EXISTE → LO CREAMOS NUEVO
+      await this.db.insertar('CajaProSystem', this.caja);
+      alertExitoSinRedirigir('¡Guardado!', 'Saldo inicial registrado ✅');
+    }
+
+    // ✅ Actualizamos lo que se ve en pantalla y cerramos
+    this.saldoInicialCaja = this.caja.saldoInicial;
+    this.cerrarModalCaja();
+  });
+}
 
 }
